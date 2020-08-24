@@ -1,0 +1,21 @@
+﻿<Page
+    x:Class="Lawful.Views.Login"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Lawful.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="936">
+        <StackPanel Margin="240,50,240,0">
+            <TextBlock Text="Login" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold"/>
+            <TextBox Name="txtUsername" PlaceholderText="Username" />
+            <PasswordBox Name="txtPassword" PlaceholderText="Password"/>
+            <Button Name="btnLogin" Content="Login" HorizontalAlignment="Center" Click="btnLogin_Click"/>
+            <TextBlock Text="" Foreground="Red" Name="lblError"/>
+            <TextBlock Text="Lawful ©" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="12" FontWeight="Normal"/>
+        </StackPanel>
+    </Grid>
+</Page>
