@@ -10,6 +10,7 @@ namespace Lawful.Core.Datos
     public class ConexionDB
     {
 
-        protected SqlConnection Conexion = new SqlConnection(@"Server=(LocalDb)\MSSQLLocalDB;DataBase=ModuloDeSeguridad;Integrated Security=true");
+        protected SqlConnection Conexion = new SqlConnection(@"Server=(LocalDb)\SQLEXPRESS;DataBase=ModuloDeSeguridad;Integrated Security=true");
+        // @"Server=(LocalDb)\MSSQLLocalDB;DataBase=ModuloDeSeguridad;Integrated Security=true"
     }
 }
