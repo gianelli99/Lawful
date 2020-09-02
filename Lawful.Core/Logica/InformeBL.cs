@@ -53,7 +53,7 @@ namespace Lawful.Core.Logica
                 fechaDesde = fechaDesde.Date;
                 fechaHasta = fechaHasta.Date;
 
-                List<Modelo.Sesion> sesiones = new List<Modelo.Sesion>();
+                List<Modelo.SesionInforme> sesiones = new List<Modelo.SesionInforme>();
                 sesiones = sesionDAO.Listar(fechaDesde, fechaHasta);
                 if (sesiones.Count> 0)
                 {
@@ -77,7 +77,7 @@ namespace Lawful.Core.Logica
                 fechaDesde = fechaDesde.Date;
                 fechaHasta = fechaHasta.Date;
 
-                List<Modelo.Sesion> sesiones = new List<Modelo.Sesion>();
+                List<Modelo.SesionInforme> sesiones = new List<Modelo.SesionInforme>();
                 if (tipoInforme == TipoInforme.Grupo)
                 {
                     sesiones = sesionDAO.ListarPorGrupo(id, fechaDesde, fechaHasta);
@@ -101,7 +101,7 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        private void GenerarExcel(TipoInforme tipoInforme, List<Modelo.Sesion> sesiones, DateTime fechaDesde, DateTime fechaHasta)
+        private void GenerarExcel(TipoInforme tipoInforme, List<Modelo.SesionInforme> sesiones, DateTime fechaDesde, DateTime fechaHasta)
         {
             fechaDesde = fechaDesde.Date;
             fechaHasta = fechaHasta.Date;

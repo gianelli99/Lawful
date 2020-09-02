@@ -49,6 +49,9 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <uap:Capability Name="enterpriseAuthentication"/>
+    <Capability Name="internetClientServer"/>
+    <Capability Name="privateNetworkClientServer"/>
   </Capabilities>
 
   <genTemplate:Metadata>

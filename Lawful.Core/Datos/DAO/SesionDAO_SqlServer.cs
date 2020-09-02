@@ -10,7 +10,7 @@ namespace Lawful.Core.Datos.DAO
 {
     public class SesionDAO_SqlServer : ConexionDB, Interfaces.ISesionDAO
     {
-        public int IniciarSesion(Sesion sesion)
+        public int IniciarSesion(SesionActiva sesion)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -45,7 +45,7 @@ namespace Lawful.Core.Datos.DAO
             }
         }
 
-        public List<Sesion> Listar(DateTime fechaDesde, DateTime fechaHasta)
+        public List<SesionInforme> Listar(DateTime fechaDesde, DateTime fechaHasta)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -64,13 +64,13 @@ namespace Lawful.Core.Datos.DAO
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
-                        var sesiones = new List<Modelo.Sesion>();
+                        var sesiones = new List<Modelo.SesionInforme>();
                         if (response.HasRows)
                         {
                             
                             while (response.Read())
                             {
-                                var sesion = Modelo.Sesion.SesionInforme();
+                                var sesion = new Modelo.SesionInforme();
                                 var usuario = new Modelo.Usuario();
                                 sesion.Usuario = usuario;
                                 sesion.ID = response.GetInt32(0);
@@ -91,7 +91,7 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public List<Sesion> ListarPorGrupo(int idGrupo, DateTime fechaDesde, DateTime fechaHasta)// devuelve sesiones de 1 grupo, cada sesion tiene un usuario con solo el username, el usuario de la primer sesion contiene 1 grupo con solo la descripcion del mismo
+        public List<SesionInforme> ListarPorGrupo(int idGrupo, DateTime fechaDesde, DateTime fechaHasta)// devuelve sesiones de 1 grupo, cada sesion tiene un usuario con solo el username, el usuario de la primer sesion contiene 1 grupo con solo la descripcion del mismo
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -110,13 +110,13 @@ namespace Lawful.Core.Datos.DAO
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
-                        var sesiones = new List<Modelo.Sesion>();
+                        var sesiones = new List<Modelo.SesionInforme>();
                         if (response.HasRows)
                         {
                            
                             while (response.Read())
                             {
-                                var sesion = Modelo.Sesion.SesionInforme();
+                                var sesion = new Modelo.SesionInforme();
                                 var usuario = new Modelo.Usuario();
                                 sesion.Usuario = usuario;
                                 sesion.ID = response.GetInt32(0);
@@ -125,7 +125,6 @@ namespace Lawful.Core.Datos.DAO
                                 sesion.LogOut = response.GetDateTime(3);
                                 sesiones.Add(sesion);
                             }
-                            //return sesiones;
                         }
                         response.NextResult();
                         if (response.HasRows)
@@ -148,7 +147,7 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public List<Sesion> ListarPorUsuario(int idUsuario, DateTime fechaDesde, DateTime fechaHasta)// en la primer sesion se encuentra 1 usuario con solo su Username
+        public List<SesionInforme> ListarPorUsuario(int idUsuario, DateTime fechaDesde, DateTime fechaHasta)// en la primer sesion se encuentra 1 usuario con solo su Username
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -167,13 +166,13 @@ namespace Lawful.Core.Datos.DAO
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
-                        var sesiones = new List<Modelo.Sesion>();
+                        var sesiones = new List<Modelo.SesionInforme>();
                         if (response.HasRows)
                         {
 
                             while (response.Read())
                             {
-                                var sesion = Modelo.Sesion.SesionInforme();
+                                var sesion = new Modelo.SesionInforme();
                                 var usuario = new Modelo.Usuario();
                                 sesion.Usuario = usuario;
                                 sesion.ID = response.GetInt32(0);
@@ -206,7 +205,7 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public void CerrarSesion(Sesion sesion)
+        public void CerrarSesion(SesionActiva sesion)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {

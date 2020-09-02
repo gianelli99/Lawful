@@ -45,7 +45,7 @@ namespace Lawful.Views
                 {
                     //sesionBL.Suscribir(this);
 
-                    var sesion = Core.Modelo.Sesion.ObtenerInstancia();
+                    var sesion = Core.Modelo.SesionActiva.ObtenerInstancia();
                     sesion.Usuario = sesionBL.ConsultarUsuario(userId);
                     sesion.LogIn = DateTime.Now;
                     sesionBL.IniciarSesion();

@@ -23,8 +23,8 @@ namespace Lawful.Core.Logica
         {
             try
             {
-                int id = sesionDAO.IniciarSesion(Modelo.Sesion.ObtenerInstancia());
-                Modelo.Sesion.ObtenerInstancia().ID = id;
+                int id = sesionDAO.IniciarSesion(Modelo.SesionActiva.ObtenerInstancia());
+                Modelo.SesionActiva.ObtenerInstancia().ID = id;
                 sesionTime = new Timer(7200000);
                 sesionTime.Elapsed += SesionTime_Elapsed;
                 sesionTime.AutoReset = true;
@@ -55,10 +55,10 @@ namespace Lawful.Core.Logica
                 sesionTime.Dispose();
             }
             this.Notificar();
-            Modelo.Sesion.ObtenerInstancia().LogOut = DateTime.Now;
+            Modelo.SesionActiva.ObtenerInstancia().LogOut = DateTime.Now;
             try
             {
-                sesionDAO.CerrarSesion(Modelo.Sesion.ObtenerInstancia()); 
+                sesionDAO.CerrarSesion(Modelo.SesionActiva.ObtenerInstancia()); 
             }
             catch (Exception ex)
             {
