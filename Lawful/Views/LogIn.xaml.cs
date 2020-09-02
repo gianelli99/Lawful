@@ -64,7 +64,7 @@ namespace Lawful.Views
                 else
                 {
                     lblError.Text = "Ha ocurrido un error :(";
-                    txtUsername.Text = "Hola";
+                    txtUsername.Text = "";
                     return;
                 }
             }

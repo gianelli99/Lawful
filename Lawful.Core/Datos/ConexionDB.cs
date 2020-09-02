@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace Lawful.Core.Datos
 {
     public class ConexionDB
     {
 
-        protected SqlConnection Conexion = new SqlConnection(@"Server=(LocalDb)\SQLEXPRESS;DataBase=ModuloDeSeguridad;Integrated Security=true");
+        //protected SqlConnection Conexion = new SqlConnection(@"Server=localhost\SQLEXPRESS;Initial Catalog=ModuloDeSeguridad;Integrated Security=SSPI");
+        //protected SqlConnection Conexion = new SqlConnection(@"Data Source=localhost\SQLEXPRESS;Initial Catalog=ModuloDeSeguridad;Integrated Security=SSPI");
+        protected SqlConnection Conexion = new SqlConnection(@"Data Source=localhost\SQLEXPRESS;Initial Catalog=ModuloDeSeguridad;Integrated Security=SSPI;");
         // @"Server=(LocalDb)\MSSQLLocalDB;DataBase=ModuloDeSeguridad;Integrated Security=true"
     }
 }
