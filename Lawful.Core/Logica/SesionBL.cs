@@ -4,31 +4,23 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Lawful.Core.Logica.Interfaces;
 using System.Timers;
 
 namespace Lawful.Core.Logica
 {
-    public class SesionBL : Interfaces.ISesionPublisher
+    public class SesionBL
     {
         private Datos.Interfaces.ISesionDAO sesionDAO;
         private Datos.Interfaces.IUsuarioDAO usuarioDAO;        
 
-        public List<ISesionObserver> Observadores { get; set; }
-
         private static SesionBL instancia;
 
-        private static Timer sesionTime;
         public void IniciarSesion()
         {
             try
             {
                 int id = sesionDAO.IniciarSesion(Modelo.SesionActiva.ObtenerInstancia());
                 Modelo.SesionActiva.ObtenerInstancia().ID = id;
-                sesionTime = new Timer(7200000);
-                sesionTime.Elapsed += SesionTime_Elapsed;
-                sesionTime.AutoReset = true;
-                sesionTime.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -36,25 +28,8 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        private void SesionTime_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            FinalizarSesion();
-        }
-        public void Suscribir(ISesionObserver observer)
-        {
-            Observadores.Add(observer);
-        }
-        public void Desuscribir(ISesionObserver observer)
-        {
-            Observadores.Remove(observer);
-        }
         public void FinalizarSesion()
         {
-            if (sesionTime != null)
-            {
-                sesionTime.Dispose();
-            }
-            this.Notificar();
             Modelo.SesionActiva.ObtenerInstancia().LogOut = DateTime.Now;
             try
             {
@@ -64,17 +39,6 @@ namespace Lawful.Core.Logica
             {
 
                 throw ex;
-            }
-        }
-        public void Notificar()
-        {
-            if (Observadores.Count - 1>=0)
-            {
-                Observadores[Observadores.Count - 1].Actualizar(true);
-            }
-            for (int i = Observadores.Count-1; i >= 0; i--)
-            {
-                Observadores[i].Actualizar(false);
             }
         }
         public bool NeedNewPassword(int userId)
@@ -105,7 +69,6 @@ namespace Lawful.Core.Logica
         {
             sesionDAO = new Datos.DAO.SesionDAO_SqlServer();
             usuarioDAO = new Datos.DAO.UsuarioDAO_SqlServer();
-            Observadores = new List<ISesionObserver>();
         }
         public int ValidarUsuario(string username, string password)
         {

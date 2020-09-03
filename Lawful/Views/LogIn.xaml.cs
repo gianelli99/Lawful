@@ -43,13 +43,12 @@ namespace Lawful.Views
                 int userId = sesionBL.ValidarUsuario(txtUsername.Text, txtPassword.Password);
                 if (userId != -1)
                 {
-                    //sesionBL.Suscribir(this);
 
                     var sesion = Core.Modelo.SesionActiva.ObtenerInstancia();
                     sesion.Usuario = sesionBL.ConsultarUsuario(userId);
                     sesion.LogIn = DateTime.Now;
                     sesionBL.IniciarSesion();
-
+                    lblError.Text = "Sesion inciada con exito :D";
                     //if (sesionBL.NeedNewPassword(userId))
                     //{
                     //    frmCambiarContrasena cContrasena = new frmCambiarContrasena(sesion.Usuario.ID, true);
