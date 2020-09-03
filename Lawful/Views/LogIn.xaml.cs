@@ -48,7 +48,6 @@ namespace Lawful.Views
                     sesion.Usuario = sesionBL.ConsultarUsuario(userId);
                     sesion.LogIn = DateTime.Now;
                     sesionBL.IniciarSesion();
-                    lblError.Text = "Sesion inciada con exito :D";
                     //if (sesionBL.NeedNewPassword(userId))
                     //{
                     //    frmCambiarContrasena cContrasena = new frmCambiarContrasena(sesion.Usuario.ID, true);
@@ -59,6 +58,7 @@ namespace Lawful.Views
                     //frmInicio inicio = new frmInicio();
                     //this.Hide();
                     //DialogResult result = inicio.ShowDialog();
+                    this.Frame.Navigate(typeof(ShellPage));
                 }
                 else
                 {

@@ -9,12 +9,24 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="936">
-        <StackPanel Margin="240,50,240,0">
-            <TextBlock Text="Login" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold"/>
-            <TextBox Name="txtUsername" PlaceholderText="Username" />
-            <PasswordBox Name="txtPassword" PlaceholderText="Password"/>
-            <Button Name="btnLogin" Content="Login" HorizontalAlignment="Center" Click="btnLogin_Click"/>
-            <TextBlock Text="" Foreground="Red" Name="lblError"/>
+        <StackPanel Spacing="40" Margin="240,50,240,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical" Width="454">
+
+            <StackPanel Spacing="10">
+                <TextBlock Text="Login" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold"/>
+                <TextBlock Text="Bienvenido a Lawful, el lugar donde los equipos se ponen de acuerdo :)" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Spacing="30">
+                <TextBox Name="txtUsername" PlaceholderText="Username" Text="GianElli99" />
+                <PasswordBox Name="txtPassword" PlaceholderText="Password" Password="abc123"/>
+                <TextBlock Text="" Foreground="Red" Name="lblError"/>
+            </StackPanel>
+
+            <StackPanel>
+                <Button Name="btnLogin" Content="Iniciar Sesión" HorizontalAlignment="Center" Click="btnLogin_Click"/>
+                <HyperlinkButton Content="¿Olvidaste tu contraseña?" HorizontalAlignment="Center"/>
+            </StackPanel>
+            
             <TextBlock Text="Lawful ©" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="12" FontWeight="Normal"/>
         </StackPanel>
     </Grid>
