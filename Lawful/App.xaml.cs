@@ -46,7 +46,7 @@ namespace Lawful
 
         private ActivationService CreateActivationService()
         {
-            return new ActivationService(this, typeof(Views.Login));
+            return new ActivationService(this, typeof(Views.LoginPage));
             // new Lazy<UIElement>(CreateShell)
         }
 

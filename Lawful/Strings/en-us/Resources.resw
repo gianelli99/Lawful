@@ -185,4 +185,12 @@
     <value>parameter must be an Enum name!</value>
     <comment>Parameter must be an Enum name in enum to boolean converter</comment>
   </data>
+  <data name="Shell_RecuperarContrasena.Content" xml:space="preserve">
+    <value>RecuperarContrasena</value>
+    <comment>Navigation view item name for RecuperarContrasena</comment>
+  </data>
+  <data name="Shell_CambiarContrasena.Content" xml:space="preserve">
+    <value>CambiarContrasena</value>
+    <comment>Navigation view item name for CambiarContrasena</comment>
+  </data>
 </root>

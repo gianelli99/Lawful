@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,11 +21,11 @@ namespace Lawful.Views
     /// <summary>
     /// Una página vacía que se puede usar de forma independiente o a la que se puede navegar dentro de un objeto Frame.
     /// </summary>
-    public sealed partial class Login : Page
+    public sealed partial class LoginPage : Page
     {
         Core.Logica.SesionBL sesionBL;
 
-        public Login()
+        public LoginPage()
         {
             this.InitializeComponent();
             sesionBL = Core.Logica.SesionBL.ObtenerInstancia();
@@ -35,7 +36,6 @@ namespace Lawful.Views
             if (String.IsNullOrWhiteSpace(txtUsername.Text) || String.IsNullOrWhiteSpace(txtPassword.Password))
             {
                 lblError.Text = "Debe completar todos los campos";
-                txtUsername.Text = "Hola";
                 return;
             }
             try
@@ -48,30 +48,33 @@ namespace Lawful.Views
                     sesion.Usuario = sesionBL.ConsultarUsuario(userId);
                     sesion.LogIn = DateTime.Now;
                     sesionBL.IniciarSesion();
-                    //if (sesionBL.NeedNewPassword(userId))
-                    //{
-                    //    frmCambiarContrasena cContrasena = new frmCambiarContrasena(sesion.Usuario.ID, true);
-                    //    cContrasena.ShowDialog();
-                    //    sesion.Usuario = sesionBL.ConsultarUsuario(userId);
-                    //}
+                    if (sesionBL.NeedNewPassword(userId))
+                    {
+                        Dictionary<string, object> parametros = new Dictionary<string, object>();
+                        parametros.Add("user-id", sesion.Usuario.ID);
+                        parametros.Add("need-old-password", true);
 
-                    //frmInicio inicio = new frmInicio();
-                    //this.Hide();
-                    //DialogResult result = inicio.ShowDialog();
+                        this.Frame.Navigate(typeof(CambiarContrasenaPage),parametros);
+                        return;
+                    }
+
                     this.Frame.Navigate(typeof(ShellPage));
                 }
                 else
                 {
-                    lblError.Text = "Ha ocurrido un error :(";
-                    txtUsername.Text = "";
+                    lblError.Text = "No se ha encontrado un usuario con los datos especificados.";
                     return;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //MessageBox.Show(ex.Message);
                 return;
             }
+        }
+
+        private void hlbOlvidasteTuContrasena_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(RecuperarContrasenaPage));
         }
     }
 }
