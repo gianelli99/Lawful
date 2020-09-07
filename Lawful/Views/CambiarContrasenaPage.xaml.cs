@@ -30,8 +30,8 @@ namespace Lawful.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var parametros = e.Parameter as Dictionary<string,object>;
-            txbParametros.Text = parametros["user-id"] + parametros["need-old-password"].ToString();
+            var parametros = (ClassParameters.CambiarContrasenaParameters)e.Parameter;
+            txbParametros.Text = parametros.UserID + parametros.NeedCurrentPassword.ToString();
 
             base.OnNavigatedTo(e);
         }

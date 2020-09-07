@@ -14,13 +14,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// La plantilla de elemento Página en blanco está documentada en https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Lawful.Views
 {
-    /// <summary>
-    /// Una página vacía que se puede usar de forma independiente o a la que se puede navegar dentro de un objeto Frame.
-    /// </summary>
     public sealed partial class LoginPage : Page
     {
         Core.Logica.SesionBL sesionBL;
@@ -33,6 +28,7 @@ namespace Lawful.Views
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
+
             if (String.IsNullOrWhiteSpace(txtUsername.Text) || String.IsNullOrWhiteSpace(txtPassword.Password))
             {
                 lblError.Text = "Debe completar todos los campos";
@@ -50,15 +46,15 @@ namespace Lawful.Views
                     sesionBL.IniciarSesion();
                     if (sesionBL.NeedNewPassword(userId))
                     {
-                        Dictionary<string, object> parametros = new Dictionary<string, object>();
-                        parametros.Add("user-id", sesion.Usuario.ID);
-                        parametros.Add("need-old-password", true);
-
-                        this.Frame.Navigate(typeof(CambiarContrasenaPage),parametros);
+                        var parameters = new ClassParameters.CambiarContrasenaParameters(sesion.Usuario.ID, true);
+                        this.Frame.Navigate(typeof(CambiarContrasenaPage),parameters);
                         return;
                     }
+                    else
+                    {
+                        this.Frame.Navigate(typeof(ShellPage));
+                    }
 
-                    this.Frame.Navigate(typeof(ShellPage));
                 }
                 else
                 {
