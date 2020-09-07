@@ -9,50 +9,8 @@
     xmlns:model="using:Lawful.Core.Models"
     mc:Ignorable="d">
     <StackPanel x:Name="ContentArea" Margin="{StaticResource SmallLeftRightMargin}">
-        <TextBlock>qawdqwd</TextBlock>
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="44"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Rectangle Fill="Red" Width="44"/>
-            <Rectangle Fill="Blue" Grid.Row="1"/>
-            <Rectangle Fill="Green" Grid.Column="1"/>
-            <Rectangle Fill="Orange" Grid.Row="1" Grid.Column="1"/>
-        </Grid>
-        <Grid>
-            <controls:DataGrid
-                AutoGenerateColumns="False"
-                GridLinesVisibility="Horizontal"
-                ItemsSource="{x:Bind Source, Mode=OneWay}">
-                <controls:DataGrid.Columns>
-                    <!--
-                        TODO WTS:
-                        Remove this column definitions and define columns for your data.
-                        Consider adding header properties to Resources.resw
-                    -->
-                    <controls:DataGridTextColumn Binding="{Binding OrderID}" Header="OrderID" />
-                    <controls:DataGridTextColumn Binding="{Binding OrderDate}" Header="OrderDate" />
-                    <controls:DataGridTextColumn Binding="{Binding Company}" Header="Company" />
-                    <controls:DataGridTextColumn Binding="{Binding ShipTo}" Header="ShipTo" />
-                    <controls:DataGridTextColumn Binding="{Binding OrderTotal}" Header="OrderTotal" />
-                    <controls:DataGridTextColumn Binding="{Binding Status}" Header="Status" />
-                    <controls:DataGridTemplateColumn Header="Symbol">
-                        <controls:DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate x:DataType="model:SampleOrder">
-                                <FontIcon
-                                    Margin="{StaticResource SmallLeftRightMargin}"
-                                    HorizontalAlignment="Left"
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    Glyph="{x:Bind Symbol}" />
-                            </DataTemplate>
-                        </controls:DataGridTemplateColumn.CellTemplate>
-                    </controls:DataGridTemplateColumn>
-                </controls:DataGrid.Columns>
+            <controls:DataGrid Name="grid" AutoGenerateColumns="True" GridLinesVisibility="Horizontal">
             </controls:DataGrid>
         </Grid>
     </StackPanel>

@@ -8,16 +8,15 @@
     xmlns:tg="using:Telerik.UI.Xaml.Controls.Grid"
     xmlns:model="using:Lawful.Core.Models"
     mc:Ignorable="d">
-    
+
     <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
-        <TextBlock Text="awedqwdqwdqwdqwd"/>
         <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <tg:RadDataGrid ColumnDataOperationsMode="Flyout" x:Name="grid" ItemsSource="{x:Bind Source, Mode=OneWay}" AutoGenerateColumns="False" >
-                <tg:RadDataGrid.Columns>
-                    <!--TODO WTS:
+            <tg:RadDataGrid ColumnDataOperationsMode="Inline" x:Name="grid" AutoGenerateColumns="True" CanDrag="True" >
+                <!--<tg:RadDataGrid.Columns>
+                   TODO WTS:
                       Remove this column definitions and define columns for your data.
                       Consider adding header properties to Resources.resw-->
-                    <tg:DataGridTextColumn PropertyName="OrderID" />
+                    <!--<tg:DataGridTextColumn PropertyName="OrderID" />
                     <tg:DataGridDateColumn PropertyName="OrderDate" />
                     <tg:DataGridTextColumn PropertyName="Company" />
                     <tg:DataGridTextColumn PropertyName="ShipTo" />
@@ -34,7 +33,7 @@
                             </DataTemplate>
                         </tg:DataGridTemplateColumn.CellContentTemplate>
                     </tg:DataGridTemplateColumn>
-                </tg:RadDataGrid.Columns>
+                </tg:RadDataGrid.Columns>-->
             </tg:RadDataGrid>
         </Grid>
     </Grid>

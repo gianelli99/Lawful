@@ -13,7 +13,7 @@ namespace Lawful.Views
 {
     public sealed partial class DataGridPage : Page, INotifyPropertyChanged
     {
-        public ObservableCollection<SampleOrder> Source { get; } = new ObservableCollection<SampleOrder>();
+        //public ObservableCollection<SampleOrder> Source { get; } = new ObservableCollection<SampleOrder>();
 
         // TODO WTS: Change the grid as appropriate to your app, adjust the column definitions on DataGridPage.xaml.
         // For more details see the documentation at https://docs.microsoft.com/windows/communitytoolkit/controls/datagrid
@@ -22,17 +22,26 @@ namespace Lawful.Views
             InitializeComponent();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override  void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            Source.Clear();
-
+            //Source.Clear();
+            Core.Logica.UsuarioBL usuarioBL = new Core.Logica.UsuarioBL();
             // TODO WTS: Replace this with your actual data
-            var data = await SampleDataService.GetGridDataAsync();
+            var data =  usuarioBL.Listar();
+            grid.ItemsSource = data;
+            grid.AutoGeneratingColumn += Grid_AutoGeneratingColumn;
+            //foreach (var item in data)
+            //{
+            //    Source.Add(item);
+            //}
+        }
 
-            foreach (var item in data)
+        private void Grid_AutoGeneratingColumn(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)
+        {
+            if (e.PropertyName == "Password" || e.PropertyName == "Grupos")
             {
-                Source.Add(item);
+                e.Column.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
         }
 

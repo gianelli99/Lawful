@@ -13,28 +13,29 @@ namespace Lawful.Views
 {
     public sealed partial class TelerikDataGridPage : Page, INotifyPropertyChanged
     {
-        public ObservableCollection<SampleOrder> Source { get; } = new ObservableCollection<SampleOrder>();
-
+        public ObservableCollection<Core.Modelo.Usuario> Source { get; } = new ObservableCollection<Core.Modelo.Usuario>();
+        private Core.Logica.UsuarioBL usuarioBL;
         // TODO WTS: Change the grid as appropriate to your app, adjust the column definitions on TelerikDataGridPage.xaml.
         // For help see http://docs.telerik.com/windows-universal/controls/raddatagrid/gettingstarted
         // You may also want to extend the grid to work with the RadDataForm http://docs.telerik.com/windows-universal/controls/raddataform/dataform-gettingstarted
         public TelerikDataGridPage()
         {
             InitializeComponent();
+            usuarioBL = new Core.Logica.UsuarioBL();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             Source.Clear();
+            
+            var data = usuarioBL.Listar();
 
-            // TODO WTS: Replace this with your actual data
-            var data = await SampleDataService.GetGridDataAsync();
-
-            foreach (var item in data)
-            {
-                Source.Add(item);
-            }
+            //foreach (var item in data)
+            //{
+            //    Source.Add(item);
+            //}
+            grid.ItemsSource = data;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
