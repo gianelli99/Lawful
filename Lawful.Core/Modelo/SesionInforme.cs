@@ -6,6 +6,9 @@ namespace Lawful.Core.Modelo
 {
     public class SesionInforme : Sesion
     {
-
+        public SesionInforme() 
+        { 
+        
+        }
     }
 }
