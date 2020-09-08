@@ -20,9 +20,5 @@ namespace Lawful.Core.Modelo
             }
             return _instancia;
         }
-        public static SesionActiva SesionInforme()
-        {
-            return new SesionActiva();
-        }
     }
 }
