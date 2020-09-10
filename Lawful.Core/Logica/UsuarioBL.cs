@@ -44,7 +44,9 @@ namespace Lawful.Core.Logica
         {
             try
             {
-                return usuarioDAO.ListarAccionesDisponibles(userId, vistaId);
+                // Falta implementar, hay que llamar a AccionDAO_SqlServer
+                return null;
+                //return usuarioDAO.ListarAccionesDisponibles(userId, vistaId);
             }
             catch (Exception ex)
             {
@@ -103,7 +105,10 @@ namespace Lawful.Core.Logica
         {
             try
             {
-                return usuarioDAO.ListarGrupos(userId);
+                // Falta implementar, hay que llamar a GrupoDAO_SqlServer (ListarPorUsuario)
+                // ¯\_(ツ)_/¯
+                return null;
+                //return usuarioDAO.ListarGrupos(userId);
             }
             catch (Exception ex)
             {

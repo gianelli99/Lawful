@@ -10,5 +10,11 @@ namespace Lawful.Core.Modelo
     {
         public int ID { get; set; }
         public string Descripcion { get; set; }
+        public List<Accion> Acciones { get; set; }
+
+        public Vista() {
+            Acciones = new List<Accion>();
+        }
+            
     }
 }

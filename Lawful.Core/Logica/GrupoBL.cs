@@ -12,12 +12,10 @@ namespace Lawful.Core.Logica
         // Subsistemas
         private Datos.Interfaces.IGrupoDAO grupoDAO;
         private Datos.Interfaces.IUsuarioDAO usuarioDAO;
-        private Datos.Interfaces.IPermisoDAO permisoDAO;
         public GrupoBL()
         {
             grupoDAO = new Datos.DAO.GrupoDAO_SqlServer();
             usuarioDAO = new Datos.DAO.UsuarioDAO_SqlServer();
-            permisoDAO = new Datos.DAO.PermisoDAO_SqlServer();
         }
 
         public List<Modelo.Accion> ListarAccionesDisponibles(int userId,int vistaId)
@@ -25,7 +23,12 @@ namespace Lawful.Core.Logica
             try
             {
                 // Utilización del subsistema IUsuarioDAO
-                return usuarioDAO.ListarAccionesDisponibles(userId, vistaId);
+                //return usuarioDAO.ListarAccionesDisponibles(userId, vistaId);
+
+
+
+                // Falta implementar, hay que llamar a AccionDAO_SqlServer
+                return null;
             }
             catch (Exception ex)
             {
@@ -33,57 +36,17 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        public List<Modelo.Permiso> ListarPermisos(int id)
-        {
-            try
-            {
-                // Utilización del subsistema IGrupoDAO
-                // Utilización del subsistema IPermisoDAO
-                var grupo = grupoDAO.Consultar(id);
-                var vistas = permisoDAO.ListarVistas();
-                var acciones = permisoDAO.ListarAcciones();
-                var permisosID = grupoDAO.ListarIDPermisos(id);
-                var permisos = new List<Modelo.Permiso>();
-                foreach (var permisoID in permisosID)
-                {
-                    var permiso = new Modelo.Permiso();
-                    permiso.ID = permisoID[0];
-                    permiso.Grupo = grupo;
-                    foreach (var vista in vistas)
-                    {
-                        if (vista.ID == permisoID[1])
-                        {
-                            permiso.Vista = vista;
-                            break;
-                        }
-                    }
-                    foreach (var accion in acciones)
-                    {
-                        if (accion.ID == permisoID[2])
-                        {
-                            permiso.Accion = accion;
-                            break;
-                        }
-                    }
-                    permiso.TienePermiso = permisoID[3] == 1 ? true : false;
-                    permisos.Add(permiso);
-                }
-                return permisos;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        
+
         // Los siguientes métodos no muestran su implementación
         // debido a la extensión total del documento
-        public void Insertar(Modelo.Grupo group, List<Modelo.Permiso> permisos)
+        public void Insertar(Modelo.Grupo group)
         {
             try
             {
                 if (DescripcionCodigoDisponible(group.Descripcion, group.Codigo, null))
                 {
-                    grupoDAO.Insertar(group, permisos);
+                    grupoDAO.Insertar(group);
                 }
                 else
                 {
@@ -96,13 +59,13 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        public void Modificar(Modelo.Grupo group, List<Modelo.Permiso> permisos)
+        public void Modificar(Modelo.Grupo group)
         {
             try
             {
                 if (DescripcionCodigoDisponible(group.Descripcion,group.Codigo,group.ID.ToString()))
                 {
-                    grupoDAO.Modificar(group, permisos);
+                    grupoDAO.Modificar(group);
                 }
                 else
                 {
@@ -163,45 +126,6 @@ namespace Lawful.Core.Logica
             try
             {
                 return grupos.FindAll(x => x.Descripcion.ToUpper().Contains(filtro.ToUpper()) || x.Codigo.ToUpper().Contains(filtro.ToUpper()));
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-        public List<Modelo.Permiso> ListarPermisos()
-        {
-            try
-            {
-                List<int[]> permisosID = permisoDAO.ListarIDPermisos();
-                var vistas = permisoDAO.ListarVistas();
-                var acciones = permisoDAO.ListarAcciones();
-                List<Modelo.Permiso> permisos = new List<Modelo.Permiso>();
-                foreach (var permisoID in permisosID)
-                {
-                    var permiso = new Modelo.Permiso();
-                    foreach (var accion in acciones)// revisar foreach y findT de la lista
-                    {
-                        if (accion.ID == permisoID[0])
-                        {
-                            permiso.Accion = accion;
-                            break;
-                        }
-                    }
-                    foreach (var vista in vistas)// revisar foreach y findT de la lista
-                    {
-                        if (vista.ID == permisoID[1])
-                        {
-                            permiso.Vista = vista;
-                            break;
-                        }
-                    }
-                    permiso.TienePermiso = false;
-                    permisos.Add(permiso);
-                }
-                return permisos;
-
             }
             catch (Exception ex)
             {
