@@ -19,6 +19,10 @@ namespace Lawful.Core.Modelo
                 {
                     throw new Exception("El Username es inválido");
                 }
+                else
+                {
+                    username = value;
+                }
             }
         }
         public string Password { get; set; }

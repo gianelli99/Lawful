@@ -130,7 +130,7 @@ namespace Lawful.Core.Datos.DAO
 
                 SqlCommand command = connection.CreateCommand();
                 SqlTransaction transaction;
-                transaction = connection.BeginTransaction("Listar Acciones por vista y usuario");
+                transaction = connection.BeginTransaction("Listar Acciones");
 
                 command.Connection = connection;
                 command.Transaction = transaction;

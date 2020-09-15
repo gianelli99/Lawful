@@ -129,9 +129,9 @@
     <value>Main</value>
     <comment>Navigation view item name for Main</comment>
   </data>
-  <data name="Shell_DataGrid.Content" xml:space="preserve">
-    <value>DataGrid</value>
-    <comment>Navigation view item name for DataGrid</comment>
+  <data name="Shell_Usuarios.Content" xml:space="preserve">
+    <value>Usuarios</value>
+    <comment>Navigation view item name for Usuarios</comment>
   </data>
   <data name="Shell_TelerikDataGrid.Content" xml:space="preserve">
     <value>TelerikDataGrid</value>

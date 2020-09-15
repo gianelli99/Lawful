@@ -11,13 +11,13 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Lawful.Views
 {
-    public sealed partial class DataGridPage : Page, INotifyPropertyChanged
+    public sealed partial class UsuariosPage : Page, INotifyPropertyChanged
     {
         //public ObservableCollection<SampleOrder> Source { get; } = new ObservableCollection<SampleOrder>();
 
-        // TODO WTS: Change the grid as appropriate to your app, adjust the column definitions on DataGridPage.xaml.
+        // TODO WTS: Change the grid as appropriate to your app, adjust the column definitions on UsuariosPage.xaml.
         // For more details see the documentation at https://docs.microsoft.com/windows/communitytoolkit/controls/datagrid
-        public DataGridPage()
+        public UsuariosPage()
         {
             InitializeComponent();
         }
@@ -27,6 +27,8 @@ namespace Lawful.Views
             base.OnNavigatedTo(e);
             //Source.Clear();
             Core.Logica.UsuarioBL usuarioBL = new Core.Logica.UsuarioBL();
+            Core.Datos.DAO.AccionDAO_SqlServer daoAcciones = new Core.Datos.DAO.AccionDAO_SqlServer();
+            var acciones = daoAcciones.ListarPorVistaYUsuario(1, 1);
             // TODO WTS: Replace this with your actual data
             var data =  usuarioBL.Listar();
             grid.ItemsSource = data;
@@ -35,6 +37,14 @@ namespace Lawful.Views
             //{
             //    Source.Add(item);
             //}
+            foreach (var accion in acciones)
+            {
+                AppBarButton nueva = new AppBarButton();
+                nueva.Name = accion.ID.ToString();
+                nueva.Label = accion.Descripcion;
+                nueva.Icon = new SymbolIcon((Symbol) Enum.Parse(typeof(Symbol), accion.IconName));
+                AccionesBar.PrimaryCommands.Add(nueva);
+            }
         }
 
         private void Grid_AutoGeneratingColumn(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)

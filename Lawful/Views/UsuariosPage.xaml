@@ -1,5 +1,5 @@
-﻿<Page
-    x:Class="Lawful.Views.DataGridPage"
+﻿<Page xmlns:my="using:Microsoft.UI.Xaml.Controls" 
+    x:Class="Lawful.Views.UsuariosPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
@@ -9,8 +9,12 @@
     xmlns:model="using:Lawful.Core.Models"
     mc:Ignorable="d">
     <StackPanel x:Name="ContentArea" Margin="{StaticResource SmallLeftRightMargin}">
+
+        <CommandBar x:Name="AccionesBar">
+        </CommandBar>
+
         <Grid>
-            <controls:DataGrid Name="grid" AutoGenerateColumns="True" GridLinesVisibility="Horizontal">
+            <controls:DataGrid Name="grid" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" IsReadOnly="True">
             </controls:DataGrid>
         </Grid>
     </StackPanel>
