@@ -44,7 +44,6 @@ namespace Lawful.Core.Datos.DAO
                 throw new Exception("Ha ocurrido un error");
             }
         }
-
         public List<SesionInforme> Listar(DateTime fechaDesde, DateTime fechaHasta)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -90,7 +89,6 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
         public List<SesionInforme> ListarPorGrupo(int idGrupo, DateTime fechaDesde, DateTime fechaHasta)// devuelve sesiones de 1 grupo, cada sesion tiene un usuario con solo el username, el usuario de la primer sesion contiene 1 grupo con solo la descripcion del mismo
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))

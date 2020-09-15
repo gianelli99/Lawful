@@ -99,7 +99,11 @@ namespace Lawful.Core.Logica
         {
             try
             {
-                return usuarioDAO.ListarVistasDisponibles(userId);
+                return null;
+
+                // Falta implementar, hay que llamar a VistaDAO_SqlServer
+
+                // return usuarioDAO.ListarVistasDisponibles(userId);
             }
             catch (Exception ex)
             {

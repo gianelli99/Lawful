@@ -8,7 +8,7 @@ using Microsoft.Data.SqlClient;
 
 namespace Lawful.Core.Datos.DAO
 {
-    public class UsuarioDAO_SqlServer : ConexionDB,Interfaces.IUsuarioDAO
+    public class UsuarioDAO_SqlServer : ConexionDB, Interfaces.IUsuarioDAO
     {
         public void CambiarContrasena(string pass, int userId, int editorId, bool needNewPass)
         {
@@ -50,8 +50,7 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
-        public Usuario Consultar(int id)// traigo usuario y sus grupos
+        public Usuario Consultar(int id) // Traigo usuario y sus grupos
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -102,7 +101,6 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
         public Usuario Consultar(string username, string email)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -149,7 +147,6 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
         public void Eliminar(int id, int idEditor)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -171,7 +168,6 @@ namespace Lawful.Core.Datos.DAO
                     command.CommandText = $"UPDATE usuarios SET estado=0, editor_id=@editor_id, edicion_fecha=@edicion_fecha, edicion_accion='B' WHERE id = {id}";
                     command.Parameters.AddWithValue("@editor_id", idEditor);
                     command.Parameters.AddWithValue("@edicion_fecha", DateTime.Now);
-                    //command.CommandText = $"DELETE FROM usuarios_grupos WHERE usuario_id = {id}; DELETE FROM usuarios WHERE id = {id}";
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;
@@ -191,7 +187,6 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
         public void Insertar(Usuario t, int idEditor)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -249,7 +244,6 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
         public List<Usuario> Listar()
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -295,136 +289,6 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
-        public List<Accion> ListarAccionesDisponibles(int idUser, int idVista)
-        {
-            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
-            {
-                connection.Open();
-
-                SqlCommand command = connection.CreateCommand();
-                SqlTransaction transaction;
-                transaction = connection.BeginTransaction("Listar vistas disponibles");
-
-                command.Connection = connection;
-                command.Transaction = transaction;
-
-                try
-                {
-                    command.CommandText = $"SELECT DISTINCT acciones.id, acciones.tipo, acciones.icon_name FROM permisos INNER JOIN acciones on permisos.accion_id = acciones.id WHERE permisos.grupo_id IN (SELECT grupo_id FROM usuarios_grupos INNER JOIN grupos ON grupos.id = usuarios_grupos.grupo_id WHERE usuario_id = {idUser} AND grupos.estado = 1) AND vista_id = {idVista} AND tiene_permiso = 1";
-                    transaction.Commit();
-                    using (SqlDataReader response = command.ExecuteReader())
-                    {
-                        if (response.HasRows)
-                        {
-                            var acciones = new List<Modelo.Accion>();
-                            while (response.Read())
-                            {
-                                var accion = new Modelo.Accion();
-                                accion.ID = response.GetInt32(0);
-                                accion.Descripcion = response.GetString(1);
-                                accion.IconName = response.GetString(2);
-                                acciones.Add(accion);
-                            }
-                            return acciones;
-                        }
-                    }
-                    throw new Exception("No se han podido encontrar acciones disponibles");
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            throw new Exception("Ha ocurrido un error");
-        }
-
-        public List<Grupo> ListarGrupos(int id)//grupos del usuario
-        {
-            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
-            {
-                connection.Open();
-
-                SqlCommand command = connection.CreateCommand();
-                SqlTransaction transaction;
-                transaction = connection.BeginTransaction("Listar grupos del usuario");
-
-                command.Connection = connection;
-                command.Transaction = transaction;
-
-                try
-                {
-                    command.CommandText = $"SELECT grupos.id, grupos.codigo, grupos.descripcion,grupos.estado FROM grupos INNER JOIN usuarios_grupos ON grupos.id = usuarios_grupos.grupo_id WHERE usuarios_grupos.usuario_id = {id} AND grupos.estado = 1";
-                    transaction.Commit();
-                    using (SqlDataReader response = command.ExecuteReader())
-                    {
-                        if (response.HasRows)
-                        {
-                            var grupos = new List<Modelo.Grupo>();
-                            while (response.Read())
-                            {
-                                var grupo = new Modelo.Grupo();
-
-                                grupo.ID = response.GetInt32(0);
-                                grupo.Codigo = response.GetString(1);
-                                grupo.Descripcion = response.GetString(2);
-                                grupo.Estado = response.GetBoolean(3);
-                                grupos.Add(grupo);
-                            }
-                            return grupos;
-                        }
-                    }
-                }
-                catch (Exception ex2)
-                {
-                    throw ex2;
-                }
-            }
-            throw new Exception("Ha ocurrido un error");
-        }
-
-        public List<Modelo.Vista> ListarVistasDisponibles(int id)
-        {
-            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
-            {
-                connection.Open();
-
-                SqlCommand command = connection.CreateCommand();
-                SqlTransaction transaction;
-                transaction = connection.BeginTransaction("Listar vistas disponibles");
-
-                command.Connection = connection;
-                command.Transaction = transaction;
-
-                try
-                {
-                    command.CommandText = $"SELECT vista_id, vistas.nombre FROM permisos INNER JOIN vistas ON permisos.vista_id = vistas.id WHERE grupo_id IN(SELECT grupo_id FROM usuarios_grupos INNER JOIN grupos ON grupos.id = usuarios_grupos.grupo_id WHERE usuario_id = {id} AND grupos.estado = 1) GROUP BY vista_id, nombre HAVING SUM(CAST(tiene_permiso AS INT)) > 0";
-                    transaction.Commit();
-                    using (SqlDataReader response = command.ExecuteReader())
-                    {
-                        if (response.HasRows)
-                        {
-                            var vistas = new List<Modelo.Vista>();
-                            while (response.Read())
-                            {
-                                var vista = new Modelo.Vista();
-                                vista.ID = response.GetInt32(0);
-                                vista.Descripcion = response.GetString(1);
-                                vistas.Add(vista);
-                            }
-                            return vistas;
-                        }        
-                    }
-                    throw new Exception("No se han podido encontrar vistas disponibles, contáctese con un administrador.");
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            throw new Exception("Ha ocurrido un error");
-        }
-
         public void Modificar(Usuario t, int idEditor, bool modificaGrupo)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -487,7 +351,6 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-
         public bool UsernameEmailDisponibles(string username, string email, string id)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))

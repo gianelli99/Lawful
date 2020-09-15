@@ -12,5 +12,7 @@ namespace Lawful.Core.Modelo
         public string Codigo { get; set; }
         public string Descripcion { get; set; }
         public bool Estado { get; set; }
+        public List<Accion> Acciones { get; set; }
+        public Grupo() { Acciones = new List<Accion>(); }
     }
 }
