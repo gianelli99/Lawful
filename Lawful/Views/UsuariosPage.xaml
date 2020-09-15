@@ -11,11 +11,38 @@
     <StackPanel x:Name="ContentArea" Margin="{StaticResource SmallLeftRightMargin}">
 
         <CommandBar x:Name="AccionesBar">
+            <!-- Auto generated actions -->
         </CommandBar>
 
         <Grid>
             <controls:DataGrid Name="grid" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" IsReadOnly="True">
             </controls:DataGrid>
         </Grid>
+
+        <Grid>
+            <RelativePanel>
+                <ScrollViewer x:Name="Scroll" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Enabled" Height="500">
+                    <StackPanel x:Name="First" Margin="20">
+                        <TextBox x:Name="txtUsername" Header= "Nombre de Usuario" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                        <PasswordBox x:Name="txtPassword" Header="Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                        <PasswordBox x:Name="txtConfirmPasswaord" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtEmail" Header="Correo" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtNombre" Header="Nombre" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtApellido" Header="Apellido" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </ScrollViewer>
+                <StackPanel x:Name="Second" Margin="30,44,0,0" RelativePanel.RightOf="Scroll">
+                    <ListView x:Name="Grupos" Header="Grupos" SelectionMode="Multiple" Height="450">
+                        <!-- Auto generated groups -->
+                    </ListView>
+                </StackPanel>
+                
+            </RelativePanel>
+            
+        </Grid>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Guardar" Margin="24"/>
+            <Button Content="Cancelar" Margin="24"/>
+        </StackPanel>
     </StackPanel>
 </Page>
