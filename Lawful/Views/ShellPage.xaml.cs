@@ -44,6 +44,7 @@ namespace Lawful.Views
             InitializeComponent();
             DataContext = this;
             Initialize();
+            shellFrame.Navigate(typeof(MainPage)); 
         }
 
         private void Initialize()

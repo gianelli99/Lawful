@@ -81,7 +81,7 @@ namespace Lawful.Views
 
         private void Grid_AutoGeneratingColumn(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)
         {
-            if (e.PropertyName == "Password" || e.PropertyName == "Grupos")
+            if (e.PropertyName == "Password" || e.PropertyName == "Grupos" || e.PropertyName == "Estado")
             {
                 e.Column.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
@@ -118,7 +118,7 @@ namespace Lawful.Views
                     usuarioBL.Insertar(user, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID);
                     grid.ItemsSource = usuarioBL.Listar();
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    grid.MaxHeight = 500;
+                    grid.MaxHeight = double.PositiveInfinity;
                     break;
                 case "2":
                     break;

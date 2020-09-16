@@ -14,7 +14,7 @@
                 <!-- Auto generated actions -->
             </CommandBar>
 
-            <Grid MaxHeight="460">
+            <Grid>
                 <controls:DataGrid Name="grid" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" IsReadOnly="True">
                 </controls:DataGrid>
                 <!-- Auto generated users -->
