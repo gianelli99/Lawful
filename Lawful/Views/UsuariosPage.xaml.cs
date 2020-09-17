@@ -6,20 +6,24 @@ using System.Runtime.CompilerServices;
 
 using Lawful.Core.Models;
 using Lawful.Core.Services;
-
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 namespace Lawful.Views
 {
-    public sealed partial class UsuariosPage : Page
+    public sealed partial class UsuariosPage : Page, INotifyPropertyChanged
     {
         string accion;
         List<Core.Modelo.Grupo> grupos;
         Core.Logica.UsuarioBL usuarioBL;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public UsuariosPage()
         {
             InitializeComponent();
+
         }
 
         protected override  void OnNavigatedTo(NavigationEventArgs e)
@@ -30,8 +34,8 @@ namespace Lawful.Views
             Core.Datos.DAO.AccionDAO_SqlServer daoAcciones = new Core.Datos.DAO.AccionDAO_SqlServer();
             var acciones = daoAcciones.ListarPorVistaYUsuario(1, 1);
             var data =  usuarioBL.Listar();
-            grid.ItemsSource = data;
-            grid.AutoGeneratingColumn += Grid_AutoGeneratingColumn;
+            dgUsuarios.ItemsSource = data;
+            dgUsuarios.AutoGeneratingColumn += Grid_AutoGeneratingColumn;
             AppBarButton buscar = new AppBarButton();
             buscar.Name = "abbBuscar";
             buscar.Label = "Buscar";
@@ -59,20 +63,66 @@ namespace Lawful.Views
 
         private void Accion_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            accion = ((AppBarButton)sender).Name;
+            if (dgUsuarios.SelectedItems.Count != 1 && accion != "1")
+            {
+                DisplayNoUserSelected();
+                return;
+            }
+
             switch (((AppBarButton)sender).Name)
             {
                 case "1":
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    grid.MaxHeight = 100;
-                    accion = "1";
+                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    dgUsuarios.MaxHeight = 100;
+                    accion = "1";                   
                     break;
                 case "2":
                     break;
                 case "3":
+                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    dgUsuarios.MaxHeight = 100;
+                    accion = "3";
+
+                    var userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
+                    txtUsername.Text = userpadreee.Username;
+                    txtPassword.IsEnabled = false;
+                    txtConfirmPasswaord.IsEnabled = false;
+                    txtEmail.Text = userpadreee.Email;
+                    txtNombre.Text = userpadreee.Nombre;
+                    txtApellido.Text = userpadreee.Apellido;
+
+                    LvGrupos.Items.Clear();
+                    foreach (var grupo in grupos)
+                    {
+                        ListViewItem item = new ListViewItem();
+                        item.Name = grupo.ID.ToString();
+                        item.Content = grupo.Descripcion;
+                        if (userpadreee.Grupos.FindIndex(x=>x.ID.ToString() == item.Name) != -1)
+                        {
+                            item.IsSelected = true;
+                        }
+                        LvGrupos.Items.Add(item);
+                    }
+
                     break;
                 case "4":
+                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    dgUsuarios.MaxHeight = 100;
+                    accion = "4";
                     break;
                 case "5":
+                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    dgUsuarios.MaxHeight = 100;
+                    accion = "4";
                     break;
                 default:
                     break;
@@ -116,21 +166,50 @@ namespace Lawful.Views
                         }
                     }
                     usuarioBL.Insertar(user, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID);
-                    grid.ItemsSource = usuarioBL.Listar();
+                    dgUsuarios.ItemsSource = usuarioBL.Listar();
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    grid.MaxHeight = double.PositiveInfinity;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    dgUsuarios.MaxHeight = double.PositiveInfinity;
                     break;
                 case "2":
                     break;
                 case "3":
+                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    dgUsuarios.MaxHeight = double.PositiveInfinity;
                     break;
                 case "4":
+                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    dgUsuarios.MaxHeight = double.PositiveInfinity;
                     break;
                 case "5":
+                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    dgUsuarios.MaxHeight = double.PositiveInfinity;
                     break;
                 default:
                     break;
             }
+        }
+
+        private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            dgUsuarios.MaxHeight = double.PositiveInfinity;
+        }
+        private async void DisplayNoUserSelected()
+        {
+            ContentDialog noUserSelected = new ContentDialog
+            {
+                Title = "Usuario no seleccionado",
+                Content = "Seleccione uno e intente de nuevo.",
+                CloseButtonText = "Ok"
+            };
+
+            ContentDialogResult result = await noUserSelected.ShowAsync();
         }
     }
 }

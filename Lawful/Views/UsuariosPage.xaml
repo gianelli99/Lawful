@@ -1,4 +1,4 @@
-﻿<Page xmlns:my="using:Microsoft.UI.Xaml.Controls" 
+﻿<Page xmlns:my="using:Microsoft.UI.Xaml.Controls" x:Name="UsuariosP" 
     x:Class="Lawful.Views.UsuariosPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,6 +8,12 @@
     Style="{StaticResource PageStyle}"
     xmlns:model="using:Lawful.Core.Models"
     mc:Ignorable="d">
+    <Page.Resources>
+        
+        <Flyout x:Key="Error" Placement="RightEdgeAlignedBottom">
+            <TextBlock>Debe seleccionar un usuario</TextBlock>
+        </Flyout>
+    </Page.Resources>
     <ScrollViewer x:Name="ContentArea" Margin="{StaticResource SmallLeftRightMargin}">
         <StackPanel>
             <CommandBar x:Name="AccionesBar">
@@ -15,13 +21,12 @@
             </CommandBar>
 
             <Grid>
-                <controls:DataGrid Name="grid" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" IsReadOnly="True">
+                <controls:DataGrid Name="dgUsuarios" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" IsReadOnly="True" SelectionMode="Single">
                 </controls:DataGrid>
                 <!-- Auto generated users -->
             </Grid>
             <StackPanel Visibility="Collapsed" x:Name="FormularioUsuario">
-                <Grid >
-                    <RelativePanel>
+                <RelativePanel>
                         <StackPanel x:Name="First" Margin="20">
                             <TextBox x:Name="txtUsername" Header= "Nombre de Usuario" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                             <PasswordBox x:Name="txtPassword" Header="Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
@@ -37,12 +42,14 @@
                             </ListView>
                         </StackPanel>
                     </RelativePanel>
-
-                </Grid>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
-                    <Button x:Name="btnCancelar" Content="Cancelar" Margin="24"/>
-                </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="CambiarContraseñaUsuario" Visibility="Collapsed" Margin="20">
+                <PasswordBox x:Name="txtPasswordCC" Header="Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                <PasswordBox x:Name="txtConfirmPasswaordCC" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+            </StackPanel>
+            <StackPanel x:Name="Buttons" Orientation="Horizontal" Visibility="Collapsed" >
+                <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
+                <Button x:Name="btnCancelar" Content="Cancelar" Margin="24" Click="btnCancelar_Click"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
