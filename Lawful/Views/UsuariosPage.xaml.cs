@@ -63,6 +63,7 @@ namespace Lawful.Views
 
         private void Accion_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            Core.Modelo.Usuario userpadreee;
             accion = ((AppBarButton)sender).Name;
             if (dgUsuarios.SelectedItems.Count != 1 && accion != "1")
             {
@@ -76,19 +77,22 @@ namespace Lawful.Views
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    btnGuardar.IsEnabled = true;
                     dgUsuarios.MaxHeight = 100;
                     accion = "1";                   
                     break;
                 case "2":
+                    DisplayDeleteConfirmation();
                     break;
                 case "3":
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    btnGuardar.IsEnabled = true;
                     dgUsuarios.MaxHeight = 100;
                     accion = "3";
 
-                    var userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
+                    userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
                     txtUsername.Text = userpadreee.Username;
                     txtPassword.IsEnabled = false;
                     txtConfirmPasswaord.IsEnabled = false;
@@ -114,8 +118,29 @@ namespace Lawful.Views
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    btnGuardar.IsEnabled = false;
                     dgUsuarios.MaxHeight = 100;
                     accion = "4";
+                    userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
+                    txtUsername.Text = userpadreee.Username;
+                    txtPassword.IsEnabled = false;
+                    txtConfirmPasswaord.IsEnabled = false;
+                    txtEmail.Text = userpadreee.Email;
+                    txtNombre.Text = userpadreee.Nombre;
+                    txtApellido.Text = userpadreee.Apellido;
+
+                    LvGrupos.Items.Clear();
+                    foreach (var grupo in grupos)
+                    {
+                        ListViewItem item = new ListViewItem();
+                        item.Name = grupo.ID.ToString();
+                        item.Content = grupo.Descripcion;
+                        if (userpadreee.Grupos.FindIndex(x => x.ID.ToString() == item.Name) != -1)
+                        {
+                            item.IsSelected = true;
+                        }
+                        LvGrupos.Items.Add(item);
+                    }
                     break;
                 case "5":
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
@@ -171,9 +196,32 @@ namespace Lawful.Views
                     Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     dgUsuarios.MaxHeight = double.PositiveInfinity;
                     break;
-                case "2":
-                    break;
                 case "3":
+                    user = new Core.Modelo.Usuario();
+                    user.ID = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID).ID;
+                    user.Username = txtUsername.Text;
+                    user.Password = txtPassword.Password;
+                    user.Email = txtEmail.Text;
+                    user.Nombre = txtNombre.Text;
+                    user.Apellido = txtApellido.Text;
+                    user.Estado = true;
+
+                    foreach (ListViewItem item in LvGrupos.Items)
+                    {
+                        if (item.IsSelected)
+                        {
+                            foreach (var grupo in grupos)
+                            {
+                                if (item.Name == grupo.ID.ToString())
+                                {
+                                    user.Grupos.Add(grupo);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    usuarioBL.Modificar(user, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID,true);
+                    dgUsuarios.ItemsSource = usuarioBL.Listar();
                     FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     dgUsuarios.MaxHeight = double.PositiveInfinity;
@@ -210,6 +258,24 @@ namespace Lawful.Views
             };
 
             ContentDialogResult result = await noUserSelected.ShowAsync();
+        }
+        private async void DisplayDeleteConfirmation()
+        {
+            ContentDialog noUserSelected = new ContentDialog
+            {
+                Title = "Atención",
+                Content = "¿Está seguro que desea eliminarlo?",
+                PrimaryButtonText = "Si",
+                SecondaryButtonText = "No"
+            };
+
+            ContentDialogResult result = await noUserSelected.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                var user = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
+                usuarioBL.Eliminar(user.ID,1);
+                dgUsuarios.ItemsSource = usuarioBL.Listar();
+            }
         }
     }
 }
