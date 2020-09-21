@@ -11,7 +11,6 @@ namespace Lawful.Core.Modelo
         public int ID { get; set; }
         public string Descripcion { get; set; }
         public string IconName { get; set; }
-
-
+        
     }
 }

@@ -3,54 +3,48 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 using Lawful.Core.Models;
 using Lawful.Core.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
+using Lawful.Core.Modelo;
+using Lawful.Core.Logica;
 
 namespace Lawful.Views
 {
     public sealed partial class UsuariosPage : Page, INotifyPropertyChanged
     {
         string accion;
-        List<Core.Modelo.Grupo> grupos;
-        Core.Logica.UsuarioBL usuarioBL;
+        List<Grupo> grupos;
+        UsuarioBL usuarioBL;
+        Usuario user;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public UsuariosPage()
         {
             InitializeComponent();
-
+            GridMode();
+            usuarioBL = new UsuarioBL();
         }
 
         protected override  void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            usuarioBL = new Core.Logica.UsuarioBL();
-            Core.Datos.DAO.AccionDAO_SqlServer daoAcciones = new Core.Datos.DAO.AccionDAO_SqlServer();
-            var acciones = daoAcciones.ListarPorVistaYUsuario(1, 1);
-            var data =  usuarioBL.Listar();
-            dgUsuarios.ItemsSource = data;
+            
+            
+            Core.Datos.DAO.AccionDAO_SqlServer daoAcciones = new Core.Datos.DAO.AccionDAO_SqlServer(); // Nos falta implementar el método ListarPorVistaYUsuario en AccionBL jeje
+            var acciones = daoAcciones.ListarPorVistaYUsuario(1, 1); // List<Accion>
+            
+            dgUsuarios.ItemsSource = usuarioBL.Listar();
             dgUsuarios.AutoGeneratingColumn += Grid_AutoGeneratingColumn;
-            AppBarButton buscar = new AppBarButton();
-            buscar.Name = "abbBuscar";
-            buscar.Label = "Buscar";
-            buscar.Icon = new SymbolIcon(Symbol.Find);
-            AccionesBar.PrimaryCommands.Add(buscar);
-            AccionesBar.PrimaryCommands.Add(new AppBarSeparator());
-            foreach (var accion in acciones)
-            {
-                AppBarButton nueva = new AppBarButton();
-                nueva.Name = accion.ID.ToString();
-                nueva.Label = accion.Descripcion;
-                nueva.Icon = new SymbolIcon((Symbol) Enum.Parse(typeof(Symbol), accion.IconName));
-                nueva.Click += Accion_Click;
-                AccionesBar.PrimaryCommands.Add(nueva);
-            }
+           
+            AccionesBar = CreateCommandBar(acciones);
+
+
             grupos = usuarioBL.ListarGrupos();
             foreach (var grupo in grupos)
             {
@@ -67,6 +61,7 @@ namespace Lawful.Views
             accion = ((AppBarButton)sender).Name;
             if (dgUsuarios.SelectedItems.Count != 1 && accion != "1")
             {
+                
                 DisplayNoUserSelected();
                 return;
             }
@@ -74,23 +69,15 @@ namespace Lawful.Views
             switch (((AppBarButton)sender).Name)
             {
                 case "1":
-                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    btnGuardar.IsEnabled = true;
-                    dgUsuarios.MaxHeight = 100;
-                    accion = "1";                   
+                    FormularioUsuarioMode(false);
+                    
                     break;
                 case "2":
                     DisplayDeleteConfirmation();
+
                     break;
                 case "3":
-                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    btnGuardar.IsEnabled = true;
-                    dgUsuarios.MaxHeight = 100;
-                    accion = "3";
+                    FormularioUsuarioMode(false);
 
                     userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
                     txtUsername.Text = userpadreee.Username;
@@ -115,12 +102,8 @@ namespace Lawful.Views
 
                     break;
                 case "4":
-                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    btnGuardar.IsEnabled = false;
-                    dgUsuarios.MaxHeight = 100;
-                    accion = "4";
+                    FormularioUsuarioMode(true);
+                    
                     userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
                     txtUsername.Text = userpadreee.Username;
                     txtPassword.IsEnabled = false;
@@ -143,11 +126,8 @@ namespace Lawful.Views
                     }
                     break;
                 case "5":
-                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                    dgUsuarios.MaxHeight = 100;
-                    accion = "4";
+                    CambiarContrasenaMode();
+                    
                     break;
                 default:
                     break;
@@ -162,7 +142,7 @@ namespace Lawful.Views
             }
         }
 
-        private void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Core.Modelo.Usuario user;
             switch (accion)
@@ -232,9 +212,29 @@ namespace Lawful.Views
                     dgUsuarios.MaxHeight = double.PositiveInfinity;
                     break;
                 case "5":
+
+                    //Validaciones
+                    user = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
+                    user.Password = txtPasswordCC.Password;
+                    try
+                    {
+                        usuarioBL.CambiarContrasena(user.Password, user.ID, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        ContentDialog error = new ContentDialog
+                        {
+                            Title = "Error",
+                            Content = ex.Message,
+                            CloseButtonText = "Ok"
+                        };
+
+                        ContentDialogResult result = await error.ShowAsync();
+                    }
                     CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     dgUsuarios.MaxHeight = double.PositiveInfinity;
+                    
                     break;
                 default:
                     break;
@@ -243,11 +243,9 @@ namespace Lawful.Views
 
         private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            dgUsuarios.MaxHeight = double.PositiveInfinity;
+            GridMode();
         }
+
         private async void DisplayNoUserSelected()
         {
             ContentDialog noUserSelected = new ContentDialog
@@ -259,6 +257,7 @@ namespace Lawful.Views
 
             ContentDialogResult result = await noUserSelected.ShowAsync();
         }
+
         private async void DisplayDeleteConfirmation()
         {
             ContentDialog noUserSelected = new ContentDialog
@@ -276,6 +275,69 @@ namespace Lawful.Views
                 usuarioBL.Eliminar(user.ID,1);
                 dgUsuarios.ItemsSource = usuarioBL.Listar();
             }
+        }
+
+        private void GridMode()
+        {
+            FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            dgUsuarios.MaxHeight = double.PositiveInfinity;
+        }
+
+        private void FormularioUsuarioMode(bool isConsultar) {
+            FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            dgUsuarios.MaxHeight = 100;
+            GuardarEnabled(!isConsultar);
+        }
+
+        private void CambiarContrasenaMode() {
+            FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            Buttons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            dgUsuarios.MaxHeight = 100;
+            GuardarEnabled(true);
+        }
+
+        private void GuardarEnabled(bool isEnabled) {
+            btnGuardar.IsEnabled = isEnabled;
+        }
+
+        private List<AppBarButton> CreateAppBarButtons(List<Accion> acciones) {
+            List<AppBarButton> appBarButtons = new List<AppBarButton>();
+            foreach (var accion in acciones)
+            {
+                AppBarButton appBarButton = new AppBarButton()
+                {
+                    Name = accion.ID.ToString(),
+                    Label = accion.Descripcion,
+                    Icon = new SymbolIcon((Symbol)Enum.Parse(typeof(Symbol), accion.IconName)),
+                };
+                appBarButton.Click += Accion_Click;
+                appBarButtons.Add(appBarButton);
+            }
+            return appBarButtons;
+            
+        }
+
+        private AppBarButton CreateFindAppBarButton() {
+            AppBarButton buscar = new AppBarButton();
+            buscar.Name = "abbBuscar";
+            buscar.Label = "Buscar";
+            buscar.Icon = new SymbolIcon(Symbol.Find);
+            return buscar;
+        }
+
+        private CommandBar CreateCommandBar(List<Accion> acciones) {
+            CommandBar commandBar = new CommandBar();
+            commandBar.PrimaryCommands.Add(CreateFindAppBarButton());
+            foreach (var button in CreateAppBarButtons(acciones))
+            {
+                commandBar.PrimaryCommands.Add(button);
+            }
+            return commandBar;
         }
     }
 }
