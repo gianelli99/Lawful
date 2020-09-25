@@ -7,13 +7,29 @@
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
-        <Grid
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <Button x:Name="btnVolver" Content="Volver" Margin="665,153,0,0" VerticalAlignment="Top" Click="btnVolver_Click"/>
-            <!--
-                The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
-                Place your content here.
-            -->
-        </Grid>
+        
+            
+            <StackPanel   Spacing="40" Margin="240,50,240,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical" Width="454">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Reestablecé tu contraseña" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold"/>
+                    <TextBlock Text="Ingresá tu usuario y email, y te enviaremos una contraseña nueva" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Spacing="30">
+                    <TextBox Name="txtUsername" PlaceholderText="Username" Text="GianElli99" />
+                    <TextBox Name="txtEmail" PlaceholderText="Email" Text="gianelli99@gmail.com" />
+                    <TextBlock Text="" Foreground="Red" Name="lblError"/>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Center">
+                    <Button Name="btnEnviarCorreo" Content="Enviar correo" HorizontalAlignment="Center" Click="btnEnviarCorreo_Click" /> 
+                    <!--Falta propiedad onClick-->
+                    <Button x:Name="btnVolver" Content="Volver" Margin="10,20" HorizontalAlignment="Center" Click="btnVolver_Click"/>
+                </StackPanel>
+
+                <TextBlock Text="Lawful ©" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="12" FontWeight="Normal"/>
+            </StackPanel>
+
+        
     </Grid>
 </Page>
