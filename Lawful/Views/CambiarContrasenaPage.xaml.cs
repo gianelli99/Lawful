@@ -5,42 +5,85 @@ using System.Runtime.CompilerServices;
 
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Lawful.Core;
 
 namespace Lawful.Views
 {
-    public sealed partial class CambiarContrasenaPage : Page, INotifyPropertyChanged
+    public sealed partial class CambiarContrasenaPage : Page
     {
+        private Core.Logica.UsuarioBL usuarioBL;
+        private Core.Modelo.Usuario usuario;
+        private bool necesitaContrActual;
+        int userId;
         public CambiarContrasenaPage()
         {
             InitializeComponent();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
-        {
-            if (Equals(storage, value))
-            {
-                return;
-            }
-
-            storage = value;
-            OnPropertyChanged(propertyName);
+            usuarioBL = new Core.Logica.UsuarioBL();
+            
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var parametros = (ClassParameters.CambiarContrasenaParameters)e.Parameter;
-            txbParametros.Text = parametros.UserID + parametros.NeedCurrentPassword.ToString();
-
+            necesitaContrActual = parametros.NeedCurrentPassword;
+            userId = parametros.UserID;
+            usuario = usuarioBL.Consultar(userId);
+            if (!necesitaContrActual)
+            {
+                txtCurrentPassword.IsEnabled = false;
+            }
             base.OnNavigatedTo(e);
         }
 
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        private void btnVolver_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void btnEnviarCorreo_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(LoginPage));
+            if (necesitaContrActual && String.IsNullOrWhiteSpace(txtCurrentPassword.Password) ||
+                String.IsNullOrWhiteSpace(txtNewPassword.Password) ||
+                String.IsNullOrWhiteSpace(txtConfirmNewPassword.Password))
+            {
+                showUIContentDialog("Debe completar todos los campos", false);
+                return;
+            }
+
+            if (txtNewPassword.Password != txtConfirmNewPassword.Password)
+            {
+                showUIContentDialog("Las contraseñas no coinciden", false);
+                return;
+            }
+
+            if (necesitaContrActual)
+            {
+                if (!usuarioBL.ValidarContrasena(usuario, txtCurrentPassword.Password, txtNewPassword.Password))
+                {
+                    showUIContentDialog("La contraseña actual no es correcta o coincide con la nueva", false);
+                    return;
+                }
+            }
+
+            try
+            {
+                bool needNewPass = !necesitaContrActual;
+                usuarioBL.CambiarContrasena(txtNewPassword.Password, userId, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID, needNewPass);
+                this.Frame.Navigate(typeof(LoginPage));
+            }
+            catch (Exception ex)
+            {
+
+                showUIContentDialog(ex.Message, false);
+                return;
+            }
+
+        }
+        private async void showUIContentDialog(string msg, bool passwordChangedSuccessfully)
+        {
+            ContentDialog error = new ContentDialog
+            {
+                Title = passwordChangedSuccessfully ? "Contraseña cambiada con éxito" : "Error",
+                Content = msg,
+                CloseButtonText = "Ok"
+            };
+
+            await error.ShowAsync();
         }
     }
 }

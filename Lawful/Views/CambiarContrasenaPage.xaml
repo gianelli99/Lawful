@@ -6,15 +6,26 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
-    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
-        <Grid
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <Button x:Name="btnVolver" Content="Volver" Margin="766,450,0,0" VerticalAlignment="Top" Click="btnVolver_Click"/>
-            <TextBlock x:Name="txbParametros" HorizontalAlignment="Left" Margin="546,348,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top"/>
-            <!--
-                The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
-                Place your content here.
-            -->
-        </Grid>
-    </Grid>
+    <StackPanel x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}" VerticalAlignment="Center">
+
+        <StackPanel   Spacing="40" Margin="240,50,240,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical" Width="454">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Cambiá tu contraseña" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold"/>
+                <TextBlock Text="Ingresá tu nueva contraseña y confirmala para iniciar sesión (Asegurate que no sea igual a la actual)" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Spacing="30">
+                <PasswordBox Name="txtCurrentPassword" PlaceholderText="Contraseña actual"/>
+                <PasswordBox Name="txtNewPassword" PlaceholderText="Contraseña nueva"/>
+                <PasswordBox Name="txtConfirmNewPassword" PlaceholderText="Repetir contraseña nueva"/>
+                <TextBlock Text="" Foreground="Red" Name="lblError"/>
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Center">
+                <Button Name="btnEnviarCorreo" Content="Cambiar Contraseña" HorizontalAlignment="Center" Click="btnEnviarCorreo_Click"/>
+            </StackPanel>
+
+            <TextBlock Text="Lawful ©" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="12" FontWeight="Normal"/>
+        </StackPanel>
+    </StackPanel>
 </Page>
