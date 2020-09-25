@@ -30,7 +30,7 @@
                         <StackPanel x:Name="First" Margin="20">
                             <TextBox x:Name="txtUsername" Header= "Nombre de Usuario" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                             <PasswordBox x:Name="txtPassword" Header="Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
-                            <PasswordBox x:Name="txtConfirmPasswaord" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                            <PasswordBox x:Name="txtConfirmPassword" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
                             <TextBox x:Name="txtEmail" Header="Correo" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
                             <TextBox x:Name="txtNombre" Header="Nombre" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
                             <TextBox x:Name="txtApellido" Header="Apellido" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
@@ -45,7 +45,7 @@
             </StackPanel>
             <StackPanel x:Name="CambiarContraseñaUsuario" Visibility="Collapsed" Margin="20">
                 <PasswordBox x:Name="txtPasswordCC" Header="Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
-                <PasswordBox x:Name="txtConfirmPasswaordCC" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                <PasswordBox x:Name="txtConfirmPasswordCC" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
             </StackPanel>
             <StackPanel x:Name="Buttons" Orientation="Horizontal" Visibility="Collapsed" >
                 <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
-
+using Lawful.Helpers;
 using Lawful.Core.Models;
 using Lawful.Core.Services;
 using Windows.UI.Xaml.Controls;
@@ -12,12 +12,13 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using Lawful.Core.Modelo;
 using Lawful.Core.Logica;
+using System.Threading.Tasks;
 
 namespace Lawful.Views
 {
     public sealed partial class UsuariosPage : Page, INotifyPropertyChanged
     {
-        string accion;
+        Accion accion;
         List<Grupo> grupos;
         UsuarioBL usuarioBL;
         Usuario user;
@@ -49,62 +50,100 @@ namespace Lawful.Views
             CreateGruposListView(LvGrupos,grupos);
         }
 
-        private void Accion_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Accion_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            accion = ((AppBarButton)sender).Name;
-            if (dgUsuarios.SelectedItems.Count != 1 && accion != "1")
-            {             
-                DisplayNoUserSelected();
-                return;
-            }
-
-            switch (accion)
+            try
             {
-                case "1":
-                    FormularioUsuarioMode(false);
-                    
-                    break;
-                case "2":
-                    DisplayDeleteConfirmation();
+                accion = (sender as AccionAppBarButton).Accion;
+                if (dgUsuarios.SelectedItems.Count != 1 && accion.Descripcion != "Agregar Usuario")
+                {
+                    DisplayNoUserSelected();
+                    return;
+                }
 
-                    break;
-                case "3":
-                    FormularioUsuarioMode(false);
+                switch (accion.Descripcion)
+                {
+                    case "Agregar Usuario":
+                        FormularioUsuarioMode(false);
 
-                    user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
-                    FillUserFields(user);
+                        break;
+                    case "Eliminar Usuario":
+                        DisplayDeleteConfirmation();
 
-                    LvGrupos.Items.Clear();
-                    CreateGruposListView(LvGrupos, grupos, user.Grupos);
+                        break;
+                    case "Modificar Usuario":
+                        FormularioUsuarioMode(false);
 
-                    break;
-                case "4":
-                    FormularioUsuarioMode(true);
+                        user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
+                        FillFormFields(user);
 
-                    user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
-                    FillUserFields(user);
+                        LvGrupos.Items.Clear();
+                        CreateGruposListView(LvGrupos, grupos, user.Grupos);
 
-                    LvGrupos.Items.Clear();
-                    CreateGruposListView(LvGrupos, grupos, user.Grupos);
+                        break;
+                    case "Consultar Usuario":
+                        FormularioUsuarioMode(true);
 
-                    break;
-                case "5":
-                    CambiarContrasenaMode();
-                    
-                    break;
-                default:
-                    break;
+                        user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
+                        FillFormFields(user);
+
+                        LvGrupos.Items.Clear();
+                        CreateGruposListView(LvGrupos, grupos, user.Grupos);
+
+                        break;
+                    case "Cambiar Contraseña":
+                        CambiarContrasenaMode();
+
+                        break;
+                    default:
+                        break;
+                }
             }
+            catch (Exception)
+            {
+                ContentDialog error = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "Ocurrió un error inesperado, vuelva a intentarlo",
+                    CloseButtonText = "Ok"
+                };
+
+                ContentDialogResult result = await error.ShowAsync();
+                GridMode();
+            }
+        }
+
+        private void FillFormFields(Usuario user)
+        {
+            txtUsername.Text = user.Username;
+            txtPassword.IsEnabled = false;
+            txtConfirmPassword.IsEnabled = false;
+            txtEmail.Text = user.Email;
+            txtNombre.Text = user.Nombre;
+            txtApellido.Text = user.Apellido;
         }
 
         private void FillUserFields(Usuario user)
         {
-            txtUsername.Text = user.Username;
-            txtPassword.IsEnabled = false;
-            txtConfirmPasswaord.IsEnabled = false;
-            txtEmail.Text = user.Email;
-            txtNombre.Text = user.Nombre;
-            txtApellido.Text = user.Apellido;
+            user.Username = txtUsername.Text;
+            user.Password = txtPassword.Password;
+            user.Email = txtEmail.Text;
+            user.Nombre = txtNombre.Text;
+            user.Apellido = txtApellido.Text;
+            user.Estado = true;
+        }
+
+        public List<Grupo> ObtainSelectedGroups(ListView listView)
+        {
+            var grupos = new List<Grupo>();
+            foreach (GrupoListViewItem item in listView.Items)
+            {
+                if (item.IsSelected)
+                {
+                    grupos.Add(item.Grupo);
+                }
+            }
+            return grupos;
         }
 
         private void Grid_AutoGeneratingColumn(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)
@@ -115,103 +154,113 @@ namespace Lawful.Views
             }
         }
 
-        private async void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private bool AreFieldsFilled()
         {
-            Core.Modelo.Usuario user;
-            switch (accion)
+            if (String.IsNullOrWhiteSpace(txtUsername.Text) ||
+                String.IsNullOrWhiteSpace(txtEmail.Text) ||
+                String.IsNullOrWhiteSpace(txtNombre.Text) ||
+                String.IsNullOrWhiteSpace(txtApellido.Text) ||
+                String.IsNullOrWhiteSpace(txtPassword.Password) ||
+                String.IsNullOrWhiteSpace(txtConfirmPassword.Password))
             {
-                case "1":
-                    user = new Core.Modelo.Usuario();
-                    user.Username = txtUsername.Text;
-                    user.Password = txtPassword.Password;
-                    user.Email = txtEmail.Text;
-                    user.Nombre = txtNombre.Text;
-                    user.Apellido = txtApellido.Text;
-                    user.Estado = true;
 
-                    foreach (ListViewItem item in LvGrupos.Items)
-                    {
-                        if (item.IsSelected)
-                        {
-                            foreach (var grupo in grupos)
-                            {
-                                if (item.Name == grupo.ID.ToString())
-                                {
-                                    user.Grupos.Add(grupo);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    usuarioBL.Insertar(user, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID);
-                    dgUsuarios.ItemsSource = usuarioBL.Listar();
-                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    dgUsuarios.MaxHeight = double.PositiveInfinity;
-                    break;
-                case "3":
-                    user = new Core.Modelo.Usuario();
-                    user.ID = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID).ID;
-                    user.Username = txtUsername.Text;
-                    user.Password = txtPassword.Password;
-                    user.Email = txtEmail.Text;
-                    user.Nombre = txtNombre.Text;
-                    user.Apellido = txtApellido.Text;
-                    user.Estado = true;
-
-                    foreach (ListViewItem item in LvGrupos.Items)
-                    {
-                        if (item.IsSelected)
-                        {
-                            foreach (var grupo in grupos)
-                            {
-                                if (item.Name == grupo.ID.ToString())
-                                {
-                                    user.Grupos.Add(grupo);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    usuarioBL.Modificar(user, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID,true);
-                    dgUsuarios.ItemsSource = usuarioBL.Listar();
-                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    dgUsuarios.MaxHeight = double.PositiveInfinity;
-                    break;
-                case "4":
-                    FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    dgUsuarios.MaxHeight = double.PositiveInfinity;
-                    break;
-                case "5":
-
-                    //Validaciones
-                    user = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
-                    user.Password = txtPasswordCC.Password;
-                    try
-                    {
-                        usuarioBL.CambiarContrasena(user.Password, user.ID, Core.Modelo.SesionActiva.ObtenerInstancia().Usuario.ID, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        ContentDialog error = new ContentDialog
-                        {
-                            Title = "Error",
-                            Content = ex.Message,
-                            CloseButtonText = "Ok"
-                        };
-
-                        ContentDialogResult result = await error.ShowAsync();
-                    }
-                    CambiarContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    Buttons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-                    dgUsuarios.MaxHeight = double.PositiveInfinity;
-                    
-                    break;
-                default:
-                    break;
+                throw new Exception("Debe completar todos los campos");
             }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool ArePasswordsEqual(string pass1, string pass2)
+        {
+            if (pass1 != pass2)
+            {
+                throw new Exception("Las contraseñas deben ser iguales.");
+            }
+            return true;
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                throw new Exception("Debe ingresar un email válido");
+            }
+        }
+
+
+        private void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            try
+            {
+                switch (accion.Descripcion)
+                {
+                    case "Agregar Usuario":
+                        if (AreFieldsFilled() && ArePasswordsEqual(txtPassword.Password,txtConfirmPassword.Password) && IsValidEmail(txtEmail.Text))
+                        {
+                            user = new Usuario();
+                            FillUserFields(user);
+                            user.Grupos = ObtainSelectedGroups(LvGrupos);
+
+                            usuarioBL.Insertar(user, SesionActiva.ObtenerInstancia().Usuario.ID);
+
+                            dgUsuarios.ItemsSource = usuarioBL.Listar();
+                            GridMode();
+                        }
+
+                        break;
+                    case "Modificar Usuario":
+                        if (AreFieldsFilled() && ArePasswordsEqual(txtPassword.Password, txtConfirmPassword.Password) && IsValidEmail(txtEmail.Text))
+                        {
+                            FillUserFields(user);
+                            user.Grupos = ObtainSelectedGroups(LvGrupos);
+
+                            usuarioBL.Modificar(user, SesionActiva.ObtenerInstancia().Usuario.ID, true);
+
+                            dgUsuarios.ItemsSource = usuarioBL.Listar();
+                            GridMode();
+                        }
+
+                        break;
+                    case "Cambiar Contraseña":
+
+                        if (ArePasswordsEqual(txtConfirmPasswordCC.Password, txtPasswordCC.Password))
+                        {
+                            user.Password = txtPasswordCC.Password;
+
+                            usuarioBL.CambiarContrasena(user.Password, user.ID, SesionActiva.ObtenerInstancia().Usuario.ID, true);
+
+                            GridMode();
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayError(ex.Message);
+            }
+        }
+
+        private async void DisplayError(string errorM)
+        {
+            ContentDialog error = new ContentDialog
+            {
+                Title = "Error",
+                Content = errorM,
+                CloseButtonText = "Ok"
+            };
+
+            await error.ShowAsync();
         }
 
         private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -254,9 +303,10 @@ namespace Lawful.Views
         {
             foreach (var grupo in Totalgrupos)
             {
-                ListViewItem item = new ListViewItem();
+                GrupoListViewItem item = new GrupoListViewItem();
                 item.Name = grupo.ID.ToString();
                 item.Content = grupo.Descripcion;
+                item.Grupo = grupo;
                 listView.Items.Add(item);
             }
         }
@@ -265,10 +315,11 @@ namespace Lawful.Views
         {
             foreach (var grupo in Totalgrupos)
             {
-                ListViewItem item = new ListViewItem();
+                GrupoListViewItem item = new GrupoListViewItem();
                 item.Name = grupo.ID.ToString();
                 item.Content = grupo.Descripcion;
-                if (userGrupos.FindIndex(x => x.ID.ToString() == item.Name) != -1)
+                item.Grupo = grupo;
+                if (userGrupos.Exists(x => x.ID == grupo.ID))
                 {
                     item.IsSelected = true;
                 }
@@ -308,11 +359,12 @@ namespace Lawful.Views
             List<AppBarButton> appBarButtons = new List<AppBarButton>();
             foreach (var accion in acciones)
             {
-                AppBarButton appBarButton = new AppBarButton()
+                AccionAppBarButton appBarButton = new AccionAppBarButton()
                 {
                     Name = accion.ID.ToString(),
                     Label = accion.Descripcion,
                     Icon = new SymbolIcon((Symbol)Enum.Parse(typeof(Symbol), accion.IconName)),
+                    Accion = accion
                 };
                 appBarButton.Click += Accion_Click;
                 appBarButtons.Add(appBarButton);
@@ -330,7 +382,6 @@ namespace Lawful.Views
         }
 
         private CommandBar CreateCommandBar(CommandBar commandBar ,List<Accion> acciones) {
-            //CommandBar commandBar = new CommandBar();
             commandBar.PrimaryCommands.Add(CreateFindAppBarButton());
             foreach (var button in CreateAppBarButtons(acciones))
             {
@@ -340,4 +391,5 @@ namespace Lawful.Views
             return commandBar;
         }
     }
+
 }
