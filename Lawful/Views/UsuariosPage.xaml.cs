@@ -34,39 +34,31 @@ namespace Lawful.Views
         protected override  void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            
-            
+            grupos = usuarioBL.ListarGrupos();
+
             Core.Datos.DAO.AccionDAO_SqlServer daoAcciones = new Core.Datos.DAO.AccionDAO_SqlServer(); // Nos falta implementar el método ListarPorVistaYUsuario en AccionBL jeje
             var acciones = daoAcciones.ListarPorVistaYUsuario(1, 1); // List<Accion>
+
             
             dgUsuarios.ItemsSource = usuarioBL.Listar();
             dgUsuarios.AutoGeneratingColumn += Grid_AutoGeneratingColumn;
-           
-            AccionesBar = CreateCommandBar(acciones);
 
 
-            grupos = usuarioBL.ListarGrupos();
-            foreach (var grupo in grupos)
-            {
-                ListViewItem item = new ListViewItem();
-                item.Name = grupo.ID.ToString();
-                item.Content = grupo.Descripcion;
-                LvGrupos.Items.Add(item);
-            }
+            CreateCommandBar(AccionesBar, acciones);
+
+            CreateGruposListView(LvGrupos,grupos);
         }
 
         private void Accion_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Core.Modelo.Usuario userpadreee;
             accion = ((AppBarButton)sender).Name;
             if (dgUsuarios.SelectedItems.Count != 1 && accion != "1")
-            {
-                
+            {             
                 DisplayNoUserSelected();
                 return;
             }
 
-            switch (((AppBarButton)sender).Name)
+            switch (accion)
             {
                 case "1":
                     FormularioUsuarioMode(false);
@@ -79,51 +71,22 @@ namespace Lawful.Views
                 case "3":
                     FormularioUsuarioMode(false);
 
-                    userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
-                    txtUsername.Text = userpadreee.Username;
-                    txtPassword.IsEnabled = false;
-                    txtConfirmPasswaord.IsEnabled = false;
-                    txtEmail.Text = userpadreee.Email;
-                    txtNombre.Text = userpadreee.Nombre;
-                    txtApellido.Text = userpadreee.Apellido;
+                    user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
+                    FillUserFields(user);
 
                     LvGrupos.Items.Clear();
-                    foreach (var grupo in grupos)
-                    {
-                        ListViewItem item = new ListViewItem();
-                        item.Name = grupo.ID.ToString();
-                        item.Content = grupo.Descripcion;
-                        if (userpadreee.Grupos.FindIndex(x=>x.ID.ToString() == item.Name) != -1)
-                        {
-                            item.IsSelected = true;
-                        }
-                        LvGrupos.Items.Add(item);
-                    }
+                    CreateGruposListView(LvGrupos, grupos, user.Grupos);
 
                     break;
                 case "4":
                     FormularioUsuarioMode(true);
-                    
-                    userpadreee = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
-                    txtUsername.Text = userpadreee.Username;
-                    txtPassword.IsEnabled = false;
-                    txtConfirmPasswaord.IsEnabled = false;
-                    txtEmail.Text = userpadreee.Email;
-                    txtNombre.Text = userpadreee.Nombre;
-                    txtApellido.Text = userpadreee.Apellido;
+
+                    user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
+                    FillUserFields(user);
 
                     LvGrupos.Items.Clear();
-                    foreach (var grupo in grupos)
-                    {
-                        ListViewItem item = new ListViewItem();
-                        item.Name = grupo.ID.ToString();
-                        item.Content = grupo.Descripcion;
-                        if (userpadreee.Grupos.FindIndex(x => x.ID.ToString() == item.Name) != -1)
-                        {
-                            item.IsSelected = true;
-                        }
-                        LvGrupos.Items.Add(item);
-                    }
+                    CreateGruposListView(LvGrupos, grupos, user.Grupos);
+
                     break;
                 case "5":
                     CambiarContrasenaMode();
@@ -132,6 +95,16 @@ namespace Lawful.Views
                 default:
                     break;
             }
+        }
+
+        private void FillUserFields(Usuario user)
+        {
+            txtUsername.Text = user.Username;
+            txtPassword.IsEnabled = false;
+            txtConfirmPasswaord.IsEnabled = false;
+            txtEmail.Text = user.Email;
+            txtNombre.Text = user.Nombre;
+            txtApellido.Text = user.Apellido;
         }
 
         private void Grid_AutoGeneratingColumn(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)
@@ -277,6 +250,32 @@ namespace Lawful.Views
             }
         }
 
+        private void CreateGruposListView(ListView listView, List<Grupo> Totalgrupos)
+        {
+            foreach (var grupo in Totalgrupos)
+            {
+                ListViewItem item = new ListViewItem();
+                item.Name = grupo.ID.ToString();
+                item.Content = grupo.Descripcion;
+                listView.Items.Add(item);
+            }
+        }
+
+        private void CreateGruposListView(ListView listView, List<Grupo> Totalgrupos, List<Grupo> userGrupos)
+        {
+            foreach (var grupo in Totalgrupos)
+            {
+                ListViewItem item = new ListViewItem();
+                item.Name = grupo.ID.ToString();
+                item.Content = grupo.Descripcion;
+                if (userGrupos.FindIndex(x => x.ID.ToString() == item.Name) != -1)
+                {
+                    item.IsSelected = true;
+                }
+                listView.Items.Add(item);
+            }
+        }
+
         private void GridMode()
         {
             FormularioUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
@@ -330,13 +329,14 @@ namespace Lawful.Views
             return buscar;
         }
 
-        private CommandBar CreateCommandBar(List<Accion> acciones) {
-            CommandBar commandBar = new CommandBar();
+        private CommandBar CreateCommandBar(CommandBar commandBar ,List<Accion> acciones) {
+            //CommandBar commandBar = new CommandBar();
             commandBar.PrimaryCommands.Add(CreateFindAppBarButton());
             foreach (var button in CreateAppBarButtons(acciones))
             {
                 commandBar.PrimaryCommands.Add(button);
             }
+            Trace.WriteLine(commandBar.PrimaryCommands.Count);
             return commandBar;
         }
     }
