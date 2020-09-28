@@ -15,14 +15,18 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
 using WinUI = Microsoft.UI.Xaml.Controls;
+using Lawful.Core.Modelo;
+using Lawful.Core.Logica;
 
 namespace Lawful.Views
 {
-    // TODO WTS: Change the icons and titles for all NavigationViewItems in ShellPage.xaml.
     public sealed partial class ShellPage : Page, INotifyPropertyChanged
     {
         private readonly KeyboardAccelerator _altLeftKeyboardAccelerator = BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu);
         private readonly KeyboardAccelerator _backKeyboardAccelerator = BuildKeyboardAccelerator(VirtualKey.GoBack);
+
+        SesionBL sesionBL;
+        Vista vista;
 
         private bool _isBackEnabled;
         private WinUI.NavigationViewItem _selected;
@@ -43,8 +47,13 @@ namespace Lawful.Views
         {
             InitializeComponent();
             DataContext = this;
+            sesionBL = SesionBL.ObtenerInstancia();
             Initialize();
-            shellFrame.Navigate(typeof(MainPage)); 
+            shellFrame.Navigate(typeof(MainPage));
+
+            WinUI.NavigationViewItem nuevo = new WinUI.NavigationViewItem() { Content = "Usuarios",Name = "Usuarios"};
+            //nuevo.Tapped += VistaItemTapped;
+            navigationView.MenuItems.Add(nuevo);
         }
 
         private void Initialize()
@@ -121,7 +130,8 @@ namespace Lawful.Views
             if (args.InvokedItemContainer is WinUI.NavigationViewItem selectedItem)
             {
                 var pageType = selectedItem.GetValue(NavHelper.NavigateToProperty) as Type;
-                NavigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
+                this.Selected = sender.SelectedItem as WinUI.NavigationViewItem;
+                NavigationService.Navigate(typeof(UsuariosPage), null, args.RecommendedNavigationTransitionInfo);
             }
         }
 
@@ -162,5 +172,23 @@ namespace Lawful.Views
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private void btn_CerrarSesion_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            sesionBL.FinalizarSesion();
+            Frame.Navigate(typeof(LoginPage));
+        }
+
+        private void VistaItemTapped(object sender, TappedRoutedEventArgs e)
+        {
+            switch (((WinUI.NavigationViewItem)sender).Name)
+            {
+                case "Usuarios":
+                    shellFrame.Navigate(typeof(UsuariosPage));
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
