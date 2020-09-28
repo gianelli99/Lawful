@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Navigation;
 using WinUI = Microsoft.UI.Xaml.Controls;
 using Lawful.Core.Modelo;
 using Lawful.Core.Logica;
+using Windows.ApplicationModel.Email.DataProvider;
+using System.Diagnostics;
 
 namespace Lawful.Views
 {
@@ -26,11 +28,11 @@ namespace Lawful.Views
         private readonly KeyboardAccelerator _backKeyboardAccelerator = BuildKeyboardAccelerator(VirtualKey.GoBack);
 
         SesionBL sesionBL;
-        Vista vista;
+        UsuarioBL usuarioBL;
+        List<Vista> vistas;
 
         private bool _isBackEnabled;
         private WinUI.NavigationViewItem _selected;
-
         public bool IsBackEnabled
         {
             get { return _isBackEnabled; }
@@ -48,14 +50,30 @@ namespace Lawful.Views
             InitializeComponent();
             DataContext = this;
             sesionBL = SesionBL.ObtenerInstancia();
+            usuarioBL = new UsuarioBL();
             Initialize();
             shellFrame.Navigate(typeof(MainPage));
 
-            WinUI.NavigationViewItem nuevo = new WinUI.NavigationViewItem() { Content = "Usuarios",Name = "Usuarios"};
-            //nuevo.Tapped += VistaItemTapped;
-            navigationView.MenuItems.Add(nuevo);
-        }
+            vistas = usuarioBL.ListarVistasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
+            GenerateNavigationViewItems(vistas);
 
+
+        }
+        private void GenerateNavigationViewItems(List<Vista> vistas)
+        {
+            foreach (var vista in vistas)
+            {
+                WinUI.NavigationViewItem item = new WinUI.NavigationViewItem()
+                {
+                    Content = vista.Descripcion,
+                    Name = vista.ID.ToString(),
+                    Icon = new SymbolIcon((Symbol)Enum.Parse(typeof(Symbol), vista.IconName)),
+                };
+                Type type = Type.GetType("Lawful.Viewss." + vista.AssociatedViewName);
+                NavHelper.SetNavigateTo(item, type);
+                navigationView.MenuItems.Add(item);
+            } 
+        }
         private void Initialize()
         {
             NavigationService.Frame = shellFrame;
@@ -66,8 +84,6 @@ namespace Lawful.Views
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Keyboard accelerators are added here to avoid showing 'Alt + left' tooltip on the page.
-            // More info on tracking issue https://github.com/Microsoft/microsoft-ui-xaml/issues/8
             KeyboardAccelerators.Add(_altLeftKeyboardAccelerator);
             KeyboardAccelerators.Add(_backKeyboardAccelerator);
             await Task.CompletedTask;
@@ -121,18 +137,17 @@ namespace Lawful.Views
 
         private void OnItemInvoked(WinUI.NavigationView sender, WinUI.NavigationViewItemInvokedEventArgs args)
         {
-            if (args.IsSettingsInvoked)
-            {
-                NavigationService.Navigate(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
-                return;
-            }
+                if (args.IsSettingsInvoked)
+                {
+                    NavigationService.Navigate(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
+                    return;
+                }
 
-            if (args.InvokedItemContainer is WinUI.NavigationViewItem selectedItem)
-            {
-                var pageType = selectedItem.GetValue(NavHelper.NavigateToProperty) as Type;
-                this.Selected = sender.SelectedItem as WinUI.NavigationViewItem;
-                NavigationService.Navigate(typeof(UsuariosPage), null, args.RecommendedNavigationTransitionInfo);
-            }
+                if (args.InvokedItemContainer is WinUI.NavigationViewItem selectedItem)
+                {
+                    var pageType = selectedItem.GetValue(NavHelper.NavigateToProperty) as Type;
+                    NavigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
+                }
         }
 
         private void OnBackRequested(WinUI.NavigationView sender, WinUI.NavigationViewBackRequestedEventArgs args)
@@ -177,18 +192,6 @@ namespace Lawful.Views
         {
             sesionBL.FinalizarSesion();
             Frame.Navigate(typeof(LoginPage));
-        }
-
-        private void VistaItemTapped(object sender, TappedRoutedEventArgs e)
-        {
-            switch (((WinUI.NavigationViewItem)sender).Name)
-            {
-                case "Usuarios":
-                    shellFrame.Navigate(typeof(UsuariosPage));
-                    break;
-                default:
-                    break;
-            }
         }
     }
 }

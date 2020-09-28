@@ -21,11 +21,8 @@
         IsSettingsVisible="True"
         Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
         <winui:NavigationView.MenuItems>
-            <!-- Auto-generated view items
-            <winui:NavigationViewItem x:Uid="Shell_Inicio" Icon="Home" helpers:NavHelper.NavigateTo="views:MainPage" Content="Inicio" Tapped="VistaItemTapped" />
-            <winui:NavigationViewItem x:Uid="Shell_Usuarios" Icon="Contact" helpers:NavHelper.NavigateTo="views:UsuariosPage" Content="Usuarios" />
--->
-            </winui:NavigationView.MenuItems>
+            <winui:NavigationViewItem x:Uid="Shell_Inicio" Icon="Home" helpers:NavHelper.NavigateTo="views:MainPage" Content="Inicio"/>
+        </winui:NavigationView.MenuItems>
         
         <winui:NavigationView.PaneFooter>
             <StackPanel>
