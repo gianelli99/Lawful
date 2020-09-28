@@ -11,11 +11,15 @@ namespace Lawful.Core.Logica
     {
         private Datos.Interfaces.IUsuarioDAO usuarioDAO;
         private Datos.Interfaces.IGrupoDAO grupoDAO;
+        private Datos.Interfaces.IVistaDAO vistaDAO;
+        private Datos.Interfaces.IAccionDAO accionDAO;
 
         public UsuarioBL()
         {
             usuarioDAO = new Datos.DAO.UsuarioDAO_SqlServer();
             grupoDAO = new Datos.DAO.GrupoDAO_SqlServer();
+            vistaDAO = new Datos.DAO.VistaDAO_SqlServer();
+            accionDAO = new Datos.DAO.AccionDAO_SqlServer();
         }
         public Modelo.Usuario Consultar(int id)
         {
@@ -40,13 +44,24 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        public List<Modelo.Accion> ListarAccionesDisponibles(int userId, int vistaId)
+        public List<Modelo.Vista> ListarVistasDisponibles(int userId)
         {
             try
             {
-                // Falta implementar, hay que llamar a AccionDAO_SqlServer
-                return null;
-                //return usuarioDAO.ListarAccionesDisponibles(userId, vistaId);
+
+                return vistaDAO.ListarPorUsuario(userId);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public List<Modelo.Accion> ListarAccionesDisponiblesEnVista(int userId, int vistaId)
+        {
+            try
+            {
+                return accionDAO.ListarPorVistaYUsuario(userId, vistaId);
             }
             catch (Exception ex)
             {

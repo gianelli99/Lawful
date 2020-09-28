@@ -37,8 +37,7 @@ namespace Lawful.Views
             base.OnNavigatedTo(e);
             grupos = usuarioBL.ListarGrupos();
 
-            Core.Datos.DAO.AccionDAO_SqlServer daoAcciones = new Core.Datos.DAO.AccionDAO_SqlServer(); // Nos falta implementar el método ListarPorVistaYUsuario en AccionBL jeje
-            var acciones = daoAcciones.ListarPorVistaYUsuario(1, 1); // List<Accion>
+            List<Accion> acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 1); 
 
             
             dgUsuarios.ItemsSource = usuarioBL.Listar();

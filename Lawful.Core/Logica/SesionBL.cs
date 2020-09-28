@@ -95,21 +95,5 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        public List<Modelo.Vista> ListarVistasDisponibles(int userId)
-        {
-            try
-            {
-                return null;
-
-                // Falta implementar, hay que llamar a VistaDAO_SqlServer
-
-                // return usuarioDAO.ListarVistasDisponibles(userId);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
     }
 }
