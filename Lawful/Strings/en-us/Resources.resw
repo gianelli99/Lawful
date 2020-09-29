@@ -197,4 +197,8 @@
     <value>Grupos</value>
     <comment>Navigation view item name for Grupos</comment>
   </data>
+  <data name="Shell_MisDatos.Content" xml:space="preserve">
+    <value>MisDatos</value>
+    <comment>Navigation view item name for MisDatos</comment>
+  </data>
 </root>
