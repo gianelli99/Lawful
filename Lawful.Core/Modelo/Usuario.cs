@@ -16,10 +16,12 @@ namespace Lawful.Core.Modelo
         public string Apellido { get; set; }
         public bool Estado { get; set; }
         public List<Grupo> Grupos { get; set; }
+        public List<Tema> Temas { get; set; }
 
         public Usuario()
         {
             Grupos = new List<Grupo>();
+            Temas = new List<Tema>();
         }
     }
 }
