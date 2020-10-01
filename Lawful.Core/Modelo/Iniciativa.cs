@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lawful.Core.Modelo
 {
-    public class Iniciativa
+    public abstract class Iniciativa
     {
         public int ID { get; set; }
         public string Titulo { get; set; }
@@ -12,6 +12,8 @@ namespace Lawful.Core.Modelo
         public DateTime FechaCreacion { get; set; }
         public string IconName { get; set; }
         public bool EveryoneCanEdit { get; set; }
+        public List<Comentario> Comentarios { get; set; }
+
         public readonly Usuario Owner;
         public Iniciativa(Usuario owner)
         {
