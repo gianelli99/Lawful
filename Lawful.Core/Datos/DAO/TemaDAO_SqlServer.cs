@@ -69,7 +69,7 @@ namespace Lawful.Core.Datos.DAO
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;
-                }
+        }
                 catch (Exception)
                 {
                     try
@@ -164,7 +164,7 @@ namespace Lawful.Core.Datos.DAO
                             }
                             return temas;
                         }
-                    }
+        }
                 }
                 catch (Exception ex2)
                 {
