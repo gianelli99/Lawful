@@ -158,6 +158,9 @@
     <Compile Include="Views\GruposPage.xaml.cs">
       <DependentUpon>GruposPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MisDatosPage.xaml.cs">
+      <DependentUpon>MisDatosPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UsuariosPage.xaml.cs">
       <DependentUpon>UsuariosPage.xaml</DependentUpon>
     </Compile>
@@ -209,6 +212,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GruposPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MisDatosPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

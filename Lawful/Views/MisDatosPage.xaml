@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="Lawful.Views.MisDatosPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Style="{StaticResource PageStyle}"
+    mc:Ignorable="d">
+    <ScrollViewer Margin="{StaticResource SmallLeftRightMargin}">
+        <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
+            <!--CommandBar-->
+            <CommandBar x:Name="cbAcciones">
+                <!--Auto generated actions-->
+            </CommandBar>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel x:Name="spUserFormGroupsContainer" Orientation="Horizontal">
+                    <!--Form fields-->
+                    <StackPanel x:Name="spUserForm" Margin="20">
+                        <TextBox x:Name="txtUsername" Header= "Nombre de usuario" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                        <TextBox x:Name="txtEmail" Header="Correo" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtNombre" Header="Nombre" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                        <TextBox x:Name="txtApellido" Header="Apellido" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <!--Groups ListView-->
+                    <ListView x:Name="lvGrupos" Margin="30,44,0,0" SelectionMode="Multiple" Header="Grupos">
+                        <!--Auto generated actions-->
+                    </ListView>
+
+                </StackPanel>
+                <StackPanel x:Name="CambiarMiContraseñaUsuario" Visibility="Collapsed" Margin="20">
+                    <PasswordBox x:Name="txtCurrentPasswordCC" Header="Contraseña actual" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                    <PasswordBox x:Name="txtPasswordCC" Header="Contraseña nueva" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                    <PasswordBox x:Name="txtConfirmPasswordCC" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                </StackPanel>
+                <!-- Accept + Cancel buttons -->
+                <StackPanel x:Name="spButtons" Orientation="Horizontal">
+                    <Button x:Name="btnCancelar" Content="Cancelar" Click="btnCancelar_Click" Visibility="Collapsed" />
+                    <Button x:Name="btnCambiarContraseña" Content="Cambiar contraseña" Click="btnCambiarContraseña_Click" Visibility="Collapsed"/>
+                </StackPanel>
+
+
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

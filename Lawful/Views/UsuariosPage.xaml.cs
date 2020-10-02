@@ -5,8 +5,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using Lawful.Helpers;
-using Lawful.Core.Models;
-using Lawful.Core.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
@@ -63,6 +61,7 @@ namespace Lawful.Views
                 switch (accion.Descripcion)
                 {
                     case "Agregar Usuario":
+                        ClearFields();
                         FormularioUsuarioMode(false);
 
                         break;
@@ -91,6 +90,8 @@ namespace Lawful.Views
 
                         break;
                     case "Cambiar Contraseña":
+                        ClearFields();
+                        user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
                         CambiarContrasenaMode();
 
                         break;
@@ -116,7 +117,9 @@ namespace Lawful.Views
         {
             txtUsername.Text = user.Username;
             txtPassword.IsEnabled = false;
+            txtPassword.Password = user.Password;
             txtConfirmPassword.IsEnabled = false;
+            txtConfirmPassword.Password = user.Password;
             txtEmail.Text = user.Email;
             txtNombre.Text = user.Nombre;
             txtApellido.Text = user.Apellido;
@@ -130,6 +133,20 @@ namespace Lawful.Views
             user.Nombre = txtNombre.Text;
             user.Apellido = txtApellido.Text;
             user.Estado = true;
+        }
+
+        private void ClearFields()
+        {
+            txtUsername.Text = "";
+            txtPassword.IsEnabled = true;
+            txtPassword.Password = "";
+            txtConfirmPassword.IsEnabled = true;
+            txtConfirmPassword.Password = "";
+            txtEmail.Text = "";
+            txtNombre.Text = "";
+            txtApellido.Text = "";
+            txtPasswordCC.Password = "";
+            txtConfirmPasswordCC.Password = "";
         }
 
         public List<Grupo> ObtainSelectedGroups(ListView listView)
@@ -264,6 +281,7 @@ namespace Lawful.Views
 
         private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            ClearFields();
             GridMode();
         }
 

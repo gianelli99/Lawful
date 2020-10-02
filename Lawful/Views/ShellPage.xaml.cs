@@ -69,7 +69,7 @@ namespace Lawful.Views
                     Name = vista.ID.ToString(),
                     Icon = new SymbolIcon((Symbol)Enum.Parse(typeof(Symbol), vista.IconName)),
                 };
-                Type type = Type.GetType("Lawful.Viewss." + vista.AssociatedViewName);
+                Type type = Type.GetType("Lawful.Views." + vista.AssociatedViewName);
                 NavHelper.SetNavigateTo(item, type);
                 navigationView.MenuItems.Add(item);
             } 
