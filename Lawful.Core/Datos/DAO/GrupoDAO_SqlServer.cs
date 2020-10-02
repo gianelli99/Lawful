@@ -139,7 +139,6 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    //command.CommandText = $"DELETE FROM permisos WHERE grupo_id = {id};DELETE FROM grupos WHERE id = {id}";
                     command.CommandText = $"UPDATE grupos set estado=0 WHERE id = {id}";
                     command.ExecuteNonQuery();
                     transaction.Commit();
@@ -317,7 +316,7 @@ namespace Lawful.Core.Datos.DAO
                     command.CommandText = $"UPDATE grupos SET codigo=@codigo, descripcion=@descripcion, estado={bitEstado.ToString()} WHERE id = {grupo.ID};";
                     command.Parameters.AddWithValue("@codigo", grupo.Codigo);
                     command.Parameters.AddWithValue("@descripcion", grupo.Descripcion);
-                    //command.ExecuteNonQuery();
+
                     command.CommandText += $"DELETE * FROM grupos_acciones WHERE grupo_id = {grupo.ID};";
                     string accionesQuery = "";
                     foreach (var accion in grupo.Acciones)
