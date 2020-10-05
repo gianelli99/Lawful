@@ -16,38 +16,59 @@ namespace Lawful.Core.Helpers
             {
                 case 1:
                     iniciativa = new Asistire(owner);
-                    break;
+                    ((Asistire)iniciativa).FechaEvento = Convert.ToDateTime(campos[8]);
+                    ((Asistire)iniciativa).Lugar = campos[9];
+                    ((Asistire)iniciativa).FechaLimiteConfirmacion = Convert.ToDateTime(campos[10]);
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 case 2:
                     iniciativa = new DoDont(owner);
                     ((DoDont)iniciativa).Tipo = "Do";
-                    break;
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 case 3:
                     iniciativa = new DoDont(owner);
                     ((DoDont)iniciativa).Tipo = "Don't";
-                    break;
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 case 4:
                     iniciativa = new FAQ(owner);
-                    break;
+                    //no seteamos respuesta correcta porque se hace en el consultar
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 case 5:
                     iniciativa = new PropuestaGenerica(owner);
-                    break;
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 case 6:
                     iniciativa = new Regla(owner);
-                    break;
+                    ((Regla)iniciativa).Relevancia = Convert.ToInt32(campos[12]);
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 case 7:
                     iniciativa = new Votacion(owner);
-                    break;
+                    ((Votacion)iniciativa).FechaLimite = Convert.ToDateTime(campos[13]);
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 case 8:
                     iniciativa = new VotacionMultiple(owner);
-                    break;
+                    ((VotacionMultiple)iniciativa).FechaLimite = Convert.ToDateTime(campos[13]);
+                    ((VotacionMultiple)iniciativa).MaxOpcionesSeleccionables = Convert.ToInt32(campos[14]);
+                    RellenarCamposGenerales(iniciativa,campos);
+                    return iniciativa;
                 default:
                     break;
             }
             return null;
         }
-        private static void RellenarCamposGenerales(Modelo.Iniciativa iniciativa)
+        private static void RellenarCamposGenerales(Iniciativa iniciativa, string[] campos)
         {
-
+            iniciativa.ID = Convert.ToInt32(campos[0]);
+            iniciativa.Titulo = campos[1];
+            iniciativa.Descripcion = campos[2];
+            iniciativa.FechaCreacion = Convert.ToDateTime(campos[3]);
+            iniciativa.IconName = campos[4];
+            iniciativa.EveryoneCanEdit = Convert.ToBoolean(campos[5]);
         } 
     }
 }

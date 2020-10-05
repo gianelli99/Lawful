@@ -7,7 +7,7 @@ namespace Lawful.Core.Modelo.Iniciativas
     public class DoDont : Iniciativa
     {
         public string Tipo { get; set; }
-        public List<Opcion> Opciones { get; private set; }
+        public List<Opcion> Opciones { get; set; }
         public DoDont(Usuario owner)
         :base(owner)
         {

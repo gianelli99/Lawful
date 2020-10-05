@@ -128,7 +128,7 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public List<Tema> Listar()
+        public List<Tema> ListarPorUsuario(int userId)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -143,16 +143,16 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit FROM temas WHERE estado = 1";
+                    command.CommandText = $"SELECT temas.id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit FROM temas INNER JOIN usuarios_temas ON temas.id = usuarios_temas.tema_id WHERE estado = 1 AND usuarios_temas.usuario_id = {userId}";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
                         if (response.HasRows)
                         {
-                            var temas = new List<Modelo.Tema>();
+                            var temas = new List<Tema>();
                             while (response.Read())
                             {
-                                var tema = new Modelo.Tema();
+                                var tema = new Tema();
 
                                 tema.ID = response.GetInt32(0);
                                 tema.Descripcion = response.GetString(1);
