@@ -8,7 +8,7 @@ namespace Lawful.Core.Modelo.Iniciativas
     {
         public DateTime FechaLimite { get; set; }
         public int MaxOpcionesSeleccionables { get; set; }
-        public List<Opcion> Opciones { get; private set; }
+        public List<Opcion> Opciones { get; set; }
         public VotacionMultiple(Usuario owner)
         : base(owner)
         {

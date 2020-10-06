@@ -12,9 +12,14 @@ namespace Lawful.Core.Modelo.Iniciativas
         :base(owner)
         {
             Opciones = new List<Opcion>();
-            Opciones.Add(new Opcion() { Descripcion = "Si"});
-            Opciones.Add(new Opcion() { Descripcion = "No"});
-            Opciones.Capacity = 2;
+        }
+        public DoDont NuevaInstancia(Usuario owner)
+        {
+            var instancia = new DoDont(owner);
+            instancia.Opciones.Add(new Opcion() { Descripcion = "Si" });
+            instancia.Opciones.Add(new Opcion() { Descripcion = "No" });
+            instancia.Opciones.Capacity = 2;
+            return instancia;
         }
     }
 }

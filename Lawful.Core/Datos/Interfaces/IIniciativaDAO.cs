@@ -8,9 +8,9 @@ namespace Lawful.Core.Datos.Interfaces
     {
         List<Modelo.Iniciativa> ListarPorTema(int temaId);
         List<Modelo.Iniciativa> ListarPorUsuario(int userId);
-        void Insertar(Modelo.Iniciativa iniciativa);
+        void Insertar(QueryMiddleware.IniciativaMiddleware iniciativaMiddle);
         void Eliminar(int id);
-        void Modificar(Modelo.Iniciativa iniciativa);
+        void Modificar(QueryMiddleware.IniciativaMiddleware iniciativaMiddle);
         Modelo.Iniciativa Consultar(int id);
     }
 }

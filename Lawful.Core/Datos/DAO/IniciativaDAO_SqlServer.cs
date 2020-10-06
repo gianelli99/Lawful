@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Lawful.Core.Modelo.Iniciativas;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Lawful.Core.Datos.QueryMiddleware;
 
 namespace Lawful.Core.Datos.DAO
 {
@@ -18,6 +19,7 @@ namespace Lawful.Core.Datos.DAO
                 connection.Open();
 
                 SqlCommand command = connection.CreateCommand();
+
                 SqlTransaction transaction;
                 transaction = connection.BeginTransaction("Consulta Iniciativa");
 
@@ -65,6 +67,23 @@ namespace Lawful.Core.Datos.DAO
                                 opt.ID = response.GetInt32(0);
                                 opt.Descripcion = response.GetString(1);
                             }
+                            response.NextResult();
+                            while (response.Read())
+                            {
+                                Usuario votante = new Usuario();
+                                votante.Nombre = response.GetString(1);
+                                votante.Apellido = response.GetString(2);
+                                int opcionId = response.GetInt32(0);
+                                foreach (var opcion in opciones)
+                                {
+                                    if (opcionId == opcion.ID)
+                                    {
+                                        opcion.Votantes.Add(votante);
+                                        break;
+                                    }
+                                }
+                            }
+
                             if (iniciativa.GetType() != typeof(PropuestaGenerica) || iniciativa.GetType() != typeof(FAQ))
                             {
                                 switch (iniciativa.GetType().Name.ToString())
@@ -72,13 +91,26 @@ namespace Lawful.Core.Datos.DAO
                                     case "Asistire":
                                         ((Asistire)iniciativa).Opciones = opciones;
                                         break;
+                                    case "DoDont":
+                                        ((DoDont)iniciativa).Opciones = opciones;
+                                        break;
+                                    case "Regla":
+                                        ((Regla)iniciativa).Opciones = opciones;
+                                        break;
+                                    case "Votacion":
+                                        ((Votacion)iniciativa).Opciones = opciones;
+                                        break;
+                                    case "VotacionMultiple":
+                                        ((VotacionMultiple)iniciativa).Opciones = opciones;
+                                        break;
                                     default:
                                         break;
                                 }
                             }
-                            
 
+                            return iniciativa;
                         }
+
                     }
                     throw new Exception("No se ha podido encontrar el tema");
                 }
@@ -105,7 +137,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"DELETE FROM comentarios WHERE iniciativa_id = {id}; DELETE FROM votos WHERE opcion_id IN(SELECT id FROM opciones WHERE opciones.iniciativa_id = {id}); DELETE FROM opciones WHERE opciones.iniciativa_id = {id};";
+                    command.CommandText = $"DELETE FROM comentarios WHERE iniciativa_id = {id}; DELETE FROM votos WHERE opcion_id IN(SELECT id FROM opciones WHERE opciones.iniciativa_id = {id}); DELETE FROM opciones WHERE opciones.iniciativa_id = {id}; DELETE FROM iniciativas WHERE id = {id}";
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;
@@ -126,7 +158,7 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public void Insertar(Iniciativa iniciativa)
+        public void Insertar(IniciativaMiddleware iniciativaMiddle)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -134,20 +166,15 @@ namespace Lawful.Core.Datos.DAO
 
                 SqlCommand command = connection.CreateCommand();
                 SqlTransaction transaction;
-                transaction = connection.BeginTransaction("Insertar Tema");
+                transaction = connection.BeginTransaction("Insertar Iniciativa");
 
                 command.Connection = connection;
                 command.Transaction = transaction;
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO temas VALUES (@descripcion, @estado, @fecha_creacion, @fecha_cierre, @everyone_can_edit);";
-                    command.Parameters.AddWithValue("@descripcion", tema.Descripcion);
-                    command.Parameters.AddWithValue("@estado", 1);
-                    command.Parameters.AddWithValue("@fecha_creacion", tema.FechaCreacion);
-                    command.Parameters.AddWithValue("@fecha_cierre", tema.FechaCierre);
-                    command.Parameters.AddWithValue("@everyone_can_edit", tema.EveryoneCanEdit);
-
+                    iniciativaMiddle.SetInsertCommand(command);
+                    
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;
@@ -244,7 +271,7 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public void Modificar(Iniciativa iniciativa)
+        public void Modificar(IniciativaMiddleware iniciativaMiddle)
         {
             throw new NotImplementedException();
         }
