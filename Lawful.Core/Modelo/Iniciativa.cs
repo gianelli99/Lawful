@@ -21,6 +21,5 @@ namespace Lawful.Core.Modelo
             Owner = owner;
             Comentarios = new List<Comentario>();
         }
-        public abstract string[,] GetSpecificInsert();
     }
 }

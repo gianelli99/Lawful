@@ -1,17 +1,16 @@
 ﻿using Lawful.Core.Modelo;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Data.SqlClient;
 using Lawful.Core.Modelo.Iniciativas;
-using Microsoft.Office.Interop.Excel;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Lawful.Core.Datos.QueryMiddleware;
 
 namespace Lawful.Core.Datos.DAO
 {
     public class IniciativaDAO_SqlServer : ConexionDB, Interfaces.IIniciativaDAO
     {
+        public IQueryStrategy Strategy { get; set; }
+       
         public Iniciativa Consultar(int id)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -28,7 +27,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,iniciativas_iconos.icon_name,everyone_can_edit,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id FROM iniciativas INNER JOIN iniciativas_iconos ON iniciativa_icono_id = iniciativas_iconos.id WHERE id = {id};";
+                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,everyone_can_edit,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id FROM iniciativas WHERE id = {id};";
                     command.CommandText += $"SELECT comentarios.id, descripcion, usuario_id,usuarios.nombre, usuarios.apellido FROM comentarios INNER JOIN usuarios ON comentarios.usuario_id = usuarios.id WHERE comentarios.iniciativa_id = {id};";
                     command.CommandText += $"SELECT opciones.id, opciones.descripcion FROM opciones WHERE iniciativa_id = {id};";
                     command.CommandText += $"SELECT opciones.id,usuarios.nombre, usuarios.apellido FROM opciones INNER JOIN votos ON opciones.id =votos.opcion_id INNER JOIN usuarios ON usuarios.id = votos.usuario_id WHERE iniciativa_id = {id};";
@@ -120,9 +119,9 @@ namespace Lawful.Core.Datos.DAO
                 }
             }
             throw new Exception("Ha ocurrido un error");
-        }
+        }//done
 
-        public void Eliminar(int id)
+        public void Eliminar(int id)//done
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -158,8 +157,9 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public void Insertar(IniciativaMiddleware iniciativaMiddle)
+        public void Insertar(Iniciativa iniciativa)
         {
+
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
                 connection.Open();
@@ -173,7 +173,8 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    iniciativaMiddle.SetInsertCommand(command);
+                    
+                    Strategy.SetInsertCommand(command, iniciativa);
                     
                     command.ExecuteNonQuery();
                     transaction.Commit();
@@ -193,9 +194,9 @@ namespace Lawful.Core.Datos.DAO
                 }
             }
             throw new Exception("Ha ocurrido un error");
-        }
+        }//done
 
-        public List<Iniciativa> ListarPorTema(int temaId)
+        public List<Iniciativa> ListarPorTema(int temaId)//done
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -210,7 +211,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,iniciativas_iconos.icon_name,everyone_can_edit,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id FROM iniciativas INNER JOIN iniciativas_iconos ON iniciativa_icono_id = iniciativas_iconos.id WHERE tema_id = {temaId};";
+                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,everyone_can_edit,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id FROM iniciativas WHERE tema_id = {temaId};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -233,7 +234,7 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public List<Iniciativa> ListarPorUsuario(int userId)
+        public List<Iniciativa> ListarPorUsuario(int userId)//done
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -248,7 +249,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,iniciativas_iconos.icon_name,everyone_can_edit,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id FROM iniciativas INNER JOIN iniciativas_iconos ON iniciativa_icono_id = iniciativas_iconos.id WHERE tema_id = {userId};";
+                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,everyone_can_edit,iniciativas.usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,iniciativas.tema_id FROM iniciativas INNER JOIN usuarios_temas ON usuarios_temas.tema_id = iniciativas.tema_id WHERE usuarios_temas.usuario_id = {userId};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -271,9 +272,47 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public void Modificar(IniciativaMiddleware iniciativaMiddle)
+        public void Modificar(Iniciativa iniciativa)
         {
-            throw new NotImplementedException();
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Modificar Iniciativa");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+
+                    Strategy.SetUpdateCommand(command, iniciativa);
+
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                    return;
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+
+                        throw ex2;
+                    }
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
+        public void SetStrategy(IQueryStrategy strategy)
+        {
+            this.Strategy = strategy;
         }
 
         private string[] ListarCamposTablaIniciativas(SqlDataReader response)
