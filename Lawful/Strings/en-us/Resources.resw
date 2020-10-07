@@ -201,4 +201,16 @@
     <value>MisDatos</value>
     <comment>Navigation view item name for MisDatos</comment>
   </data>
+  <data name="Temas_NoSelection.Text" xml:space="preserve">
+    <value>Select an item from the list.</value>
+    <comment>No selection text for Temas</comment>
+  </data>
+  <data name="Temas.MasterHeader" xml:space="preserve">
+    <value>Temas</value>
+    <comment>Title for TemasPage</comment>
+  </data>
+  <data name="Shell_Temas.Content" xml:space="preserve">
+    <value>Temas</value>
+    <comment>Navigation view item name for Temas</comment>
+  </data>
 </root>

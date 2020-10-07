@@ -19,6 +19,7 @@
         SelectedItem="{x:Bind Selected, Mode=OneWay}"
         ItemInvoked="OnItemInvoked"
         IsSettingsVisible="True"
+        ExpandedModeThresholdWidth="1280"
         Background="{ThemeResource SystemControlBackgroundAltHighBrush}">
         <winui:NavigationView.MenuItems>
             <winui:NavigationViewItem x:Uid="Shell_Inicio" Icon="Home" helpers:NavHelper.NavigateTo="views:MainPage" Content="Inicio"/>

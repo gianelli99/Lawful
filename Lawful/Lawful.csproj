@@ -122,6 +122,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
+      <Version>6.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls.DataGrid">
       <Version>6.1.0</Version>
     </PackageReference>
@@ -160,6 +163,12 @@
     </Compile>
     <Compile Include="Views\MisDatosPage.xaml.cs">
       <DependentUpon>MisDatosPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TemasDetailControl.xaml.cs">
+      <DependentUpon>TemasDetailControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TemasPage.xaml.cs">
+      <DependentUpon>TemasPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UsuariosPage.xaml.cs">
       <DependentUpon>UsuariosPage.xaml</DependentUpon>
@@ -216,6 +225,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MisDatosPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TemasDetailControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TemasPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

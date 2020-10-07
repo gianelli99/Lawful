@@ -164,6 +164,7 @@ namespace Lawful.Core.Datos.DAO
                             }
                             return temas;
                         }
+                        return null;
                     }
                 }
                 catch (Exception ex2)

@@ -13,6 +13,7 @@ namespace Lawful.Core.Logica
         private Datos.Interfaces.IGrupoDAO grupoDAO;
         private Datos.Interfaces.IVistaDAO vistaDAO;
         private Datos.Interfaces.IAccionDAO accionDAO;
+        private Datos.Interfaces.ITemaDAO temaDAO;
 
         public UsuarioBL()
         {
@@ -20,6 +21,7 @@ namespace Lawful.Core.Logica
             grupoDAO = new Datos.DAO.GrupoDAO_SqlServer();
             vistaDAO = new Datos.DAO.VistaDAO_SqlServer();
             accionDAO = new Datos.DAO.AccionDAO_SqlServer();
+            temaDAO = new Datos.DAO.TemaDAO_SqlServer();
         }
         public Modelo.Usuario Consultar(int id)
         {
@@ -41,6 +43,19 @@ namespace Lawful.Core.Logica
             }
             catch (Exception ex)
             {
+                throw ex;
+            }
+        }
+        public List<Modelo.Tema> ListarTemasDisponibles(int userId)
+        {
+            try
+            {
+
+                return temaDAO.ListarPorUsuario(userId);
+            }
+            catch (Exception ex)
+            {
+
                 throw ex;
             }
         }
