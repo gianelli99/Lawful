@@ -17,9 +17,8 @@
     <ScrollViewer x:Name="ContentArea" Margin="{StaticResource SmallLeftRightMargin}">
         <StackPanel>
             <CommandBar x:Name="AccionesBar">
-                <!-- Auto generated actions -->
-            </CommandBar>
-
+                    <!-- Auto generated actions -->
+                </CommandBar>
             <Grid>
                 <controls:DataGrid Name="dgUsuarios" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" IsReadOnly="True" SelectionMode="Single">
                 </controls:DataGrid>

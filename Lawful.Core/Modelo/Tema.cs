@@ -7,6 +7,7 @@ namespace Lawful.Core.Modelo
     public class Tema
     {
         public int ID { get; set; }
+        public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public bool Estado { get; set; }
         public DateTime FechaCreacion { get; set; }
@@ -22,6 +23,10 @@ namespace Lawful.Core.Modelo
         {
             Iniciativas = new List<Iniciativa>();
             Owner = owner;
+        }
+        public string DisponibleHasta()
+        {
+            return "Hasta: " + FechaCierre.ToShortDateString();
         }
     }
 }

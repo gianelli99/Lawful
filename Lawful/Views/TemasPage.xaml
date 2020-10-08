@@ -32,15 +32,15 @@
                     Grid.Column="1"
                     Margin="{StaticResource SmallLeftMargin}"
                     VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind Descripcion}" Style="{ThemeResource ListTitleStyle}" />
-                    <TextBlock Text="{x:Bind FechaCreacion.ToShortDateString()}" Style="{StaticResource ListSubTitleStyle}" />
+                    <TextBlock Text="{x:Bind Titulo}" Style="{ThemeResource ListTitleStyle}" />
+                    <TextBlock Text="{x:Bind DisponibleHasta()}" Style="{StaticResource ListSubTitleStyle}" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DetailsTemplate">
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <views:TemasDetailControl MasterMenuItem="{Binding}" />
+                <views:TemasDetailControl MasterMenuItem="{Binding}"/>
             </Grid>
         </DataTemplate>
 
@@ -77,20 +77,27 @@
     </Page.Resources>
 
     <Grid x:Name="ContentArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
         <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState>
-                        <VisualState.StateTriggers>
-                            <!--641 is the default CompactModeThresholdWidth in NavigationView -->
-                            <AdaptiveTrigger MinWindowWidth="641" />
-                        </VisualState.StateTriggers>
-                        <VisualState.Setters>
-                            <Setter Target="MasterDetailsViewControl.MasterHeaderTemplate" Value="{StaticResource MasterHeaderTemplate}" />
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-        <controls:MasterDetailsView
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!--641 is the default CompactModeThresholdWidth in NavigationView -->
+                        <AdaptiveTrigger MinWindowWidth="641" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MasterDetailsViewControl.MasterHeaderTemplate" Value="{StaticResource MasterHeaderTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <CommandBar x:Name="AccionesBar" Grid.Row="0" DefaultLabelPosition="Right">
+        </CommandBar>
+        <controls:MasterDetailsView Grid.Row="1"
             x:Name="MasterDetailsViewControl"
             x:Uid="Temas"
             BackButtonBehavior="Automatic"

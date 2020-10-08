@@ -164,7 +164,7 @@ namespace Lawful.Views
 
         private void Grid_AutoGeneratingColumn(object sender, Microsoft.Toolkit.Uwp.UI.Controls.DataGridAutoGeneratingColumnEventArgs e)
         {
-            if (e.PropertyName == "Password" || e.PropertyName == "Grupos" || e.PropertyName == "Estado")
+            if (e.PropertyName == "Password" || e.PropertyName == "Grupos" || e.PropertyName == "Estado" || e.PropertyName == "Temas")
             {
                 e.Column.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             }
@@ -404,7 +404,6 @@ namespace Lawful.Views
             {
                 commandBar.PrimaryCommands.Add(button);
             }
-            Trace.WriteLine(commandBar.PrimaryCommands.Count);
             return commandBar;
         }
     }

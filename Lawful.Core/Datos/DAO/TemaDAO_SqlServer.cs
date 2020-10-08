@@ -23,7 +23,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit FROM temas WHERE id = {id};";
+                    command.CommandText = $"SELECT id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit,titulo FROM temas WHERE id = {id};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -37,6 +37,7 @@ namespace Lawful.Core.Datos.DAO
                             tema.FechaCreacion = response.GetDateTime(3);
                             tema.FechaCierre = response.GetDateTime(4);
                             tema.EveryoneCanEdit = response.GetBoolean(5);
+                            tema.Titulo = response.GetString(6);
                             return tema;
                         }
                     }
@@ -101,13 +102,14 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO temas VALUES (@descripcion, @estado, @fecha_creacion, @fecha_cierre, @everyone_can_edit);";
+                    command.CommandText = $"INSERT INTO temas VALUES (@descripcion, @estado, @fecha_creacion, @fecha_cierre, @everyone_can_edit, @titulo);";
                     command.Parameters.AddWithValue("@descripcion", tema.Descripcion);
                     command.Parameters.AddWithValue("@estado", 1);
                     command.Parameters.AddWithValue("@fecha_creacion", tema.FechaCreacion);
                     command.Parameters.AddWithValue("@fecha_cierre", tema.FechaCierre);
                     command.Parameters.AddWithValue("@everyone_can_edit", tema.EveryoneCanEdit);
-                    
+                    command.Parameters.AddWithValue("@titulo", tema.Titulo);
+
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;
@@ -143,7 +145,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT temas.id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit FROM temas INNER JOIN usuarios_temas ON temas.id = usuarios_temas.tema_id WHERE estado = 1 AND usuarios_temas.usuario_id = {userId}";
+                    command.CommandText = $"SELECT temas.id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit, titulo FROM temas INNER JOIN usuarios_temas ON temas.id = usuarios_temas.tema_id WHERE estado = 1 AND usuarios_temas.usuario_id = {userId}";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -160,6 +162,8 @@ namespace Lawful.Core.Datos.DAO
                                 tema.FechaCreacion = response.GetDateTime(3);
                                 tema.FechaCierre = response.GetDateTime(4);
                                 tema.EveryoneCanEdit = response.GetBoolean(5);
+                                tema.Titulo = response.GetString(6);
+                            
                                 temas.Add(tema);
                             }
                             return temas;
@@ -190,12 +194,13 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"UPDATE temas SET descripcion=@descripcion, estado=@estado, fecha_creacion=@fecha_creacion, fecha_cierre=@fecha_cierre, everyone_can_edit=@everyone_can_edit WHERE id = {tema.ID};";
+                    command.CommandText = $"UPDATE temas SET descripcion=@descripcion, estado=@estado, fecha_creacion=@fecha_creacion, fecha_cierre=@fecha_cierre, everyone_can_edit=@everyone_can_edit titulo=@titulo WHERE id = {tema.ID};";
                     command.Parameters.AddWithValue("@descripcion", tema.Descripcion);
                     command.Parameters.AddWithValue("@estado", tema.Estado);
                     command.Parameters.AddWithValue("@fecha_creacion", tema.FechaCreacion);
                     command.Parameters.AddWithValue("@fecha_cierre", tema.FechaCierre);
                     command.Parameters.AddWithValue("@everyone_can_edit", tema.EveryoneCanEdit);
+                    command.Parameters.AddWithValue("@titulo", tema.Titulo);
 
                     command.ExecuteNonQuery();
                     transaction.Commit();
