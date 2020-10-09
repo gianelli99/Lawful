@@ -35,7 +35,7 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
-        public void Eliminiar(int id)
+        public void Eliminar(int id)
         {
             try
             {

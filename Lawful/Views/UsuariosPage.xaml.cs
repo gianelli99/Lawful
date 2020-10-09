@@ -311,7 +311,7 @@ namespace Lawful.Views
             if (result == ContentDialogResult.Primary)
             {
                 var user = usuarioBL.Consultar(((Core.Modelo.Usuario)dgUsuarios.SelectedItem).ID);
-                usuarioBL.Eliminar(user.ID,1);
+                usuarioBL.Eliminar(user.ID,SesionActiva.ObtenerInstancia().Usuario.ID);
                 dgUsuarios.ItemsSource = usuarioBL.Listar();
             }
         }

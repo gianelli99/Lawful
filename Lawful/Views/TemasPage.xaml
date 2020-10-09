@@ -77,11 +77,6 @@
     </Page.Resources>
 
     <Grid x:Name="ContentArea">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition></RowDefinition>
-        </Grid.RowDefinitions>
-
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState>
@@ -95,8 +90,6 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <CommandBar x:Name="AccionesBar" Grid.Row="0" DefaultLabelPosition="Right">
-        </CommandBar>
         <controls:MasterDetailsView Grid.Row="1"
             x:Name="MasterDetailsViewControl"
             x:Uid="Temas"

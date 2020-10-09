@@ -20,6 +20,7 @@ namespace Lawful.Views
     {
         private UsuarioBL usuarioBL;
         private Tema _selected;
+        private Accion accion;
         public Tema Selected
         {
             get { return _selected; }
@@ -39,19 +40,16 @@ namespace Lawful.Views
         {
             Temas.Clear();
 
-            var data = usuarioBL.ListarTemasDisponibles(1);
+            var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
 
             foreach (var item in data)
             {
                 Temas.Add(item);
             }
-
             if (MasterDetailsViewControl.ViewState == MasterDetailsViewState.Both)
             {
                 Selected = Temas.FirstOrDefault();
             }
-            var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 8);
-            CreateCommandBar(AccionesBar, acciones);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -68,32 +66,5 @@ namespace Lawful.Views
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
-        {
-            foreach (var button in CreateAppBarButtons(acciones))
-            {
-                commandBar.PrimaryCommands.Add(button);
-            }
-            return commandBar;
-        }
-        private List<AppBarButton> CreateAppBarButtons(List<Accion> acciones)
-        {
-            List<AppBarButton> appBarButtons = new List<AppBarButton>();
-            foreach (var accion in acciones)
-            {
-                AccionAppBarButton appBarButton = new AccionAppBarButton()
-                {
-                    Name = accion.ID.ToString(),
-                    Label = accion.Descripcion,
-                    Icon = new SymbolIcon((Symbol)Enum.Parse(typeof(Symbol), accion.IconName)),
-                    Accion = accion
-                };
-                //appBarButton.Click += Accion_Click;
-                appBarButtons.Add(appBarButton);
-            }
-            return appBarButtons;
-
-        }
     }
 }
