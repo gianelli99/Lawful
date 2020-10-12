@@ -18,7 +18,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" x:Name="Master">
-            <ListView x:Name="TemasListView" ItemsSource="{x:Bind Temas}" IsItemClickEnabled="True" ItemClick="TemasListView_ItemClick">
+            <ListView x:Name="TemasListView" ItemsSource="{x:Bind Temas, Mode=TwoWay}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" IsItemClickEnabled="True" ItemClick="TemasListView_ItemClick">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="modelo:Tema">
                         <StackPanel Orientation="Horizontal" Margin="6">
@@ -32,7 +32,8 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackPanel>
-        <Grid Grid.Column="1" x:Name="Detail" HorizontalAlignment="Stretch" MinWidth="250" >
+        <ScrollViewer Grid.Column="1">
+        <Grid  x:Name="Detail" HorizontalAlignment="Stretch" MinWidth="250" >
             <CommandBar Grid.Row="0" x:Name="AccionesBar"></CommandBar>
             <StackPanel Grid.Row="1" x:Name="spDetails"
                 DataContext="{Binding SelectedItem, ElementName=TemasListView}"
@@ -61,16 +62,23 @@
                     Style="{StaticResource DetailSubTitleStyle}"
                     Text="¿Todos pueden editarlo?" />
                 <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding EveryoneCanEdit}"/>
-
             </StackPanel>
-            <StackPanel Grid.Row="2" x:Name="spFormularioTema" Visibility="Collapsed" Padding="{StaticResource DetailPageMargin}">
+            <StackPanel HorizontalAlignment="Left" Grid.Row="2" x:Name="spFormularioTema" Visibility="Collapsed" Padding="{StaticResource DetailPageMargin}">
                 <TextBox x:Name="txtTitulo" Header= "Título" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                 <TextBox x:Name="txtDescripcion" Header= "Descripción" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                 <DatePicker x:Name="dpFechaCierre" Header="Fecha de cierre" Margin="0,24,0,0" Width="400"/>
                 <TextBlock Text="¿Quién puede editarlo?" Margin="0,24,0,0" TextAlignment="Left"/>
                 <RadioButton x:Name="cbTodos" Content="Todos" Margin="0,12,0,0"/>
                 <RadioButton x:Name="cbSoloYo" Content="Solo yo"/>
+                <ListView x:Name="lvUsuarios" Margin="{StaticResource SmallTopMargin}" Header="Usuarios" SelectionMode="Multiple" Height="400" MaxWidth="450" ItemsSource="{x:Bind Usuarios, Mode=OneWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="modelo:Usuario">
+                            <TextBlock Text="{x:Bind GetNombreCompleto()}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
         </Grid>
+        </ScrollViewer>
     </Grid>
 </Page>

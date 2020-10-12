@@ -34,10 +34,8 @@
                             <TextBox x:Name="txtApellido" Header="Apellido" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
                         </StackPanel>
                         <StackPanel x:Name="Second" Margin="30,44,0,0" RelativePanel.RightOf="First">
-                            <ListView x:Name="LvGrupos" Header="Grupos" SelectionMode="Multiple" Height="450">
-                                <!-- Auto generated groups -->
-                                <!-- Auto generated groups -->
-                            </ListView>
+                        <ListView x:Name="LvGrupos" Header="Grupos" SelectionMode="Multiple" Height="450">
+                        </ListView>
                         </StackPanel>
                     </RelativePanel>
             </StackPanel>

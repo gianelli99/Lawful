@@ -161,6 +161,9 @@
     <Compile Include="Views\GruposPage.xaml.cs">
       <DependentUpon>GruposPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\IniciativasTemaPage.xaml.cs">
+      <DependentUpon>IniciativasTemaPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MisDatosPage.xaml.cs">
       <DependentUpon>MisDatosPage.xaml</DependentUpon>
     </Compile>
@@ -224,6 +227,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GruposPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\IniciativasTemaPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

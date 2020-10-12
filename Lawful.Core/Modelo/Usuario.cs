@@ -23,5 +23,9 @@ namespace Lawful.Core.Modelo
             Grupos = new List<Grupo>();
             Temas = new List<Tema>();
         }
+        public string GetNombreCompleto()
+        {
+            return Nombre + " " + Apellido;
+        }
     }
 }

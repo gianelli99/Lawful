@@ -7,8 +7,10 @@ using System.Runtime.CompilerServices;
 using Lawful.Core.Logica;
 using Lawful.Core.Modelo;
 using Lawful.Helpers;
+using Lawful.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace Lawful.Views
 {
@@ -28,22 +30,20 @@ namespace Lawful.Views
             usuarioBL = new UsuarioBL();
             temaBL = new TemaBL();
             InitializeComponent();
-            Temas = new ObservableCollection<Tema>();
-            var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
+            RefreshTemasListView();
+            Usuarios = new ObservableCollection<Usuario>();
+            var data = usuarioBL.Listar();
             foreach (var item in data)
             {
-                Temas.Add(item);
+                Usuarios.Add(item);
             }
-            if (Temas.Count>0)
-            {
-                Selected = Temas[0];
-                TemasListView.SelectedIndex = 1;
-            }
+            OnPropertyChanged("Usuarios");
             TemaMode();
             var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 8);
             CreateCommandBar(this.AccionesBar, acciones);
         }
         public  ObservableCollection<Tema> Temas { get; set; }
+        public ObservableCollection<Usuario> Usuarios { get; set; }
 
         private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
         {
@@ -71,6 +71,23 @@ namespace Lawful.Views
             return appBarButtons;
 
         }
+        private void RefreshTemasListView()
+        {
+            Temas = new ObservableCollection<Tema>();
+            var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Temas.Add(item);
+                }
+                if (Temas.Count>0)
+                {
+                    Selected = Temas[0];
+                }
+            }
+            OnPropertyChanged("Temas");
+        }
 
         private async void Accion_Click(object sender, RoutedEventArgs e)
         {
@@ -86,19 +103,13 @@ namespace Lawful.Views
                 {
                     case "Agregar Tema":
                         FormularioMode();
-
                         break;
                     case "Eliminar Tema":
                         ContentDialogResult result = await DisplayDeleteConfirmation();
                         if (result == ContentDialogResult.Primary)
                         {
                             temaBL.Eliminar(((Tema)TemasListView.SelectedItem).ID);
-                            var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
-                            Temas.Clear();
-                            foreach (var item in data)
-                            {
-                                Temas.Add(item);
-                            }
+                            RefreshTemasListView();
                         }
 
                         break;
@@ -113,13 +124,7 @@ namespace Lawful.Views
 
                         break;
                     case "Ver Iniciativas":
-                        //FormularioUsuarioMode(true);
-
-                        //user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
-                        //FillFormFields(user);
-
-                        //LvGrupos.Items.Clear();
-                        //CreateGruposListView(LvGrupos, grupos, user.Grupos);
+                        this.Frame.Navigate(typeof(IniciativasTemaPage),Selected.ID);
 
                         break;
                     default:

@@ -213,4 +213,8 @@
     <value>Temas</value>
     <comment>Navigation view item name for Temas</comment>
   </data>
+  <data name="Shell_IniciativasTema.Content" xml:space="preserve">
+    <value>IniciativasTema</value>
+    <comment>Navigation view item name for IniciativasTema</comment>
+  </data>
 </root>
