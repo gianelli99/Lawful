@@ -2,49 +2,59 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using Lawful.Core.Logica;
-using Lawful.Core.Modelo;
-using Lawful.Helpers;
+using System.Threading.Tasks;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
+using Lawful.Core.Modelo;
+using Lawful.Core.Logica;
+using Lawful.Helpers;
 
 namespace Lawful.Views
 {
-    public sealed partial class TemasPage : Page, INotifyPropertyChanged
+    public sealed partial class TemasPageViejo : Page, INotifyPropertyChanged
     {
         private UsuarioBL usuarioBL;
-        private Tema _selected;
         private TemaBL temaBL;
+        private Tema _selected;
         private Accion accion;
         public Tema Selected
         {
             get { return _selected; }
             set { Set(ref _selected, value); }
         }
-        public TemasPage()
+
+        public ObservableCollection<Tema> Temas { get; private set; } = new ObservableCollection<Tema>();
+
+        public TemasPageViejo()
         {
             usuarioBL = new UsuarioBL();
             temaBL = new TemaBL();
             InitializeComponent();
-            Temas = new ObservableCollection<Tema>();
-            var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
-            foreach (var item in data)
-            {
-                Temas.Add(item);
-            }
-            if (Temas.Count>0)
-            {
-                Selected = Temas[0];
-                TemasListView.SelectedIndex = 1;
-            }
-            TemaMode();
-            var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 8);
-            CreateCommandBar(this.AccionesBar, acciones);
-        }
-        public  ObservableCollection<Tema> Temas { get; set; }
+            Loaded += TemasPage_Loaded;
 
+            var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 8);
+            var bar = new CommandBar();
+            CreateCommandBar(bar, acciones);
+            MasterDetailsViewControl.DetailsCommandBar = bar;
+        }
+
+        //private void FormularioMode()
+        //{
+        //    spFormularioTema.Visibility = Visibility.Visible;
+        //    tbTitulo.Visibility = Visibility.Collapsed;
+        //    spDetails.Visibility = Visibility.Collapsed;
+        //}
+        //private void TemaMode()
+        //{
+        //    spFormularioTema.Visibility = Visibility.Collapsed;
+        //    tbTitulo.Visibility = Visibility.Visible;
+        //    spDetails.Visibility = Visibility.Visible;
+        //}
         private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
         {
             foreach (var button in CreateAppBarButtons(acciones))
@@ -72,34 +82,23 @@ namespace Lawful.Views
 
         }
 
-        private async void Accion_Click(object sender, RoutedEventArgs e)
+        private void Accion_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 accion = (sender as AccionAppBarButton).Accion;
-                if (accion.Descripcion != "Agregar Tema" && TemasListView.SelectedItem == null)
+                if (accion.Descripcion != "Agregar Tema" && Selected == null)
                 {
                     DisplayNoTopicSelected();
-                    return;
                 }
                 switch (accion.Descripcion)
                 {
                     case "Agregar Tema":
-                        FormularioMode();
+                        //FormularioMode();
 
                         break;
                     case "Eliminar Tema":
-                        ContentDialogResult result = await DisplayDeleteConfirmation();
-                        if (result == ContentDialogResult.Primary)
-                        {
-                            temaBL.Eliminar(((Tema)TemasListView.SelectedItem).ID);
-                            var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
-                            Temas.Clear();
-                            foreach (var item in data)
-                            {
-                                Temas.Add(item);
-                            }
-                        }
+                        DisplayDeleteConfirmation();
 
                         break;
                     case "Modificar Tema":
@@ -139,33 +138,18 @@ namespace Lawful.Views
                 //GridMode();
             }
         }
-        private void FormularioMode()
-        {
-            spFormularioTema.Visibility = Visibility.Visible;
-            tbTitulo.Visibility = Visibility.Collapsed;
-            spDetails.Visibility = Visibility.Collapsed;
-        }
-        private void TemaMode()
-        {
-            spFormularioTema.Visibility = Visibility.Collapsed;
-            tbTitulo.Visibility = Visibility.Visible;
-            spDetails.Visibility = Visibility.Visible;
-            txtTitulo.Text = "";
-            txtDescripcion.Text = "";
-
-        }
         private async void DisplayNoTopicSelected()
         {
-            ContentDialog noTopicSelected = new ContentDialog
+            ContentDialog noUserSelected = new ContentDialog
             {
                 Title = "Tema no seleccionado",
                 Content = "Seleccione uno e intente de nuevo.",
                 CloseButtonText = "Ok"
             };
 
-            ContentDialogResult result = await noTopicSelected.ShowAsync();
+            ContentDialogResult result = await noUserSelected.ShowAsync();
         }
-        private async System.Threading.Tasks.Task<ContentDialogResult> DisplayDeleteConfirmation()
+        private async void DisplayDeleteConfirmation()
         {
             ContentDialog noUserSelected = new ContentDialog
             {
@@ -176,7 +160,26 @@ namespace Lawful.Views
             };
 
             ContentDialogResult result = await noUserSelected.ShowAsync();
-            return result;            
+            if (result == ContentDialogResult.Primary)
+            {
+                //temaBL.Eliminar(MasterMenuItem.ID);
+                var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
+            }
+        }
+        private void TemasPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Temas.Clear();
+
+            var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
+
+            foreach (var item in data)
+            {
+                Temas.Add(item);
+            }
+            if (MasterDetailsViewControl.ViewState == MasterDetailsViewState.Both)
+            {
+                Selected = Temas.FirstOrDefault();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -193,10 +196,5 @@ namespace Lawful.Views
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        private void TemasListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            TemaMode();
-        }
     }
 }

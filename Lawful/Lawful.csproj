@@ -170,6 +170,9 @@
     <Compile Include="Views\TemasPage.xaml.cs">
       <DependentUpon>TemasPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TemasPageViejo.xaml.cs">
+      <DependentUpon>TemasPageViejo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UsuariosPage.xaml.cs">
       <DependentUpon>UsuariosPage.xaml</DependentUpon>
     </Compile>
@@ -233,6 +236,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\TemasPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TemasPageViejo.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
