@@ -28,7 +28,7 @@
                     </StackPanel>
                 <StackPanel x:Name="Second" Margin="20,0,20,20" HorizontalAlignment="Left">
                     <TextBlock Text= "Usuarios"/>
-                    <ListView x:Name="LvUsuarios" IsMultiSelectCheckBoxEnabled="True" SelectionMode="Multiple" Height="350" ItemsSource="{x:Bind Usuarios}">
+                    <ListView x:Name="LvUsuarios" SelectionMode="Multiple" Height="350" ItemsSource="{x:Bind Usuarios}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="modelo:Usuario">
                                 <TextBlock Text="{x:Bind GetNombreCompleto()}"/>
