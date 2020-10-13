@@ -10,19 +10,19 @@ namespace Lawful.Views
 {
     public sealed partial class MisDatosPage : Page
     {
-        /*To Do:
-            - Sacar el multi select del list view
-            - Listar los grupos del usuario en ese list view
-            - Optimizar :S
-         */
-        private Usuario usuarioLogueado;
-        private UsuarioBL usuarioBL;
-        private GrupoBL grupoBL;
-        List<Grupo> grupos;
+        // TODO: Optimizar
+
+        Usuario usuarioLogueado;
+        UsuarioBL usuarioBL;
+        GrupoBL grupoBL;
+
+
         public MisDatosPage()
         {
             InitializeComponent();
         }
+
+
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -32,10 +32,18 @@ namespace Lawful.Views
             grupoBL = new GrupoBL();
             usuarioLogueado = usuarioBL.Consultar(userId);
             CambiarDatosMode();
-            var accionesDisponibles = usuarioBL.ListarAccionesDisponiblesEnVista(userId, 7); //TODO: ¿Cambiar ese 7 por algo más dinámico?
-            grupos = grupoBL.Listar();
-            CreateCommandBar(cbAcciones, accionesDisponibles);
-            CreateGruposListView(lvGrupos, grupos);
+            FillUserFormData(usuarioLogueado);
+            CreateCommandBar(cbAcciones, usuarioBL.ListarAccionesDisponiblesEnVista(userId, 7));
+            CreateGruposListView(lvGrupos, usuarioLogueado.Grupos);
+            
+        }
+
+        private void FillUserFormData(Usuario usuarioLogueado)
+        {
+            txtApellido.Text = usuarioLogueado.Apellido;
+            txtEmail.Text = usuarioLogueado.Email;
+            txtNombre.Text = usuarioLogueado.Nombre;
+            txtUsername.Text = usuarioLogueado.Username;
         }
 
         private string GenerateButtonName(string actionName)
@@ -60,7 +68,9 @@ namespace Lawful.Views
             // Cuando cliqueo en cada acción ¿Qué hago?
             switch (((AccionAppBarButton)sender).Accion.Descripcion)
             {
+
                 case "Modificar Mis Datos":
+                    CambiarDatosMode();
                     if (String.IsNullOrWhiteSpace(txtUsername.Text) ||
                         String.IsNullOrWhiteSpace(txtEmail.Text) ||
                         String.IsNullOrWhiteSpace(txtNombre.Text) ||
@@ -91,7 +101,6 @@ namespace Lawful.Views
                         PrimaryButtonText = "Si",
                         SecondaryButtonText = "No"
                     };
-
                     ContentDialogResult result = await seguroDeModificar.ShowAsync();
                     if (result == ContentDialogResult.Primary)
                     {
@@ -101,6 +110,7 @@ namespace Lawful.Views
                         usuarioLogueado.Apellido = txtApellido.Text;
                         usuarioBL.Modificar(usuarioLogueado, usuarioLogueado.ID, false);
                         DisplayContentDialog("Su perfil se ha actualizado correctamente", "Éxito");
+                        CambiarDatosMode();
                     }
                     else
                     {
@@ -120,10 +130,18 @@ namespace Lawful.Views
                     if (resultEliminar == ContentDialogResult.Primary)
                     {
                         // Dar de baja
+
+                        
                         usuarioBL.Eliminar(usuarioLogueado.ID, usuarioLogueado.ID);
                         SesionBL.ObtenerInstancia().FinalizarSesion();
-                        DisplayContentDialog("Su perfil se ha dado de baja correctamente", "Éxito");
-                        Frame.Navigate(typeof(LoginPage));
+                        //DisplayContentDialog("Su perfil se ha dado de baja correctamente", "Éxito");
+                        //FrameGlobal.FrameEstatico.Navigate(typeof(LoginPage));
+
+                        //Frame frame = FrameGlobal.ObtenerInstancia().UnicoFrame;
+                        //FrameGlobal fg = FrameGlobal.ObtenerInstancia();
+                        FrameGlobal.FrameEstatico.Navigate(typeof(LoginPage));
+                        //frame.Navigate(typeof(LoginPage));
+
                     }
                     else
                     {
@@ -143,11 +161,13 @@ namespace Lawful.Views
             List<AppBarButton> appBarButtons = new List<AppBarButton>();
             foreach (var accion in acciones)
             {
-                AccionAppBarButton appBarButton = new AccionAppBarButton();
-                appBarButton.Name = $"btn{GenerateButtonName(accion.Descripcion)}";
-                appBarButton.Label = accion.Descripcion;
-                appBarButton.Icon = new SymbolIcon((Symbol)Enum.Parse(typeof(Symbol), accion.IconName));
-                appBarButton.Accion = accion;
+                AccionAppBarButton appBarButton = new AccionAppBarButton
+                {
+                    Name = $"btn{GenerateButtonName(accion.Descripcion)}",
+                    Label = accion.Descripcion,
+                    Icon = new SymbolIcon((Symbol)Enum.Parse(typeof(Symbol), accion.IconName)),
+                    Accion = accion
+                };
                 appBarButton.Click += Accion_Click;
                 appBarButtons.Add(appBarButton);
             }
@@ -159,17 +179,21 @@ namespace Lawful.Views
         {
             foreach (var grupo in Totalgrupos)
             {
-                GrupoListViewItem item = new GrupoListViewItem();
-                item.Name = grupo.ID.ToString();
-                item.Content = grupo.Descripcion;
-                item.Grupo = grupo;
+                GrupoListViewItem item = new GrupoListViewItem
+                {
+                    Name = grupo.ID.ToString(),
+                    Content = grupo.Descripcion,
+                    Grupo = grupo,
+                    FontWeight = new Windows.UI.Text.FontWeight { Weight = 600 },
+
+                };
                 listView.Items.Add(item);
             }
         }
 
-        private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void BtnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            CambiarMiContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            CambiarDatosMode();
         }
 
         private async void DisplayContentDialog(string msg, string title = "Error")
@@ -184,7 +208,7 @@ namespace Lawful.Views
             await noUserSelected.ShowAsync();
         }
 
-        private void btnCambiarContraseña_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void BtnCambiarContraseña_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             try
             {
@@ -209,10 +233,8 @@ namespace Lawful.Views
                 }
 
                 usuarioBL.CambiarContrasena(txtPasswordCC.Password, usuarioLogueado.ID, usuarioLogueado.ID, false);
-                txtConfirmPasswordCC.Password = "";
-                txtCurrentPasswordCC.Password = "";
-                txtPasswordCC.Password = "";
                 usuarioLogueado = usuarioBL.Consultar(usuarioLogueado.ID);
+                DisplayContentDialog("Su contraseña se ha modificado correctamente", "Éxito 😊");
                 CambiarDatosMode();
             }
             catch (Exception ex)
@@ -225,18 +247,19 @@ namespace Lawful.Views
         private void CambiarContraseñaMode()
         {
             CambiarMiContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            btnCambiarContraseña.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            btnCancelar.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            spButtons.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            spUserFormGroupsContainer.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
         private void CambiarDatosMode()
         {
-            txtApellido.Text = usuarioLogueado.Apellido;
-            txtEmail.Text = usuarioLogueado.Email;
-            txtNombre.Text = usuarioLogueado.Nombre;
-            txtUsername.Text = usuarioLogueado.Username;
+            txtPasswordCC.Password = "";
+            txtConfirmPasswordCC.Password = "";
+            txtCurrentPasswordCC.Password = "";
+
+            spUserFormGroupsContainer.Visibility = Windows.UI.Xaml.Visibility.Visible;
             CambiarMiContraseñaUsuario.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            btnCambiarContraseña.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            btnCancelar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            spButtons.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
+
     }
 }

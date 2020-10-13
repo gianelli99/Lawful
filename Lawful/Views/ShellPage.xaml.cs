@@ -20,16 +20,30 @@ using Lawful.Core.Logica;
 using Windows.ApplicationModel.Email.DataProvider;
 using System.Diagnostics;
 
+
 namespace Lawful.Views
 {
     public sealed partial class ShellPage : Page, INotifyPropertyChanged
     {
+
+        private ShellPage instancia;
+        public ShellPage ObtenerInstancia()
+        {
+            if (instancia == null)
+            {
+                instancia = new ShellPage();
+            }
+            return instancia;
+        }
+
         private readonly KeyboardAccelerator _altLeftKeyboardAccelerator = BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu);
         private readonly KeyboardAccelerator _backKeyboardAccelerator = BuildKeyboardAccelerator(VirtualKey.GoBack);
 
         SesionBL sesionBL;
         UsuarioBL usuarioBL;
         List<Vista> vistas;
+        
+
 
         private bool _isBackEnabled;
         private WinUI.NavigationViewItem _selected;
@@ -56,11 +70,12 @@ namespace Lawful.Views
 
             vistas = usuarioBL.ListarVistasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
             GenerateNavigationViewItems(vistas);
-
+            
 
         }
         private void GenerateNavigationViewItems(List<Vista> vistas)
         {
+
             foreach (var vista in vistas)
             {
                 WinUI.NavigationViewItem item = new WinUI.NavigationViewItem()
@@ -72,7 +87,7 @@ namespace Lawful.Views
                 Type type = Type.GetType("Lawful.Views." + vista.AssociatedViewName);
                 NavHelper.SetNavigateTo(item, type);
                 navigationView.MenuItems.Add(item);
-            } 
+            }
         }
         private void Initialize()
         {
@@ -96,6 +111,8 @@ namespace Lawful.Views
 
         private void Frame_Navigated(object sender, NavigationEventArgs e)
         {
+            
+
             IsBackEnabled = NavigationService.CanGoBack;
             if (e.SourcePageType == typeof(SettingsPage))
             {
@@ -106,8 +123,13 @@ namespace Lawful.Views
             var selectedItem = GetSelectedItem(navigationView.MenuItems, e.SourcePageType);
             if (selectedItem != null)
             {
+                if (e.SourcePageType.ToString() == "Lawful.Views.MisDatosPage") {
+                    FrameGlobal.FrameEstatico = this.Frame;
+                }
                 Selected = selectedItem;
             }
+
+
         }
 
         private WinUI.NavigationViewItem GetSelectedItem(IEnumerable<object> menuItems, Type pageType)
@@ -137,17 +159,17 @@ namespace Lawful.Views
 
         private void OnItemInvoked(WinUI.NavigationView sender, WinUI.NavigationViewItemInvokedEventArgs args)
         {
-                if (args.IsSettingsInvoked)
-                {
-                    NavigationService.Navigate(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
-                    return;
-                }
+            if (args.IsSettingsInvoked)
+            {
+                NavigationService.Navigate(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
+                return;
+            }
 
-                if (args.InvokedItemContainer is WinUI.NavigationViewItem selectedItem)
-                {
-                    var pageType = selectedItem.GetValue(NavHelper.NavigateToProperty) as Type;
-                    NavigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
-                }
+            if (args.InvokedItemContainer is WinUI.NavigationViewItem selectedItem)
+            {
+                var pageType = selectedItem.GetValue(NavHelper.NavigateToProperty) as Type;
+                NavigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
+            }
         }
 
         private void OnBackRequested(WinUI.NavigationView sender, WinUI.NavigationViewBackRequestedEventArgs args)
@@ -175,7 +197,7 @@ namespace Lawful.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
+        private void Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (Equals(storage, value))
             {
@@ -188,10 +210,11 @@ namespace Lawful.Views
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private void btn_CerrarSesion_Tapped(object sender, TappedRoutedEventArgs e)
+        private void Btn_CerrarSesion_Tapped(object sender, TappedRoutedEventArgs e)
         {
             sesionBL.FinalizarSesion();
             Frame.Navigate(typeof(LoginPage));
         }
+
     }
 }

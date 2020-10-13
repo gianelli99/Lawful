@@ -148,6 +148,7 @@
     <Compile Include="ClassParameters\CambiarContrasenaParameters.cs" />
     <Compile Include="Helpers\AccionAppBarButton.cs" />
     <Compile Include="Helpers\EnumToBooleanConverter.cs" />
+    <Compile Include="Helpers\FrameGlobal.cs" />
     <Compile Include="Helpers\GrupoListViewItem.cs" />
     <Compile Include="Helpers\NavHelper.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />

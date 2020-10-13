@@ -27,7 +27,7 @@
         
         <winui:NavigationView.PaneFooter>
             <StackPanel>
-                <winui:NavigationViewItem x:Name="btn_CerrarSesion" x:Uid="Shell_CerrarSesion" Icon="Back" Content="Cerrar sesión" Tapped="btn_CerrarSesion_Tapped" />
+                <winui:NavigationViewItem x:Name="btn_CerrarSesion" x:Uid="Shell_CerrarSesion" Icon="Back" Content="Cerrar sesión" Tapped="Btn_CerrarSesion_Tapped" />
             </StackPanel>
         </winui:NavigationView.PaneFooter>
         

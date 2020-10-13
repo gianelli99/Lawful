@@ -7,36 +7,37 @@
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <ScrollViewer Margin="{StaticResource SmallLeftRightMargin}">
-        <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
-            <!--CommandBar-->
-            <CommandBar x:Name="cbAcciones">
+        <Grid x:Name="ContentArea">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <CommandBar x:Name="cbAcciones" Grid.Row="0">
                 <!--Auto generated actions-->
             </CommandBar>
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel x:Name="spUserFormGroupsContainer" Orientation="Horizontal">
-                    <!--Form fields-->
-                    <StackPanel x:Name="spUserForm" Margin="20">
-                        <TextBox x:Name="txtUsername" Header= "Nombre de usuario" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
-                        <TextBox x:Name="txtEmail" Header="Correo" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
-                        <TextBox x:Name="txtNombre" Header="Nombre" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
-                        <TextBox x:Name="txtApellido" Header="Apellido" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+            <StackPanel HorizontalAlignment="Left" Grid.Row="1" >
+                <StackPanel x:Name="spUserFormGroupsContainer" Orientation="Horizontal" Visibility="Visible">
+                    <StackPanel x:Name="spUserForm" Margin="20,30,20,30" Orientation="Vertical" VerticalAlignment="Stretch" >
+                        <TextBox x:Name="txtUsername" Header= "Nombre de usuario"  Width="400" HorizontalAlignment="Left" Margin="0,10,0,10"/>
+                        <TextBox x:Name="txtEmail" Header="Correo"  Width="400" HorizontalAlignment="Left" Margin="0,10,0,10"/>
+                        <TextBox x:Name="txtNombre" Header="Nombre"  Width="400" HorizontalAlignment="Left" Margin="0,10,0,10"/>
+                        <TextBox x:Name="txtApellido" Header="Apellido"  Width="400" HorizontalAlignment="Left" Margin="0,10,0,10"/>
                     </StackPanel>
 
                     <!--Groups ListView-->
-                    <ListView x:Name="lvGrupos" Margin="30,44,0,0" SelectionMode="Multiple" Header="Grupos">
+                    <ListView SelectionMode="None" x:Name="lvGrupos" Header="Grupos" Margin="20,30,20,30">
                         <!--Auto generated actions-->
                     </ListView>
 
                 </StackPanel>
-                <StackPanel x:Name="CambiarMiContraseñaUsuario" Visibility="Collapsed" Margin="20">
-                    <PasswordBox x:Name="txtCurrentPasswordCC" Header="Contraseña actual" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
-                    <PasswordBox x:Name="txtPasswordCC" Header="Contraseña nueva" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
-                    <PasswordBox x:Name="txtConfirmPasswordCC" Header="Confirmar Contraseña" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
+                <StackPanel x:Name="CambiarMiContraseñaUsuario" Visibility="Collapsed" Margin="20,30,20,30">
+                    <PasswordBox x:Name="txtCurrentPasswordCC" Header="Contraseña actual"  Width="400" HorizontalAlignment="Left" Margin="0,10,0,10"/>
+                    <PasswordBox x:Name="txtPasswordCC" Header="Contraseña nueva"  Width="400" HorizontalAlignment="Left" Margin="0,10,0,10"/>
+                    <PasswordBox x:Name="txtConfirmPasswordCC" Header="Confirmar Contraseña"  Width="400" HorizontalAlignment="Left"  Margin="0,10,0,10"/>
                 </StackPanel>
-                <!-- Accept + Cancel buttons -->
-                <StackPanel x:Name="spButtons" Orientation="Horizontal">
-                    <Button x:Name="btnCancelar" Content="Cancelar" Click="btnCancelar_Click" Visibility="Collapsed" />
-                    <Button x:Name="btnCambiarContraseña" Content="Cambiar contraseña" Click="btnCambiarContraseña_Click" Visibility="Collapsed"/>
+                <StackPanel x:Name="spButtons" Orientation="Horizontal" Visibility="Collapsed" Margin="20,0,20,30">
+                    <Button x:Name="btnCancelar" Content="Cancelar" Click="BtnCancelar_Click" Margin="0,0,20,0" />
+                    <Button x:Name="btnCambiarContraseña" Content="Cambiar contraseña" Click="BtnCambiarContraseña_Click" FontWeight="Bold"/>
                 </StackPanel>
 
 
