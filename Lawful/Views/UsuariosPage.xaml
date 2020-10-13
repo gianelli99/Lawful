@@ -21,7 +21,6 @@
             <Grid>
                 <controls:DataGrid Name="dgUsuarios" AutoGenerateColumns="True" GridLinesVisibility="Horizontal" IsReadOnly="True" SelectionMode="Single">
                 </controls:DataGrid>
-                <!-- Auto generated users -->
             </Grid>
             <StackPanel Visibility="Collapsed" x:Name="FormularioUsuario">
                 <RelativePanel>
