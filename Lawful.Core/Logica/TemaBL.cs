@@ -47,11 +47,11 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
-        public void Consultar(int id)
+        public Modelo.Tema Consultar(int id)
         {
             try
             {
-                temaDAO.Consultar(id);
+                 return temaDAO.Consultar(id);
             }
             catch (Exception)
             {

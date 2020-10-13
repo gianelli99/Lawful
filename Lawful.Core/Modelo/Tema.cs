@@ -14,6 +14,7 @@ namespace Lawful.Core.Modelo
         public DateTime FechaCierre { get; set; }
         public readonly Usuario Owner;
         public List<Iniciativa> Iniciativas { get; set; }
+        public List<Usuario> Usuarios { get; set; }
         public bool EveryoneCanEdit { get; set; }
         public Tema()//para listas todos los temas
         {

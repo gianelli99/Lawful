@@ -23,14 +23,15 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit,titulo FROM temas WHERE id = {id};";
+                    command.CommandText = $"SELECT id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit,titulo FROM temas WHERE id = {id}; SELECT usuarios.id, nombre, apellido FROM usuarios INNER JOIN usuarios_temas ON usuarios.id = usuarios_temas.usuario_id WHERE tema_id = {id};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
                         if (response.Read())
                         {
-                            var tema = new Modelo.Tema();
-
+                            var tema = new Tema();
+                            var usuarios = new List<Usuario>();
+                            tema.Usuarios = usuarios;
                             tema.ID = response.GetInt32(0);
                             tema.Descripcion = response.GetString(1);
                             tema.Estado = response.GetBoolean(2);
@@ -38,6 +39,17 @@ namespace Lawful.Core.Datos.DAO
                             tema.FechaCierre = response.GetDateTime(4);
                             tema.EveryoneCanEdit = response.GetBoolean(5);
                             tema.Titulo = response.GetString(6);
+
+                            response.NextResult();
+                            while (response.Read())
+                            {
+                                var user = new Usuario();
+                                user.ID = response.GetInt32(0);
+                                user.Nombre = response.GetString(1);
+                                user.Apellido = response.GetString(2);
+                                tema.Usuarios.Add(user);
+                            }
+
                             return tema;
                         }
                     }

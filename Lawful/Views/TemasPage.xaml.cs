@@ -18,6 +18,7 @@ namespace Lawful.Views
     {
         private UsuarioBL usuarioBL;
         private Tema _selected;
+        private Tema modifyTema;
         private TemaBL temaBL;
         private Accion accion;
         public Tema Selected
@@ -42,9 +43,33 @@ namespace Lawful.Views
             var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 8);
             CreateCommandBar(this.AccionesBar, acciones);
         }
-        public  ObservableCollection<Tema> Temas { get; set; }
+        public ObservableCollection<Tema> Temas { get; set; }
         public ObservableCollection<Usuario> Usuarios { get; set; }
-
+        private string MyEveryoneCanEdit
+        {
+            get
+            {
+                if (Selected.EveryoneCanEdit)
+                {
+                    return "Si, todos los pertenecientes al tema";
+                }
+                else
+                {
+                    return "No, solo el creador del tema";
+                }
+            }
+        }
+        private string MyEstado { get
+            {
+                if (Selected.Estado)
+                {
+                    return "Activo";
+                }
+                else
+                {
+                    return "Cerrado";
+                }
+            } }
         private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
         {
             foreach (var button in CreateAppBarButtons(acciones))
@@ -103,6 +128,7 @@ namespace Lawful.Views
                 {
                     case "Agregar Tema":
                         FormularioMode();
+
                         break;
                     case "Eliminar Tema":
                         ContentDialogResult result = await DisplayDeleteConfirmation();
@@ -114,12 +140,19 @@ namespace Lawful.Views
 
                         break;
                     case "Modificar Tema":
-                        //FormularioUsuarioMode(false);
+                        modifyTema = temaBL.Consultar(Selected.ID);
+                        FormularioMode();
 
-                        //user = usuarioBL.Consultar(((Usuario)dgUsuarios.SelectedItem).ID);
-                        //FillFormFields(user);
+                        txtTitulo.Text = modifyTema.Titulo;
+                        txtDescripcion.Text = modifyTema.Descripcion;
 
-                        // LvGrupos.Items.Clear();
+                        foreach (ListViewItem user in lvUsuarios.Items)
+                        {
+                            //if (modifyTema.Usuarios.FindIndex(x => x.ID == ((Usuario)user).ID) != -1)
+                            //{
+                            //    user.IsSelected = true;
+                            //}
+                        }
                         //CreateGruposListView(LvGrupos, grupos, user.Grupos);
 
                         break;
@@ -149,15 +182,14 @@ namespace Lawful.Views
             spFormularioTema.Visibility = Visibility.Visible;
             tbTitulo.Visibility = Visibility.Collapsed;
             spDetails.Visibility = Visibility.Collapsed;
+            txtTitulo.Text = "";
+            txtDescripcion.Text = "";
         }
         private void TemaMode()
         {
             spFormularioTema.Visibility = Visibility.Collapsed;
             tbTitulo.Visibility = Visibility.Visible;
             spDetails.Visibility = Visibility.Visible;
-            txtTitulo.Text = "";
-            txtDescripcion.Text = "";
-
         }
         private async void DisplayNoTopicSelected()
         {
@@ -202,6 +234,38 @@ namespace Lawful.Views
         private void TemasListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             TemaMode();
+        }
+
+        private void btnCancelar_Click(object sender, RoutedEventArgs e)
+        {
+            TemaMode();
+        }
+
+        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                accion = (sender as AccionAppBarButton).Accion;
+                switch (accion.Descripcion)
+                {
+                    case "Agregar Tema":
+
+                        break;
+                    case "Modificar Tema":
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                ContentDialog error = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = "Ocurrió un error inesperado, vuelva a intentarlo",
+                    CloseButtonText = "Ok"
+                };
+            }
         }
     }
 }

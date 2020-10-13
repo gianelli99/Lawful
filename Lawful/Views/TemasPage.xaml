@@ -56,12 +56,12 @@
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}"
                     Text="Estado" />
-                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding Estado}"/>
+                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind MyEstado}"/>
                 <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}"
                     Text="¿Todos pueden editarlo?" />
-                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding EveryoneCanEdit}"/>
+                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind MyEveryoneCanEdit}"/>
             </StackPanel>
             <StackPanel HorizontalAlignment="Left" Grid.Row="2" x:Name="spFormularioTema" Visibility="Collapsed" Padding="{StaticResource DetailPageMargin}">
                 <TextBox x:Name="txtTitulo" Header= "Título" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
@@ -77,8 +77,13 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-            </StackPanel>
-        </Grid>
+                    <StackPanel x:Name="Buttons" Orientation="Horizontal">
+                        <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
+                        <Button x:Name="btnCancelar" Content="Cancelar" Margin="24" Click="btnCancelar_Click"/>
+                    </StackPanel>
+                </StackPanel>
+                
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Page>
