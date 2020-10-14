@@ -226,7 +226,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"UPDATE temas SET descripcion=@descripcion, estado=@estado, fecha_creacion=@fecha_creacion, fecha_cierre=@fecha_cierre, everyone_can_edit=@everyone_can_edit titulo=@titulo WHERE id = {tema.ID};";
+                    command.CommandText = $"UPDATE temas SET descripcion=@descripcion, estado=@estado, fecha_creacion=@fecha_creacion, fecha_cierre=@fecha_cierre, everyone_can_edit=@everyone_can_edit, titulo=@titulo WHERE id = {tema.ID};";
                     command.Parameters.AddWithValue("@descripcion", tema.Descripcion);
                     command.Parameters.AddWithValue("@estado", tema.Estado);
                     command.Parameters.AddWithValue("@fecha_creacion", tema.FechaCreacion);

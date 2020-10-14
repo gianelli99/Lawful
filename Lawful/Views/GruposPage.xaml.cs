@@ -31,7 +31,6 @@ namespace Lawful.Views
             usuarioBL = new UsuarioBL();
             grupoBL = new GrupoBL();
             InitializeComponent();
-
             Grupos = grupoBL.Listar();
             Acciones = new ObservableCollection<AccionListViewItem>();
             var accionesGrupo = grupoBL.ListarAcciones();
@@ -42,11 +41,15 @@ namespace Lawful.Views
                 accionlb.Content = accionlb.Accion.Descripcion;
                 Acciones.Add(accionlb);
             }
+            GruposMode();
+            foreach (ListViewItem item in lvAcciones.Items)
+            {
+                item.IsSelected = true;
+            }
 
             var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 2);
             CreateCommandBar(AccionesBar, acciones);
 
-            GruposMode();
         }
         public List<Grupo> Grupos { get; set; }
         public ObservableCollection<AccionListViewItem> Acciones { get; set; }
@@ -204,12 +207,14 @@ namespace Lawful.Views
         private void GruposMode()
         {
             ListaGupos.MaxHeight = double.PositiveInfinity;
-            FormularioGrupo.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            //FormularioGrupo.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            FormularioGrupo.MaxHeight = 0;
         }
         private void FormularioMode(bool isConsultar)
         {
             ListaGupos.MaxHeight = 100;
             FormularioGrupo.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            FormularioGrupo.MaxHeight = double.PositiveInfinity;
             txtCodigo.Text = "";
             txtDescripcion.Text = "";
             btnGuardar.IsEnabled = !isConsultar;

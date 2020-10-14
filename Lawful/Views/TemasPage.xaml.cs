@@ -50,31 +50,8 @@ namespace Lawful.Views
         }
         public ObservableCollection<Tema> Temas { get; set; }
         public ObservableCollection<UsuarioListViewItem> Usuarios { get; set; }
-        private string MyEveryoneCanEdit
-        {
-            get
-            {
-                if (TemasListView.SelectedItem != null && ((Tema)TemasListView.SelectedItem).EveryoneCanEdit)
-                {
-                    return "Si, todos los pertenecientes al tema";
-                }
-                else
-                {
-                    return "No, solo el creador del tema";
-                }
-            }
-        }
-        private string MyEstado { get
-            {
-                if (Selected.Estado)
-                {
-                    return "Activo";
-                }
-                else
-                {
-                    return "Cerrado";
-                }
-            } }
+        private string MyEveryoneCanEdit { get; set; }
+        private string MyEstado { get; set; }
         private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
         {
             foreach (var button in CreateAppBarButtons(acciones))
@@ -148,8 +125,6 @@ namespace Lawful.Views
                         crudTema = temaBL.Consultar(Selected.ID);
                         FormularioMode();
                         FillFields();
-                        OnPropertyChanged("Usuarios");
-                        //CreateGruposListView(LvGrupos, grupos, user.Grupos);
 
                         break;
                     case "Ver Iniciativas":
@@ -190,7 +165,8 @@ namespace Lawful.Views
 
         private void FormularioMode()
         {
-            spFormularioTema.Visibility = Visibility.Visible;
+
+            spFormularioTema.MaxHeight = double.PositiveInfinity;
             tbTitulo.Visibility = Visibility.Collapsed;
             spDetails.Visibility = Visibility.Collapsed;
             txtTitulo.Text = "";
@@ -203,7 +179,7 @@ namespace Lawful.Views
         }
         private void TemaMode()
         {
-            spFormularioTema.Visibility = Visibility.Collapsed;
+            spFormularioTema.MaxHeight = 0;
             tbTitulo.Visibility = Visibility.Visible;
             spDetails.Visibility = Visibility.Visible;
         }
@@ -280,16 +256,45 @@ namespace Lawful.Views
                             {
                                 crudTema.EveryoneCanEdit = false;
                             }
-                            foreach (UsuarioListViewItem item in lvUsuarios.SelectedItems)
+                            foreach (UsuarioListViewItem item in lvUsuarios.Items)
                             {
-                                crudTema.Usuarios.Add(item.Usuario);
+                                if (item.IsSelected)
+                                {
+                                    crudTema.Usuarios.Add(item.Usuario);
+                                }
                             }
                             temaBL.Insertar(crudTema);
                             RefreshTemasListView();
                         }
                         break;
                     case "Modificar Tema":
-                        break;
+                        if (AreFieldsFilled() && IsDateValid())
+                        {
+                            crudTema = new Tema(SesionActiva.ObtenerInstancia().Usuario);
+                            crudTema.Titulo = txtTitulo.Text;
+                            crudTema.Descripcion = txtDescripcion.Text;
+                            crudTema.FechaCreacion = DateTime.Now.Date;
+                            crudTema.FechaCierre = dpFechaCierre.Date.Date;
+
+                            if (cbTodos.IsChecked == true)
+                            {
+                                crudTema.EveryoneCanEdit = true;
+                            }
+                            else
+                            {
+                                crudTema.EveryoneCanEdit = false;
+                            }
+                            foreach (UsuarioListViewItem item in lvUsuarios.Items)
+                            {
+                                if (item.IsSelected)
+                                {
+                                    crudTema.Usuarios.Add(item.Usuario);
+                                }
+                            }
+                            temaBL.Modificar(crudTema);
+                            RefreshTemasListView();
+                        }
+                            break;
                     default:
                         break;
                 }

@@ -52,19 +52,14 @@
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}"
                     Text="Fecha de cierre" />
-                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding FechaCierre}"/>
-                <TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="Estado" />
-                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind MyEstado}"/>
-                <TextBlock
+                    <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding FechaCierre}"/>
+                    <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Style="{StaticResource DetailSubTitleStyle}"
                     Text="¿Todos pueden editarlo?" />
-                <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind MyEveryoneCanEdit}"/>
+                    <RadioButton Margin="4,5,0,0" IsChecked="{Binding EveryoneCanEdit}" IsEnabled="False"/>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Left" Grid.Row="2" x:Name="spFormularioTema" Visibility="Collapsed" Padding="{StaticResource DetailPageMargin}">
+            <StackPanel HorizontalAlignment="Left" Grid.Row="2" x:Name="spFormularioTema" Visibility="Visible" Padding="{StaticResource DetailPageMargin}">
                 <TextBox x:Name="txtTitulo" Header= "Título" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                 <TextBox x:Name="txtDescripcion" Header= "Descripción" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                 <DatePicker x:Name="dpFechaCierre" Header="Fecha de cierre" Margin="0,24,0,0" Width="400"/>
