@@ -114,7 +114,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO temas VALUES (@descripcion, @estado, @fecha_creacion, @fecha_cierre, @everyone_can_edit, @titulo);";
+                    command.CommandText = $"INSERT INTO temas VALUES (@descripcion, @estado, @fecha_creacion, @fecha_cierre, @everyone_can_edit, @titulo);SELECT CAST(scope_identity() AS int);";
                     command.Parameters.AddWithValue("@descripcion", tema.Descripcion);
                     command.Parameters.AddWithValue("@estado", 1);
                     command.Parameters.AddWithValue("@fecha_creacion", tema.FechaCreacion);
@@ -122,6 +122,18 @@ namespace Lawful.Core.Datos.DAO
                     command.Parameters.AddWithValue("@everyone_can_edit", tema.EveryoneCanEdit);
                     command.Parameters.AddWithValue("@titulo", tema.Titulo);
 
+                    if (tema.Usuarios.Count>0)
+                    {
+                        string accionesQuery = "INSERT INTO usuarios_temas VALUES";
+                        foreach (var usuario in tema.Usuarios)
+                        {
+                            accionesQuery += $"({usuario.ID}, {tema.ID}),";
+                        }
+                        accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
+                        accionesQuery += ";";
+                        command.CommandText += accionesQuery;
+                    }
+                    
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;

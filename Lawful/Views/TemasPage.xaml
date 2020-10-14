@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:modelo="using:Lawful.Core.Modelo"
+    xmlns:helpers="using:Lawful.Helpers"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Page.Transitions>
@@ -70,10 +71,10 @@
                 <TextBlock Text="¿Quién puede editarlo?" Margin="0,24,0,0" TextAlignment="Left"/>
                 <RadioButton x:Name="cbTodos" Content="Todos" Margin="0,12,0,0"/>
                 <RadioButton x:Name="cbSoloYo" Content="Solo yo"/>
-                <ListView x:Name="lvUsuarios" Margin="{StaticResource SmallTopMargin}" Header="Usuarios" SelectionMode="Multiple" Height="400" MaxWidth="450" ItemsSource="{x:Bind Usuarios, Mode=OneWay}">
+                <ListView x:Name="lvUsuarios" Margin="{StaticResource SmallTopMargin}" Header="Usuarios" SelectionMode="Multiple" Height="400" MaxWidth="450" ItemsSource="{x:Bind Usuarios, Mode=TwoWay}">
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="modelo:Usuario">
-                            <TextBlock Text="{x:Bind GetNombreCompleto()}"/>
+                        <DataTemplate x:DataType="helpers:UsuarioListViewItem">
+                            <TextBlock Text="{x:Bind Usuario.GetNombreCompleto()}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

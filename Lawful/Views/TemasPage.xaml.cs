@@ -18,7 +18,7 @@ namespace Lawful.Views
     {
         private UsuarioBL usuarioBL;
         private Tema _selected;
-        private Tema modifyTema;
+        private Tema crudTema;
         private TemaBL temaBL;
         private Accion accion;
         public Tema Selected
@@ -28,15 +28,20 @@ namespace Lawful.Views
         }
         public TemasPage()
         {
+            crudTema = new Tema();
             usuarioBL = new UsuarioBL();
             temaBL = new TemaBL();
             InitializeComponent();
             RefreshTemasListView();
-            Usuarios = new ObservableCollection<Usuario>();
+            cbSoloYo.IsChecked = true;
+            Usuarios = new ObservableCollection<UsuarioListViewItem>();
             var data = usuarioBL.Listar();
             foreach (var item in data)
             {
-                Usuarios.Add(item);
+                var userlb = new UsuarioListViewItem();
+                userlb.Usuario = item;
+                userlb.Content = userlb.Usuario.GetNombreCompleto();
+                Usuarios.Add(userlb);
             }
             OnPropertyChanged("Usuarios");
             TemaMode();
@@ -44,7 +49,7 @@ namespace Lawful.Views
             CreateCommandBar(this.AccionesBar, acciones);
         }
         public ObservableCollection<Tema> Temas { get; set; }
-        public ObservableCollection<Usuario> Usuarios { get; set; }
+        public ObservableCollection<UsuarioListViewItem> Usuarios { get; set; }
         private string MyEveryoneCanEdit
         {
             get
@@ -140,19 +145,10 @@ namespace Lawful.Views
 
                         break;
                     case "Modificar Tema":
-                        modifyTema = temaBL.Consultar(Selected.ID);
+                        crudTema = temaBL.Consultar(Selected.ID);
                         FormularioMode();
-
-                        txtTitulo.Text = modifyTema.Titulo;
-                        txtDescripcion.Text = modifyTema.Descripcion;
-
-                        foreach (ListViewItem user in lvUsuarios.Items)
-                        {
-                            //if (modifyTema.Usuarios.FindIndex(x => x.ID == ((Usuario)user).ID) != -1)
-                            //{
-                            //    user.IsSelected = true;
-                            //}
-                        }
+                        FillFields();
+                        OnPropertyChanged("Usuarios");
                         //CreateGruposListView(LvGrupos, grupos, user.Grupos);
 
                         break;
@@ -177,6 +173,24 @@ namespace Lawful.Views
                 //GridMode();
             }
         }
+
+        private void FillFields()
+        {
+            txtTitulo.Text = crudTema.Titulo;
+            txtDescripcion.Text = crudTema.Descripcion;
+            dpFechaCierre.Date = crudTema.FechaCierre.Date;
+            cbSoloYo.IsChecked = crudTema.EveryoneCanEdit ? false : true;
+            cbTodos.IsChecked = crudTema.EveryoneCanEdit ? true : false;
+
+            foreach (UsuarioListViewItem user in lvUsuarios.Items)
+            {
+                if (crudTema.Usuarios.FindIndex(x => x.ID == user.Usuario.ID) != -1)
+                {
+                    user.IsSelected = true;
+                }
+            }
+        }
+
         private void FormularioMode()
         {
             spFormularioTema.Visibility = Visibility.Visible;
@@ -184,6 +198,11 @@ namespace Lawful.Views
             spDetails.Visibility = Visibility.Collapsed;
             txtTitulo.Text = "";
             txtDescripcion.Text = "";
+            cbSoloYo.IsChecked = true;
+            foreach (UsuarioListViewItem item in lvUsuarios.Items)
+            {
+                item.IsSelected = false;
+            }
         }
         private void TemaMode()
         {
@@ -245,11 +264,32 @@ namespace Lawful.Views
         {
             try
             {
-                accion = (sender as AccionAppBarButton).Accion;
                 switch (accion.Descripcion)
                 {
                     case "Agregar Tema":
-
+                        if (AreFieldsFilled() && IsDateValid())
+                        {
+                            crudTema = new Tema(SesionActiva.ObtenerInstancia().Usuario);
+                            crudTema.Titulo = txtTitulo.Text;
+                            crudTema.Descripcion = txtDescripcion.Text;
+                            crudTema.FechaCreacion = DateTime.Now.Date;
+                            crudTema.FechaCierre = dpFechaCierre.Date.Date;
+                            
+                            if (cbTodos.IsChecked == true)
+                            {
+                                crudTema.EveryoneCanEdit = true;
+                            }
+                            else
+                            {
+                                crudTema.EveryoneCanEdit = false;
+                            }
+                            foreach (UsuarioListViewItem item in lvUsuarios.SelectedItems)
+                            {
+                                crudTema.Usuarios.Add(item.Usuario);
+                            }
+                            temaBL.Insertar(crudTema);
+                            RefreshTemasListView();
+                        }
                         break;
                     case "Modificar Tema":
                         break;
@@ -257,15 +297,46 @@ namespace Lawful.Views
                         break;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ContentDialog error = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = "Ocurrió un error inesperado, vuelva a intentarlo",
-                    CloseButtonText = "Ok"
-                };
+                DisplayError(ex.Message);
             }
+        }
+        private bool IsDateValid()
+        {
+            if (dpFechaCierre.Date.Date >= DateTime.Now.Date)
+            {
+                return true;
+            }
+            else
+            {
+                throw new Exception("La fecha de cierre debe ser mayor a la actual");
+            }
+            
+        }
+        private bool AreFieldsFilled()
+        {
+            if (String.IsNullOrWhiteSpace(txtTitulo.Text) ||
+                String.IsNullOrWhiteSpace(txtDescripcion.Text))
+            {
+
+                throw new Exception("Debe completar todos los campos");
+            }
+            else
+            {
+                return true;
+            }
+        }
+        private async void DisplayError(string errorM)
+        {
+            ContentDialog error = new ContentDialog
+            {
+                Title = "Error",
+                Content = errorM,
+                CloseButtonText = "Ok"
+            };
+
+            await error.ShowAsync();
         }
     }
 }

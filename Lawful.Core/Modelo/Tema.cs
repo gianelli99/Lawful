@@ -19,10 +19,12 @@ namespace Lawful.Core.Modelo
         public Tema()//para listas todos los temas
         {
             Iniciativas = new List<Iniciativa>();
+            Usuarios = new List<Usuario>();
         }
         public Tema(Usuario owner)// para consultar un tema en especial
         {
             Iniciativas = new List<Iniciativa>();
+            Usuarios = new List<Usuario>();
             Owner = owner;
         }
         public string DisponibleHasta()

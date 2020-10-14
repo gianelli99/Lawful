@@ -185,7 +185,7 @@ namespace Lawful.Core.Datos.DAO
                     {
                         accionesQuery += $"({grupo.ID}, {accion.ID}),";
                     }
-                    accionesQuery.TrimEnd(new char[] {','});
+                    accionesQuery.TrimEnd(',');
                     accionesQuery += ";";
                     command.CommandText += accionesQuery;
 
