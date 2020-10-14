@@ -121,6 +121,13 @@ namespace Lawful.Core.Datos.DAO
                     command.Parameters.AddWithValue("@fecha_cierre", tema.FechaCierre);
                     command.Parameters.AddWithValue("@everyone_can_edit", tema.EveryoneCanEdit);
                     command.Parameters.AddWithValue("@titulo", tema.Titulo);
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        if (response.Read())
+                        {
+                            tema.ID = response.GetInt32(0);
+                        }
+                    }
 
                     if (tema.Usuarios.Count>0)
                     {
@@ -132,9 +139,10 @@ namespace Lawful.Core.Datos.DAO
                         accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
                         accionesQuery += ";";
                         command.CommandText += accionesQuery;
+                        command.ExecuteNonQuery();
                     }
                     
-                    command.ExecuteNonQuery();
+                    
                     transaction.Commit();
                     return;
                 }

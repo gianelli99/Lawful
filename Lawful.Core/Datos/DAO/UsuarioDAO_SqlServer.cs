@@ -223,7 +223,7 @@ namespace Lawful.Core.Datos.DAO
                     {
                         querygrupos += $"('{t.ID.ToString()}','{grupo.ID.ToString()}'),";
                     }
-                    querygrupos = querygrupos.TrimEnd(',');
+                    querygrupos = querygrupos.Remove(querygrupos.Length - 1);
                     command.CommandText = querygrupos;
                     command.ExecuteNonQuery();
                     transaction.Commit();

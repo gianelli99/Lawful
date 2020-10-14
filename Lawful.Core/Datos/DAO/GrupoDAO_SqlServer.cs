@@ -64,18 +64,27 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT * FROM grupos WHERE id = {id}";
+                    command.CommandText = $"SELECT * from grupos WHERE id={id} ;SELECT acciones.id, acciones.descripcion FROM grupos INNER JOIN grupos_acciones ON grupos.id = grupos_acciones.grupo_id INNER JOIN acciones ON grupos_acciones.accion_id = acciones.id WHERE grupos.id = {id};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
                         if (response.Read())
                         {
-                            var grupo = new Modelo.Grupo();
+                            var grupo = new Grupo();
 
                             grupo.ID = response.GetInt32(0);
                             grupo.Codigo = response.GetString(1);
                             grupo.Descripcion = response.GetString(2);
                             grupo.Estado = response.GetBoolean(3);
+
+                            response.NextResult();
+                            while (response.Read())
+                            {
+                                var accion = new Accion();
+                                accion.ID = response.GetInt32(0);
+                                accion.Descripcion = response.GetString(1);
+                                grupo.Acciones.Add(accion);
+                            }
                             return grupo;
                         }
                     }
@@ -185,7 +194,7 @@ namespace Lawful.Core.Datos.DAO
                     {
                         accionesQuery += $"({grupo.ID}, {accion.ID}),";
                     }
-                    accionesQuery.TrimEnd(',');
+                    accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
                     accionesQuery += ";";
                     command.CommandText += accionesQuery;
 

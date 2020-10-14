@@ -12,8 +12,8 @@
             <CommandBar x:Name="AccionesBar">
                 
             </CommandBar>
-            <Grid>
-                <controls:DataGrid Name="dgGrupos" ItemsSource="{x:Bind Grupos}" AutoGenerateColumns="False" GridLinesVisibility="Horizontal" IsReadOnly="True" SelectionMode="Single">
+            <Grid x:Name="ListaGupos">
+                <controls:DataGrid Name="dgGrupos" ItemsSource="{x:Bind Grupos}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" AutoGenerateColumns="False" GridLinesVisibility="Horizontal" IsReadOnly="True" SelectionMode="Single">
                     <controls:DataGrid.Columns>
                         <controls:DataGridTextColumn Header="ID" Binding="{Binding ID}" />
                         <controls:DataGridTextColumn Header="Código" Binding="{Binding Codigo}" />
@@ -27,14 +27,18 @@
                         <TextBox x:Name="txtDescripcion" Header="Descripcion" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left" />
                     </StackPanel>
                 <StackPanel x:Name="Second" Margin="20,0,20,20" HorizontalAlignment="Left">
-                    <TextBlock Text= "Usuarios"/>
-                    <ListView x:Name="LvUsuarios" SelectionMode="Multiple" Height="350" ItemsSource="{x:Bind Usuarios}">
-                        <ListView.ItemTemplate>
+                    <TextBlock Text= "Acciones"/>
+                    <ListView x:Name="lvAcciones" SelectionMode="Multiple" Height="350" Width="400" ItemsSource="{x:Bind Acciones, Mode=OneWay}">
+                        <!--<ListView.ItemTemplate>
                             <DataTemplate x:DataType="modelo:Usuario">
                                 <TextBlock Text="{x:Bind GetNombreCompleto()}"/>
                             </DataTemplate>
-                        </ListView.ItemTemplate>
+                        </ListView.ItemTemplate>-->
                     </ListView>
+                </StackPanel>
+                <StackPanel x:Name="Buttons" Orientation="Horizontal">
+                    <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
+                    <Button x:Name="btnCancelar" Content="Cancelar" Margin="24" Click="btnCancelar_Click"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

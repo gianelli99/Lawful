@@ -147,6 +147,7 @@
     <Compile Include="Behaviors\NavigationViewHeaderMode.cs" />
     <Compile Include="ClassParameters\CambiarContrasenaParameters.cs" />
     <Compile Include="Helpers\AccionAppBarButton.cs" />
+    <Compile Include="Helpers\AccionListViewItem.cs" />
     <Compile Include="Helpers\EnumToBooleanConverter.cs" />
     <Compile Include="Helpers\FrameGlobal.cs" />
     <Compile Include="Helpers\GrupoListViewItem.cs" />

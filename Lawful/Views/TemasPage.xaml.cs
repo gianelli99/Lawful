@@ -54,7 +54,7 @@ namespace Lawful.Views
         {
             get
             {
-                if (Selected.EveryoneCanEdit)
+                if (TemasListView.SelectedItem != null && ((Tema)TemasListView.SelectedItem).EveryoneCanEdit)
                 {
                     return "Si, todos los pertenecientes al tema";
                 }
@@ -168,9 +168,6 @@ namespace Lawful.Views
                     Content = "Ocurrió un error inesperado, vuelva a intentarlo",
                     CloseButtonText = "Ok"
                 };
-
-                //ContentDialogResult result = await error.ShowAsync();
-                //GridMode();
             }
         }
 

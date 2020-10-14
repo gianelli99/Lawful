@@ -11,24 +11,20 @@ namespace Lawful.Core.Logica
     {
         // Subsistemas
         private Datos.Interfaces.IGrupoDAO grupoDAO;
+        private Datos.Interfaces.IAccionDAO accionDAO;
         private Datos.Interfaces.IUsuarioDAO usuarioDAO;
         public GrupoBL()
         {
             grupoDAO = new Datos.DAO.GrupoDAO_SqlServer();
+            accionDAO = new Datos.DAO.AccionDAO_SqlServer();
             usuarioDAO = new Datos.DAO.UsuarioDAO_SqlServer();
         }
 
-        public List<Modelo.Accion> ListarAccionesDisponibles(int userId,int vistaId)
+        public List<Modelo.Accion> ListarAcciones()
         {
             try
             {
-                // Utilización del subsistema IUsuarioDAO
-                //return usuarioDAO.ListarAccionesDisponibles(userId, vistaId);
-
-
-
-                // Falta implementar, hay que llamar a AccionDAO_SqlServer
-                return null;
+                return accionDAO.Listar();
             }
             catch (Exception ex)
             {
