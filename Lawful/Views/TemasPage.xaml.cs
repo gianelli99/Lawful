@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Lawful.Core.Logica;
+using Lawful.Core.Modelo;
+using Lawful.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Lawful.Core.Logica;
-using Lawful.Core.Modelo;
-using Lawful.Helpers;
-using Lawful.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace Lawful.Views
 {
@@ -38,8 +35,10 @@ namespace Lawful.Views
             var data = usuarioBL.Listar();
             foreach (var item in data)
             {
-                var userlb = new UsuarioListViewItem();
-                userlb.Usuario = item;
+                var userlb = new UsuarioListViewItem
+                {
+                    Usuario = item
+                };
                 userlb.Content = userlb.Usuario.GetNombreCompleto();
                 Usuarios.Add(userlb);
             }
@@ -50,8 +49,8 @@ namespace Lawful.Views
         }
         public ObservableCollection<Tema> Temas { get; set; }
         public ObservableCollection<UsuarioListViewItem> Usuarios { get; set; }
-        private string MyEveryoneCanEdit { get; set; }
-        private string MyEstado { get; set; }
+        //private string MyEveryoneCanEdit { get; set; }
+        //private string MyEstado { get; set; }
         private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
         {
             foreach (var button in CreateAppBarButtons(acciones))
@@ -88,7 +87,7 @@ namespace Lawful.Views
                 {
                     Temas.Add(item);
                 }
-                if (Temas.Count>0)
+                if (Temas.Count > 0)
                 {
                     Selected = Temas[0];
                 }
@@ -119,7 +118,15 @@ namespace Lawful.Views
                             temaBL.Eliminar(((Tema)TemasListView.SelectedItem).ID);
                             RefreshTemasListView();
                         }
+                        if (Temas[0] != null)
+                        {
+                            Selected = Temas[0];
+                        }
+                        else
+                        {
 
+                        }
+                        OnPropertyChanged("Selected");
                         break;
                     case "Modificar Tema":
                         crudTema = temaBL.Consultar(Selected.ID);
@@ -128,7 +135,7 @@ namespace Lawful.Views
 
                         break;
                     case "Ver Iniciativas":
-                        this.Frame.Navigate(typeof(IniciativasTemaPage),Selected.ID);
+                        this.Frame.Navigate(typeof(IniciativasTemaPage), Selected.ID);
 
                         break;
                     default:
@@ -137,8 +144,7 @@ namespace Lawful.Views
             }
             catch (Exception)
             {
-                ContentDialog error = new ContentDialog
-                {
+                new ContentDialog {
                     Title = "Error",
                     Content = "Ocurrió un error inesperado, vuelva a intentarlo",
                     CloseButtonText = "Ok"
@@ -151,8 +157,8 @@ namespace Lawful.Views
             txtTitulo.Text = crudTema.Titulo;
             txtDescripcion.Text = crudTema.Descripcion;
             dpFechaCierre.Date = crudTema.FechaCierre.Date;
-            cbSoloYo.IsChecked = crudTema.EveryoneCanEdit ? false : true;
-            cbTodos.IsChecked = crudTema.EveryoneCanEdit ? true : false;
+            cbSoloYo.IsChecked = !crudTema.EveryoneCanEdit;
+            cbTodos.IsChecked = crudTema.EveryoneCanEdit;
 
             foreach (UsuarioListViewItem user in lvUsuarios.Items)
             {
@@ -192,7 +198,7 @@ namespace Lawful.Views
                 CloseButtonText = "Ok"
             };
 
-            ContentDialogResult result = await noTopicSelected.ShowAsync();
+            await noTopicSelected.ShowAsync();
         }
         private async System.Threading.Tasks.Task<ContentDialogResult> DisplayDeleteConfirmation()
         {
@@ -205,12 +211,12 @@ namespace Lawful.Views
             };
 
             ContentDialogResult result = await noUserSelected.ShowAsync();
-            return result;            
+            return result;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
+        private void Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (Equals(storage, value))
             {
@@ -242,12 +248,14 @@ namespace Lawful.Views
                     case "Agregar Tema":
                         if (AreFieldsFilled() && IsDateValid())
                         {
-                            crudTema = new Tema(SesionActiva.ObtenerInstancia().Usuario);
-                            crudTema.Titulo = txtTitulo.Text;
-                            crudTema.Descripcion = txtDescripcion.Text;
-                            crudTema.FechaCreacion = DateTime.Now.Date;
-                            crudTema.FechaCierre = dpFechaCierre.Date.Date;
-                            
+                            crudTema = new Tema(SesionActiva.ObtenerInstancia().Usuario)
+                            {
+                                Titulo = txtTitulo.Text,
+                                Descripcion = txtDescripcion.Text,
+                                FechaCreacion = DateTime.Now.Date,
+                                FechaCierre = dpFechaCierre.Date.Date
+                            };
+
                             if (cbTodos.IsChecked == true)
                             {
                                 crudTema.EveryoneCanEdit = true;
@@ -270,11 +278,15 @@ namespace Lawful.Views
                     case "Modificar Tema":
                         if (AreFieldsFilled() && IsDateValid())
                         {
-                            crudTema = new Tema(SesionActiva.ObtenerInstancia().Usuario);
-                            crudTema.Titulo = txtTitulo.Text;
-                            crudTema.Descripcion = txtDescripcion.Text;
-                            crudTema.FechaCreacion = DateTime.Now.Date;
-                            crudTema.FechaCierre = dpFechaCierre.Date.Date;
+                            crudTema = new Tema(SesionActiva.ObtenerInstancia().Usuario)
+                            {
+                                ID = Selected.ID,
+                                Titulo = txtTitulo.Text,
+                                Descripcion = txtDescripcion.Text,
+                                FechaCreacion = Selected.FechaCreacion.Date,
+                                FechaCierre = dpFechaCierre.Date.Date,
+                                Estado = Selected.Estado
+                            };
 
                             if (cbTodos.IsChecked == true)
                             {
@@ -293,8 +305,9 @@ namespace Lawful.Views
                             }
                             temaBL.Modificar(crudTema);
                             RefreshTemasListView();
+                            TemaMode();
                         }
-                            break;
+                        break;
                     default:
                         break;
                 }
@@ -314,7 +327,7 @@ namespace Lawful.Views
             {
                 throw new Exception("La fecha de cierre debe ser mayor a la actual");
             }
-            
+
         }
         private bool AreFieldsFilled()
         {

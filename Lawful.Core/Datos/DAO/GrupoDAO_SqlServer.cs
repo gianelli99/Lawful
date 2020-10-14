@@ -70,19 +70,22 @@ namespace Lawful.Core.Datos.DAO
                     {
                         if (response.Read())
                         {
-                            var grupo = new Grupo();
-
-                            grupo.ID = response.GetInt32(0);
-                            grupo.Codigo = response.GetString(1);
-                            grupo.Descripcion = response.GetString(2);
-                            grupo.Estado = response.GetBoolean(3);
+                            var grupo = new Grupo
+                            {
+                                ID = response.GetInt32(0),
+                                Codigo = response.GetString(1),
+                                Descripcion = response.GetString(2),
+                                Estado = response.GetBoolean(3)
+                            };
 
                             response.NextResult();
                             while (response.Read())
                             {
-                                var accion = new Accion();
-                                accion.ID = response.GetInt32(0);
-                                accion.Descripcion = response.GetString(1);
+                                var accion = new Accion
+                                {
+                                    ID = response.GetInt32(0),
+                                    Descripcion = response.GetString(1)
+                                };
                                 grupo.Acciones.Add(accion);
                             }
                             return grupo;
@@ -242,12 +245,13 @@ namespace Lawful.Core.Datos.DAO
                             var grupos = new List<Modelo.Grupo>();
                             while (response.Read())
                             {
-                                var grupo = new Modelo.Grupo();
-
-                                grupo.ID = response.GetInt32(0);
-                                grupo.Codigo = response.GetString(1);
-                                grupo.Descripcion = response.GetString(2);
-                                grupo.Estado = response.GetBoolean(3);
+                                var grupo = new Modelo.Grupo
+                                {
+                                    ID = response.GetInt32(0),
+                                    Codigo = response.GetString(1),
+                                    Descripcion = response.GetString(2),
+                                    Estado = response.GetBoolean(3)
+                                };
                                 grupos.Add(grupo);
                             }
                             return grupos;
@@ -277,7 +281,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT grupos.id, grupos.codigo, grupos.descripcion, grupos.estado FROM grupos INNER JOIN usuarios_grupos ON usuarios_grupos.grupo_id = grupos.id WHERE estado = 1 AND usuarios_grupos.usuario_id = {userId.ToString()}";
+                    command.CommandText = $"SELECT grupos.id, grupos.codigo, grupos.descripcion, grupos.estado FROM grupos INNER JOIN usuarios_grupos ON usuarios_grupos.grupo_id = grupos.id WHERE estado = 1 AND usuarios_grupos.usuario_id = {userId}";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -286,12 +290,13 @@ namespace Lawful.Core.Datos.DAO
                             var grupos = new List<Grupo>();
                             while (response.Read())
                             {
-                                var grupo = new Grupo();
-
-                                grupo.ID = response.GetInt32(0);
-                                grupo.Codigo = response.GetString(1);
-                                grupo.Descripcion = response.GetString(2);
-                                grupo.Estado = response.GetBoolean(3);
+                                var grupo = new Grupo
+                                {
+                                    ID = response.GetInt32(0),
+                                    Codigo = response.GetString(1),
+                                    Descripcion = response.GetString(2),
+                                    Estado = response.GetBoolean(3)
+                                };
                                 grupos.Add(grupo);
                             }
                             return grupos;
@@ -322,7 +327,7 @@ namespace Lawful.Core.Datos.DAO
                 {
                     int bitEstado = grupo.Estado ? 1 : 0;
 
-                    command.CommandText = $"UPDATE grupos SET codigo=@codigo, descripcion=@descripcion, estado={bitEstado.ToString()} WHERE id = {grupo.ID};";
+                    command.CommandText = $"UPDATE grupos SET codigo=@codigo, descripcion=@descripcion, estado={bitEstado} WHERE id = {grupo.ID};";
                     command.Parameters.AddWithValue("@codigo", grupo.Codigo);
                     command.Parameters.AddWithValue("@descripcion", grupo.Descripcion);
 
