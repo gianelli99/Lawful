@@ -29,10 +29,12 @@ namespace Lawful.Core.Datos.DAO
                         var acciones = new List<Accion>();
                         while (response.Read())
                         {
-                            var accion = new Accion();
-                            accion.ID = response.GetInt32(0);
-                            accion.Descripcion = response.GetString(1);
-                            accion.IconName = response.GetString(2);
+                            var accion = new Accion
+                            {
+                                ID = response.GetInt32(0),
+                                Descripcion = response.GetString(1),
+                                IconName = response.GetString(2)
+                            };
                             acciones.Add(accion);
                         }
                         return acciones;
@@ -67,10 +69,12 @@ namespace Lawful.Core.Datos.DAO
                         var acciones = new List<Accion>();
                         while (response.Read())
                         {
-                            var accion = new Accion();
-                            accion.ID = response.GetInt32(0);
-                            accion.Descripcion = response.GetString(1);
-                            accion.IconName = response.GetString(2);
+                            var accion = new Accion
+                            {
+                                ID = response.GetInt32(0),
+                                Descripcion = response.GetString(1),
+                                IconName = response.GetString(2)
+                            };
                             acciones.Add(accion);
                         }
                         return acciones;
@@ -105,10 +109,12 @@ namespace Lawful.Core.Datos.DAO
                         var acciones = new List<Accion>();
                         while (response.Read())
                         {
-                            var accion = new Accion();
-                            accion.ID = response.GetInt32(0);
-                            accion.Descripcion = response.GetString(1);
-                            accion.IconName = response.GetString(2);
+                            var accion = new Accion
+                            {
+                                ID = response.GetInt32(0),
+                                Descripcion = response.GetString(1),
+                                IconName = response.GetString(2)
+                            };
                             acciones.Add(accion);
                         }
                         return acciones;
@@ -143,10 +149,12 @@ namespace Lawful.Core.Datos.DAO
                         var acciones = new List<Accion>();
                         while (response.Read())
                         {
-                            var accion = new Accion();
-                            accion.ID = response.GetInt32(0);
-                            accion.Descripcion = response.GetString(1);
-                            accion.IconName = response.GetString(2);
+                            var accion = new Accion
+                            {
+                                ID = response.GetInt32(0),
+                                Descripcion = response.GetString(1),
+                                IconName = response.GetString(2)
+                            };
                             acciones.Add(accion);
                         }
                         return acciones;
