@@ -4,20 +4,18 @@ using System.Text;
 
 namespace Lawful.Core.Logica
 {
-    public class TemaBL
+    public class IniciativaBL
     {
-        private Datos.Interfaces.ITemaDAO temaDAO;
         private Datos.Interfaces.IIniciativaDAO iniciativaDAO;
-        public TemaBL()
+        public IniciativaBL()
         {
-            temaDAO = new Datos.DAO.TemaDAO_SqlServer();
             iniciativaDAO = new Datos.DAO.IniciativaDAO_SqlServer();
         }
-        public void Insertar(Modelo.Tema tema)
+        public void Insertar(Modelo.Iniciativa iniciativa)
         {
             try
             {
-                temaDAO.Insertar(tema);
+                iniciativaDAO.Insertar(iniciativa);
             }
             catch (Exception)
             {
@@ -25,11 +23,11 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
-        public void Modificar(Modelo.Tema tema)
+        public void Modificar(Modelo.Iniciativa iniciativa)
         {
             try
             {
-                temaDAO.Modificar(tema);
+                iniciativaDAO.Modificar(iniciativa);
             }
             catch (Exception)
             {
@@ -41,7 +39,7 @@ namespace Lawful.Core.Logica
         {
             try
             {
-                temaDAO.Eliminar(id);
+                iniciativaDAO.Eliminar(id);
             }
             catch (Exception)
             {
@@ -49,24 +47,11 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
-        public Modelo.Tema Consultar(int id)
+        public Modelo.Iniciativa Consultar(int id)
         {
             try
             {
-                 return temaDAO.Consultar(id);
-            }
-            catch (Exception)
-            {
-
-                throw new Exception("Ha ocurrido un error");
-            }
-        }
-        public List<Modelo.Iniciativa> ListarIniciativas(int temaId)
-        {
-            try
-            {
-                var iniciativas = iniciativaDAO.ListarPorTema(temaId);
-                return iniciativas;
+                return iniciativaDAO.Consultar(id);
             }
             catch (Exception)
             {

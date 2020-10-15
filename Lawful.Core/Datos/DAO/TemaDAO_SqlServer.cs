@@ -24,13 +24,13 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit,titulo FROM temas WHERE id = {id}; SELECT usuarios.id, nombre, apellido FROM usuarios INNER JOIN usuarios_temas ON usuarios.id = usuarios_temas.usuario_id WHERE tema_id = {id};";
+                    command.CommandText = $"SELECT id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit,titulo, temas.usuario_id FROM temas WHERE id = {id}; SELECT usuarios.id, nombre, apellido FROM usuarios INNER JOIN usuarios_temas ON usuarios.id = usuarios_temas.usuario_id WHERE tema_id = {id};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
                         if (response.Read())
                         {
-                            var tema = new Tema();
+                            var tema = new Tema(new Usuario() { ID = response.GetInt32(7)});
                             var usuarios = new List<Usuario>();
                             tema.Usuarios = usuarios;
                             tema.ID = response.GetInt32(0);
@@ -117,7 +117,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO temas VALUES (@descripcion, @estado, @fecha_creacion, @fecha_cierre, @everyone_can_edit, @titulo);SELECT CAST(scope_identity() AS int);";
+                    command.CommandText = $"INSERT INTO temas VALUES (@descripcion, @estado, @fecha_creacion, @fecha_cierre, @everyone_can_edit, @titulo, {tema.Owner.ID});SELECT CAST(scope_identity() AS int);";
                     command.Parameters.AddWithValue("@descripcion", tema.Descripcion);
                     command.Parameters.AddWithValue("@estado", 1);
                     command.Parameters.AddWithValue("@fecha_creacion", tema.FechaCreacion);
@@ -180,7 +180,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT temas.id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit, titulo FROM temas INNER JOIN usuarios_temas ON temas.id = usuarios_temas.tema_id WHERE estado = 1 AND usuarios_temas.usuario_id = {userId}";
+                    command.CommandText = $"SELECT temas.id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit, titulo, temas.usuario_id FROM temas INNER JOIN usuarios_temas ON temas.id = usuarios_temas.tema_id WHERE estado = 1 AND usuarios_temas.usuario_id = {userId}";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -189,7 +189,7 @@ namespace Lawful.Core.Datos.DAO
                             var temas = new List<Tema>();
                             while (response.Read())
                             {
-                                var tema = new Tema
+                                var tema = new Tema( new Usuario() { ID = response.GetInt32(7) })
                                 {
                                     ID = response.GetInt32(0),
                                     Descripcion = response.GetString(1),
@@ -230,7 +230,6 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    Trace.WriteLine($"El id del tema ${tema.Titulo} es ${tema.ID}", "Tema ID");
 
                     command.CommandText = $"UPDATE temas SET descripcion=@descripcion, estado=@estado, fecha_creacion=@fecha_creacion, fecha_cierre=@fecha_cierre, everyone_can_edit=@everyone_can_edit, titulo=@titulo WHERE id = {tema.ID};";
                     command.Parameters.AddWithValue("@descripcion", tema.Descripcion);
@@ -245,19 +244,10 @@ namespace Lawful.Core.Datos.DAO
                     foreach (var usuario in tema.Usuarios)
                     {
                         usuariosQuery += $"INSERT INTO usuarios_temas VALUES({usuario.ID},{tema.ID});";
-                        Trace.WriteLine($"El id del usuario ${usuario.GetNombreCompleto() } es ${usuario.ID}, mientras que el tema es ${tema.ID}", "usuarios_temas");
                     }
                     command.CommandText += usuariosQuery;
                     command.ExecuteNonQuery();
                     transaction.Commit();
-                    /*
-                     
-                    - [x] 1. Dropear todos los usuariostemas donde el temaid.
-                    - [x] 2. Copiar insert de usuariostemas del insert tema. 
-                    - [] Hacer que la fecha de inicio no sea una fecha nueva si no que sea la que ya estaba seteada.
-
-                     */
-
 
                     return;
                 }
