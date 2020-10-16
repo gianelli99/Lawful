@@ -18,6 +18,8 @@ namespace Lawful.Views
         private Tema crudTema;
         private TemaBL temaBL;
         private Accion accion;
+        public ObservableCollection<Tema> Temas { get; set; }
+        public ObservableCollection<UsuarioListViewItem> Usuarios { get; set; }
         public Tema Selected
         {
             get { return _selected; }
@@ -47,10 +49,6 @@ namespace Lawful.Views
             var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 8);
             CreateCommandBar(this.AccionesBar, acciones);
         }
-        public ObservableCollection<Tema> Temas { get; set; }
-        public ObservableCollection<UsuarioListViewItem> Usuarios { get; set; }
-        //private string MyEveryoneCanEdit { get; set; }
-        //private string MyEstado { get; set; }
         private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
         {
             foreach (var button in CreateAppBarButtons(acciones))
@@ -122,10 +120,7 @@ namespace Lawful.Views
                         {
                             Selected = Temas[0];
                         }
-                        else
-                        {
 
-                        }
                         OnPropertyChanged("Selected");
                         break;
                     case "Modificar Tema":
@@ -181,7 +176,19 @@ namespace Lawful.Views
             foreach (UsuarioListViewItem item in lvUsuarios.Items)
             {
                 item.IsSelected = false;
+                item.IsEnabled = true;
+                if (accion.Descripcion == "Agregar Tema" && item.Usuario.ID == SesionActiva.ObtenerInstancia().Usuario.ID)
+                {
+                    item.IsSelected = true;
+                    item.IsEnabled = false;
+                }
+                else if (accion.Descripcion == "Modificar Tema" && Selected.Owner.ID == item.Usuario.ID)
+                {
+                    item.IsSelected = true;
+                    item.IsEnabled = false;
+                }
             }
+
         }
         private void TemaMode()
         {
@@ -273,12 +280,17 @@ namespace Lawful.Views
                             }
                             temaBL.Insertar(crudTema);
                             RefreshTemasListView();
+                            TemaMode();
+                            if (Temas[0] != null)
+                            {
+                                Selected = Temas[0];
+                            }
                         }
                         break;
                     case "Modificar Tema":
                         if (AreFieldsFilled() && IsDateValid())
                         {
-                            crudTema = new Tema(SesionActiva.ObtenerInstancia().Usuario)
+                            crudTema = new Tema()
                             {
                                 ID = Selected.ID,
                                 Titulo = txtTitulo.Text,
@@ -305,6 +317,10 @@ namespace Lawful.Views
                             }
                             temaBL.Modificar(crudTema);
                             RefreshTemasListView();
+                            if (Temas[0] != null)
+                            {
+                                Selected = Temas[0];
+                            }
                             TemaMode();
                         }
                         break;

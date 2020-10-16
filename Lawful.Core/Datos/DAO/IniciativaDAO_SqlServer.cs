@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using Lawful.Core.Modelo.Iniciativas;
 using Lawful.Core.Datos.QueryMiddleware;
+using System.Diagnostics;
 
 namespace Lawful.Core.Datos.DAO
 {
@@ -218,6 +219,11 @@ namespace Lawful.Core.Datos.DAO
                         List<Iniciativa> iniciativas = new List<Iniciativa>();
                         while (response.Read())
                         {
+                            //Trace.WriteLine(response.GetInt32(0));
+                            //Trace.WriteLine(response.IsDBNull(0)? "0" : response.GetInt32(0).ToString());
+                            //Trace.WriteLine(response.IsDBNull(1)? "" : response.GetString(1).ToString());
+                            //Trace.WriteLine(response.IsDBNull(2)? "" : response.GetString(2).ToString());
+                            //Trace.WriteLine(response.IsDBNull(3)? "" : response.GetDateTime(3).ToString());
                             string[] campos = ListarCamposTablaIniciativas(response);
                             Iniciativa iniciativa = Helpers.IniciativaEspecificaCreator.CrearIniciativaEspecifica(campos);
                             iniciativas.Add(iniciativa);
@@ -318,22 +324,22 @@ namespace Lawful.Core.Datos.DAO
         private string[] ListarCamposTablaIniciativas(SqlDataReader response)
         {
             string[] campos = new string[16] {
-                            response.GetInt32(0).ToString(),
-                            response.GetString(1).ToString(),
-                            response.GetString(2).ToString(),
-                            response.GetDateTime(3).ToString(),
-                            response.GetString(4).ToString(),
-                            response.GetBoolean(5).ToString(),
-                            response.GetInt32(6).ToString(),
-                            response.GetInt32(7).ToString(),
-                            response.GetDateTime(8).ToString(),
-                            response.GetString(9).ToString(),
-                            response.GetDateTime(10).ToString(),
-                            response.GetInt32(11).ToString(),
-                            response.GetInt32(12).ToString(),
-                            response.GetDateTime(13).ToString(),
-                            response.GetInt32(14).ToString(),
-                            response.GetInt32(15).ToString()};
+                            response.IsDBNull(0) ? "0" :response.GetInt32(0).ToString(),
+                            response.IsDBNull(1) ? "" :response.GetString(1).ToString(),
+                            response.IsDBNull(2) ? "" :response.GetString(2).ToString(),
+                            response.IsDBNull(3) ? "" :response.GetDateTime(3).ToString(),
+                            response.IsDBNull(4) ? "" :response.GetString(4).ToString(),
+                            response.IsDBNull(5) ? "" :response.GetBoolean(5).ToString(),
+                            response.IsDBNull(6) ? "" :response.GetInt32(6).ToString(),
+                            response.IsDBNull(7) ? "" :response.GetInt32(7).ToString(),
+                            response.IsDBNull(8) ? "" :response.GetDateTime(8).ToString(),
+                            response.IsDBNull(9) ? "" :response.GetString(9).ToString(),
+                            response.IsDBNull(10)? "" :response.GetDateTime(10).ToString(),
+                            response.IsDBNull(11)? "" :response.GetInt32(11).ToString(),
+                            response.IsDBNull(12)? "" :response.GetInt32(12).ToString(),
+                            response.IsDBNull(13)? "" :response.GetDateTime(13).ToString(),
+                            response.IsDBNull(14)? "" :response.GetInt32(14).ToString(),
+                            response.IsDBNull(15)? "" :response.GetInt32(15).ToString()};
             return campos;
         }
     }
