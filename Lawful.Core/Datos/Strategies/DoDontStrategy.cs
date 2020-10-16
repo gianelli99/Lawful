@@ -20,7 +20,8 @@ namespace Lawful.Core.Datos.Strategies
                 " everyone_can_edit," +
                 " usuario_id," +
                 " iniciativa_tipo_id," +
-                " tema_id)" +
+                " tema_id," +
+                " icon_name)" +
 
                 " VALUES " +
                 "(@titulo," +
@@ -30,7 +31,8 @@ namespace Lawful.Core.Datos.Strategies
                 " @everyone_can_edit," +
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
-                " @tema_id);";
+                " @tema_id," +
+                " @icon_name);";
 
             command.Parameters.AddWithValue("@titulo", dodont.Titulo);
             command.Parameters.AddWithValue("@descripcion", dodont.Descripcion);
@@ -40,6 +42,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@usuario_id", dodont.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", dodont.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", dodont.IconName);
 
 
             return command;
@@ -56,7 +59,8 @@ namespace Lawful.Core.Datos.Strategies
                 "everyone_can_edit=@everyone_can_edit, " +
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
-                "tema_id=@tema_id " +
+                "tema_id=@tema_id, " +
+                "icon_name=@icon_name " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", dodont.Titulo);
@@ -67,6 +71,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@usuario_id", dodont.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", dodont.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", dodont.IconName);
 
             return command;
         }

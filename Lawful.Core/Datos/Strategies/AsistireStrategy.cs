@@ -15,9 +15,30 @@ namespace Lawful.Core.Datos.QueryMiddleware
         {
             Asistire asistire = (Asistire)iniciativa;
             command.CommandText = "INSERT INTO iniciativas " +
-                "(titulo, descripcion, fecha_creacion, icon_name, everyone_can_edit, usuario_id, iniciativa_tipo_id, fecha_evento, lugar, fecha_limite_confirmacion, tema_id)" +
+                "(titulo, descripcion," +
+                " fecha_creacion," +
+                " icon_name," +
+                " everyone_can_edit," +
+                " usuario_id," +
+                " iniciativa_tipo_id," +
+                " fecha_evento," +
+                " lugar," +
+                " fecha_limite_confirmacion," +
+                " tema_id, " +
+                " icon_name)" +
                 " VALUES " +
-                "(@titulo, @descripcion, @fecha_creacion, @icon_name, @everyone_can_edit, @usuario_id, @iniciativa_tipo_id, @fecha_evento, @lugar, @fecha_limite_confirmacion, @tema_id);";
+                "(@titulo," +
+                " @descripcion," +
+                " @fecha_creacion," +
+                " @icon_name," +
+                " @everyone_can_edit," +
+                " @usuario_id," +
+                " @iniciativa_tipo_id," +
+                " @fecha_evento," +
+                " @lugar," +
+                " @fecha_limite_confirmacion," +
+                " @tema_id," +
+                " @icon_name);";
 
             command.Parameters.AddWithValue("@titulo", asistire.Titulo);
             command.Parameters.AddWithValue("@descripcion", asistire.Descripcion);
@@ -31,6 +52,7 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@lugar", asistire.Lugar);
             command.Parameters.AddWithValue("@fecha_limite_confirmacion", asistire.FechaLimiteConfirmacion);
             command.Parameters.AddWithValue("@tema_id", asistire.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", asistire.IconName);
 
 
             return command;
@@ -47,9 +69,11 @@ namespace Lawful.Core.Datos.QueryMiddleware
                 "everyone_can_edit=@everyone_can_edit, " +
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
-                "fecha_evento=@fecha_evento, lugar=@lugar, " +
+                "fecha_evento=@fecha_evento, " +
+                "lugar=@lugar, " +
                 "fecha_limite_confirmacion=@fecha_limite_confirmacion, " +
-                "tema_id=@tema_id " +
+                "tema_id=@tema_id, " +
+                "icon_name=@icon_name " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", asistire.Titulo);
@@ -64,6 +88,7 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@lugar", asistire.Lugar);
             command.Parameters.AddWithValue("@fecha_limite_confirmacion", asistire.FechaLimiteConfirmacion);
             command.Parameters.AddWithValue("@tema_id", asistire.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", asistire.IconName);
 
 
             return command;

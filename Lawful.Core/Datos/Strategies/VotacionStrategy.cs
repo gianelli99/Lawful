@@ -1,10 +1,7 @@
 ﻿using Lawful.Core.Datos.QueryMiddleware;
 using Lawful.Core.Modelo;
-using Microsoft.Data.SqlClient;
 using Lawful.Core.Modelo.Iniciativas;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Data.SqlClient;
 
 namespace Lawful.Core.Datos.Strategies
 {
@@ -24,7 +21,8 @@ namespace Lawful.Core.Datos.Strategies
                 " usuario_id," +
                 " iniciativa_tipo_id," +
                 " fecha_limite," +
-                " tema_id)" +
+                " tema_id," +
+                " icon_name)" +
 
                 " VALUES " +
                 "(@titulo," +
@@ -35,7 +33,8 @@ namespace Lawful.Core.Datos.Strategies
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
                 " @fecha_limite, " +
-                " @tema_id);";
+                " tema_id," +
+                " icon_name);";
 
             command.Parameters.AddWithValue("@titulo", votacion.Titulo);
             command.Parameters.AddWithValue("@descripcion", votacion.Descripcion);
@@ -46,6 +45,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@fecha_limite", votacion.FechaLimite);
             command.Parameters.AddWithValue("@tema_id", votacion.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", votacion.IconName);
 
 
             return command;
@@ -63,7 +63,8 @@ namespace Lawful.Core.Datos.Strategies
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
                 "fecha_limite=@fecha_limite," +
-                "tema_id=@tema_id " +
+                "tema_id=@tema_id," +
+                "icon_name=@icon_name " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", votacion.Titulo);
@@ -75,6 +76,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@fecha_limite", votacion.FechaLimite);
             command.Parameters.AddWithValue("@tema_id", votacion.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", votacion.IconName);
 
             return command;
         }

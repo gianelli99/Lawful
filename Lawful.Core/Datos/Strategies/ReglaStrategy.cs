@@ -21,7 +21,8 @@ namespace Lawful.Core.Datos.Strategies
                 " usuario_id," +
                 " iniciativa_tipo_id," +
                 " relevancia, " +
-                " tema_id)" +
+                " tema_id, " +
+                " icon_name)" +
 
                 " VALUES " +
                 "(@titulo," +
@@ -32,7 +33,8 @@ namespace Lawful.Core.Datos.Strategies
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
                 " @relevancia, " +
-                " @tema_id);";
+                " @tema_id, " + 
+                " @icon_name);";
 
             command.Parameters.AddWithValue("@titulo", regla.Titulo);
             command.Parameters.AddWithValue("@descripcion", regla.Descripcion);
@@ -43,6 +45,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@relevancia", regla.Relevancia);
             command.Parameters.AddWithValue("@tema_id", regla.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", regla.IconName);
 
 
             return command;
@@ -52,15 +55,17 @@ namespace Lawful.Core.Datos.Strategies
         {
             Regla regla = (Regla)iniciativa;
             command.CommandText = "UPDATE iniciativas " +
-                "titulo = @titulo, " +
-                "descripcion = @descripcion, " +
-                "fecha_creacion = @fecha_creacion, " +
-                "icon_name = @icon_name, " +
-                "everyone_can_edit = @everyone_can_edit, " +
-                "usuario_id = @usuario_id, " +
-                "iniciativa_tipo_id = @iniciativa_tipo_id, " +
-                "relevancia = @relevancia, " +
-                "tema_id = @tema_id " +
+                "titulo=@titulo, " +
+                "descripcion=@descripcion, " +
+                "fecha_creacion=@fecha_creacion, " +
+                "icon_name=@icon_name, " +
+                "everyone_can_edit=@everyone_can_edit, " +
+                "usuario_id=@usuario_id, " +
+                "iniciativa_tipo_id=@iniciativa_tipo_id, " +
+                "relevancia=@relevancia, " +
+                "tema_id=@tema_id, " +
+                "icon_name=@icon_name " +
+
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", regla.Titulo);
@@ -72,6 +77,8 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@relevancia", regla.Relevancia);
             command.Parameters.AddWithValue("@tema_id", regla.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", regla.IconName);
+
 
             return command;
         }

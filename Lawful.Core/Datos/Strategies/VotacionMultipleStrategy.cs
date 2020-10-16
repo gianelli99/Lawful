@@ -25,7 +25,8 @@ namespace Lawful.Core.Datos.Strategies
                 " iniciativa_tipo_id," +
                 " fecha_limite," +
                 " max_opciones_seleccionables," +
-                " tema_id)" +
+                " tema_id, " +
+                " icon_name)" +
 
                 " VALUES " +
                 "(@titulo," +
@@ -37,7 +38,8 @@ namespace Lawful.Core.Datos.Strategies
                 " @iniciativa_tipo_id," +
                 " @fecha_limite, " +
                 " @max_opciones_seleccionables," +
-                " @tema_id);";
+                " @tema_id," +
+                " @icon_name);";
 
             command.Parameters.AddWithValue("@titulo", votacionMultiple.Titulo);
             command.Parameters.AddWithValue("@descripcion", votacionMultiple.Descripcion);
@@ -49,6 +51,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@fecha_limite", votacionMultiple.FechaLimite);
             command.Parameters.AddWithValue("@max_opciones_seleccionables", votacionMultiple.MaxOpcionesSeleccionables);
             command.Parameters.AddWithValue("@tema_id", votacionMultiple.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", votacionMultiple.IconName);
 
 
             return command;
@@ -67,7 +70,8 @@ namespace Lawful.Core.Datos.Strategies
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
                 "fecha_limite=@fecha_limite," +
                 "max_opciones_seleccionables=@max_opciones_seleccionables," +
-                "tema_id=@tema_id " +
+                "tema_id=@tema_id, " +
+                "icon_name=@icon_name " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", votacionMultiple.Titulo);
@@ -80,6 +84,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@fecha_limite", votacionMultiple.FechaLimite);
             command.Parameters.AddWithValue("@max_opciones_seleccionables", votacionMultiple.MaxOpcionesSeleccionables);
             command.Parameters.AddWithValue("@tema_id", votacionMultiple.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", votacionMultiple.IconName);
 
             return command;
         }

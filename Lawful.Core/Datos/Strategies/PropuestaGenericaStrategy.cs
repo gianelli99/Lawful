@@ -16,9 +16,25 @@ namespace Lawful.Core.Datos.Strategies
         {
             PropuestaGenerica propuestaGenerica = (PropuestaGenerica)iniciativa;
             command.CommandText = "INSERT INTO iniciativas " +
-                "(titulo, descripcion, fecha_creacion, icon_name, everyone_can_edit, usuario_id, iniciativa_tipo_id, tema_id)" +
+                "(titulo, descripcion," +
+                " fecha_creacion," +
+                " icon_name," +
+                " everyone_can_edit," +
+                " usuario_id," +
+                " iniciativa_tipo_id," +
+                " tema_id," +
+                " icon_name)" +
+
                 " VALUES " +
-                "(@titulo, @descripcion, @fecha_creacion, @icon_name, @everyone_can_edit, @usuario_id, @iniciativa_tipo_id, @tema_id);";
+                "(@titulo," +
+                "@descripcion," +
+                "@fecha_creacion," +
+                "@icon_name," +
+                "@everyone_can_edit," +
+                "@usuario_id," +
+                "@iniciativa_tipo_id," +
+                "@tema_id," +
+                "@icon_name);";
 
             command.Parameters.AddWithValue("@titulo", propuestaGenerica.Titulo);
             command.Parameters.AddWithValue("@descripcion", propuestaGenerica.Descripcion);
@@ -28,6 +44,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@usuario_id", propuestaGenerica.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", propuestaGenerica.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", propuestaGenerica.IconName);
 
 
             return command;
@@ -44,7 +61,8 @@ namespace Lawful.Core.Datos.Strategies
                 "everyone_can_edit=@everyone_can_edit, " +
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
-                "tema_id=@tema_id " +
+                "tema_id=@tema_id, " +
+                "icon_name=@icon_name " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", propuestaGenerica.Titulo);
@@ -55,6 +73,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@usuario_id", propuestaGenerica.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", propuestaGenerica.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", propuestaGenerica.IconName);
 
             return command;
         }

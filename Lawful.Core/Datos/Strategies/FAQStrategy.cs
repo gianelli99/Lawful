@@ -16,9 +16,27 @@ namespace Lawful.Core.Datos.Strategies
         {
             FAQ faq = (FAQ)iniciativa;
             command.CommandText = "INSERT INTO iniciativas " +
-                "(titulo, descripcion, fecha_creacion, icon_name, everyone_can_edit, usuario_id, iniciativa_tipo_id, respuesta_correcta_id, tema_id)" +
+                "(titulo," +
+                " descripcion," +
+                " fecha_creacion," +
+                " icon_name," +
+                " everyone_can_edit," +
+                " usuario_id," +
+                " iniciativa_tipo_id," +
+                " respuesta_correcta_id," +
+                " tema_id," +
+                " icon_name)" +
                 " VALUES " +
-                "(@titulo, @descripcion, @fecha_creacion, @icon_name, @everyone_can_edit, @usuario_id, @iniciativa_tipo_id, @respuesta_correcta_id, @tema_id);";
+                "(@titulo," +
+                " @descripcion," +
+                " @fecha_creacion," +
+                " @icon_name," +
+                " @everyone_can_edit," +
+                " @usuario_id," +
+                " @iniciativa_tipo_id," +
+                " @respuesta_correcta_id," +
+                " @tema_id," +
+                " @icon_name);";
 
             command.Parameters.AddWithValue("@titulo", faq.Titulo);
             command.Parameters.AddWithValue("@descripcion", faq.Descripcion);
@@ -29,6 +47,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@respuesta_correcta_id", faq.RespuestaCorrecta.ID);
             command.Parameters.AddWithValue("@tema_id", faq.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", faq.IconName);
 
 
             return command;
@@ -46,7 +65,8 @@ namespace Lawful.Core.Datos.Strategies
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
                 "respuesta_correcta_id=@respuesta_correcta_id, " +
-                "tema_id=@tema_id " +
+                "tema_id=@tema_id, " +
+                "icon_name=@icon_name " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", faq.Titulo);
@@ -58,6 +78,8 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@respuesta_correcta_id", faq.RespuestaCorrecta.ID);
             command.Parameters.AddWithValue("@tema_id", faq.Tema.ID);
+            command.Parameters.AddWithValue("@icon_name", faq.IconName);
+
 
             return command;
         }
