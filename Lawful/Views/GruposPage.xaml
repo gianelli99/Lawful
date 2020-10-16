@@ -29,11 +29,6 @@
                 <StackPanel x:Name="Second" Margin="20,0,20,20" HorizontalAlignment="Left">
                     <TextBlock Text= "Acciones"/>
                     <ListView x:Name="lvAcciones" SelectionMode="Multiple" Height="350" Width="400" ItemsSource="{x:Bind Acciones, Mode=OneWay}">
-                        <!--<ListView.ItemTemplate>
-                            <DataTemplate x:DataType="modelo:Usuario">
-                                <TextBlock Text="{x:Bind GetNombreCompleto()}"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>-->
                     </ListView>
                 </StackPanel>
                 <StackPanel x:Name="Buttons" Orientation="Horizontal">
