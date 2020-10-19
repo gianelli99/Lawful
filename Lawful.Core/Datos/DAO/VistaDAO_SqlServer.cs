@@ -61,7 +61,7 @@ namespace Lawful.Core.Datos.DAO
                 command.Transaction = transaction;
                 try
                 {
-                    command.CommandText = $"SELECT DISTINCT v.id, v.descripcion, v.icon_name, v.class_name FROM vistas as v INNER JOIN vistas_acciones ON v.id = vistas_acciones.vista_id INNER JOIN grupos_acciones ON vistas_acciones.accion_id = grupos_acciones.accion_id WHERE grupos_acciones.grupo_id IN (SELECT grupo_id FROM usuarios_grupos WHERE usuario_id = {userId});";
+                    command.CommandText = $"SELECT DISTINCT v.id, v.descripcion, v.icon_name, v.class_name FROM vistas as v INNER JOIN vistas_acciones ON v.id = vistas_acciones.vista_id INNER JOIN grupos_acciones ON vistas_acciones.accion_id = grupos_acciones.accion_id WHERE grupos_acciones.grupo_id IN (SELECT grupo_id FROM usuarios_grupos WHERE usuario_id = {userId}) AND v.visible_in_shellpage = 1;";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {

@@ -51,6 +51,9 @@ namespace Lawful.Views
             }
 
             storage = value;
+            _selected = iniciativaBL.Consultar(_selected.ID);
+            lvComentarios.ItemsSource = null;
+            lvComentarios.ItemsSource = _selected.Comentarios;
             OnPropertyChanged(propertyName);
         }
 
