@@ -1,5 +1,6 @@
 ﻿using Lawful.Core.Logica;
 using Lawful.Core.Modelo;
+using Lawful.Core.Modelo.Iniciativas;
 using Lawful.Helpers;
 using System;
 using System.Collections.ObjectModel;
@@ -54,12 +55,24 @@ namespace Lawful.Views
             _selected = iniciativaBL.Consultar(_selected.ID);
             lvComentarios.ItemsSource = null;
             lvComentarios.ItemsSource = _selected.Comentarios;
+            lvOpciones.ItemsSource = null;
+            lvOpciones.ItemsSource = ((Asistire)_selected).Opciones;
             OnPropertyChanged(propertyName);
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private void IniciativasListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnVotar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
 
         }

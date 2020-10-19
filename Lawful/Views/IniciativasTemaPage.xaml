@@ -19,7 +19,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" x:Name="Master">
-            <ListView x:Name="IniciativasListView" ItemsSource="{x:Bind Iniciativas, Mode=TwoWay}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" IsItemClickEnabled="True" ItemClick="IniciativasListView_ItemClick">
+            <ListView x:Name="IniciativasListView" ItemsSource="{x:Bind Iniciativas, Mode=TwoWay}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" IsItemClickEnabled="True">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="modelo:Iniciativa">
                         <StackPanel Orientation="Horizontal" Margin="6">
@@ -35,21 +35,20 @@
         </StackPanel>
         <ScrollViewer Grid.Column="1">
             <Grid  x:Name="Detail" HorizontalAlignment="Stretch" MinWidth="250">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
                 <CommandBar Grid.Row="0" x:Name="AccionesBar"></CommandBar>
-                <StackPanel Grid.Row="1" x:Name="spDetails"
-                DataContext="{Binding SelectedItem, ElementName=IniciativasListView}"
-                Margin="0,44,0,0"
-                Padding="{StaticResource DetailPageMargin}">
-                    <TextBlock  x:Name="tbTitulo" Text="{Binding Titulo}" Style="{ThemeResource TitleTextBlockStyle}"/>
-                    <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Descripcion" />
-                    <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding Descripcion}"/>
-                    <TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{StaticResource DetailSubTitleStyle}"
-                    Text="¿Todos pueden editarlo?" />
-                    <RadioButton Margin="4,5,0,0" IsChecked="{Binding EveryoneCanEdit}" IsEnabled="False"/>
+                <StackPanel Grid.Row="1" x:Name="spFormulario" Padding="{StaticResource DetailPageMargin}">
+                    <TextBox x:Name="txtTitulo" Header= "Título" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="txtDescripcion" Header= "Descripción" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
+                    <ComboBox x:Name="cbTipoIniciativa" Header="Tipo de iniciativa" Margin="0,24,0,0" Width="400">
 
-                    <StackPanel x:Name="spAsistire" HorizontalAlignment="Left">
+                    </ComboBox>
+
+                    <StackPanel x:Name="spFormularioAsistire" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha del evento" />
                         <DatePicker IsEnabled="False" x:Name="dpFechaEvento" Width="400"/>
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha límite de confirmación" />
@@ -57,25 +56,65 @@
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Lugar" />
                         <TextBox IsEnabled="False" x:Name="txtLugar"/>
                     </StackPanel>
-                    <StackPanel x:Name="spDoDont" HorizontalAlignment="Left">
+                    <StackPanel x:Name="spFormularioRegla" HorizontalAlignment="Left">
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Relevancia" />
+                        <Slider x:Name="slFormularioRelevancia" Maximum="10" Minimum="1" Width="400"/>
+                    </StackPanel>
+                    <StackPanel x:Name="spFormularioVotacion" HorizontalAlignment="Left">
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha límite" />
+                        <DatePicker IsEnabled="False" x:Name="dpFechaLimiteVotacion" Width="400"/>
+                    </StackPanel>
+                    <StackPanel x:Name="spFormularioVotacionMultiple" HorizontalAlignment="Left">
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
+                        <Slider x:Name="slFormularioMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Row="2" x:Name="spDetails"
+                DataContext="{Binding SelectedItem, ElementName=IniciativasListView}"
+                Margin="0,44,0,0"
+                Padding="{StaticResource DetailPageMargin}">
+                    <TextBlock  x:Name="tbTitulo" Text="{Binding Titulo}" Style="{ThemeResource TitleTextBlockStyle}"/>
+                    <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Descripcion" />
+                    <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding Descripcion}"/>
+
+                    <StackPanel x:Name="spDetailAsistire" HorizontalAlignment="Left">
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha del evento" />
+                        <TextBlock x:Name="tbFechaEvento" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha límite de confirmación" />
+                        <TextBlock x:Name="tbFechaLimiteConfirmacion" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Lugar" />
+                        <TextBlock x:Name="tbLugar" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="spDetailDoDont" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Tipo" />
                         <RadioButton IsEnabled="False" x:Name="rbDo" Content="Do" Margin="4,5,0,0" IsChecked="True" GroupName="DoDont"/>
                         <RadioButton IsEnabled="False" x:Name="rbDont" Content="Don't" Margin="4,5,0,0" IsChecked="False" GroupName="DoDont"/>
                     </StackPanel>
-                    <StackPanel x:Name="spRegla" HorizontalAlignment="Left">
+                    <StackPanel x:Name="spDetailRegla" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Relevancia" />
-                        <Slider IsEnabled="False" x:Name="slRelevancia" Maximum="10" Minimum="1" Width="400"/>
+                        <Slider IsEnabled="False" x:Name="slDetailRelevancia" Maximum="10" Minimum="1" Width="400"/>
                     </StackPanel>
-                    <StackPanel x:Name="spVotacion" HorizontalAlignment="Left">
+                    <StackPanel x:Name="spDetailVotacion" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha límite" />
-                        <DatePicker IsEnabled="False" x:Name="dpFechaLimite" Width="400"/>
+                        <TextBlock x:Name="tbFechaLimiteVotacion" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                     </StackPanel>
-                    <StackPanel x:Name="spVotacionMultiple" HorizontalAlignment="Left">
+                    <StackPanel x:Name="spDetailVotacionMultiple" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
-                        <Slider IsEnabled="False" x:Name="slMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
+                        <Slider  IsEnabled="False" x:Name="slDetailMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
                     </StackPanel>
 
-                    <StackPanel x:Name="spDetailsComentarios" HorizontalAlignment="Left">
+                    <StackPanel x:Name="spDetailOpciones" HorizontalAlignment="Left">
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Opciones" />
+                        <ListView x:Name="lvOpciones" MaxHeight="500" Width="400" >
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="modelo:Opcion">
+                                    <TextBlock Text="{x:Bind Descripcion}" FontWeight="SemiBold"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+
+                    <StackPanel x:Name="spDetailComentarios" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Comentarios" />
                         <ListView x:Name="lvComentarios" ItemsSource="{x:Bind Selected.Comentarios}" SelectionMode="None" MaxHeight="800">
                             <ListView.ItemTemplate>
@@ -92,6 +131,13 @@
                         </ListView>
                         <TextBox IsEnabled="False" Margin="0,10,0,0" x:Name="txtComentario" Width="400"/>
                     </StackPanel>
+                    <StackPanel x:Name="Buttons" Orientation="Horizontal">
+                        <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
+                        <Button x:Name="btnCancelar" Content="Cancelar" Margin="24" Click="btnCancelar_Click"/>
+                    </StackPanel>
+                    
+                    <Button x:Name="btnVotar" Content="Votar" Margin="24" Click="btnVotar_Click"/>
+                    
                 </StackPanel>
             </Grid>
         </ScrollViewer>

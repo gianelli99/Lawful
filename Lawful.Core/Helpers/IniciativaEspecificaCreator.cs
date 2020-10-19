@@ -68,7 +68,7 @@ namespace Lawful.Core.Helpers
             iniciativa.Descripcion = campos[2];
             iniciativa.FechaCreacion = Convert.ToDateTime(campos[3]);
             iniciativa.IconName = campos[4];
-            iniciativa.EveryoneCanEdit = Convert.ToBoolean(campos[5]);
+            iniciativa.IsOpen = Convert.ToBoolean(campos[15]);
         } 
     }
 }

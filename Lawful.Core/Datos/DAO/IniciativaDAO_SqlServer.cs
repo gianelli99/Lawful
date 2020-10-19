@@ -28,7 +28,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,everyone_can_edit,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id FROM iniciativas WHERE id = {id};";
+                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id,is_open FROM iniciativas WHERE id = {id};";
                     command.CommandText += $"SELECT comentarios.id, descripcion, usuario_id,usuarios.nombre, usuarios.apellido FROM comentarios INNER JOIN usuarios ON comentarios.usuario_id = usuarios.id WHERE comentarios.iniciativa_id = {id};";
                     command.CommandText += $"SELECT opciones.id, opciones.descripcion FROM opciones WHERE iniciativa_id = {id};";
                     command.CommandText += $"SELECT opciones.id,usuarios.nombre, usuarios.apellido FROM opciones INNER JOIN votos ON opciones.id =votos.opcion_id INNER JOIN usuarios ON usuarios.id = votos.usuario_id WHERE iniciativa_id = {id};";
@@ -66,6 +66,7 @@ namespace Lawful.Core.Datos.DAO
                                 Opcion opt = new Opcion();
                                 opt.ID = response.GetInt32(0);
                                 opt.Descripcion = response.GetString(1);
+                                opciones.Add(opt);
                             }
                             response.NextResult();
                             while (response.Read())
@@ -212,18 +213,13 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,everyone_can_edit,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id FROM iniciativas WHERE tema_id = {temaId};";
+                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,tema_id,is_open FROM iniciativas WHERE tema_id = {temaId};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
                         List<Iniciativa> iniciativas = new List<Iniciativa>();
                         while (response.Read())
                         {
-                            //Trace.WriteLine(response.GetInt32(0));
-                            //Trace.WriteLine(response.IsDBNull(0)? "0" : response.GetInt32(0).ToString());
-                            //Trace.WriteLine(response.IsDBNull(1)? "" : response.GetString(1).ToString());
-                            //Trace.WriteLine(response.IsDBNull(2)? "" : response.GetString(2).ToString());
-                            //Trace.WriteLine(response.IsDBNull(3)? "" : response.GetDateTime(3).ToString());
                             string[] campos = ListarCamposTablaIniciativas(response);
                             Iniciativa iniciativa = Helpers.IniciativaEspecificaCreator.CrearIniciativaEspecifica(campos);
                             iniciativas.Add(iniciativa);
@@ -255,7 +251,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,everyone_can_edit,iniciativas.usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,iniciativas.tema_id FROM iniciativas INNER JOIN usuarios_temas ON usuarios_temas.tema_id = iniciativas.tema_id WHERE usuarios_temas.usuario_id = {userId};";
+                    command.CommandText = $"SELECT iniciativas.id,titulo,descripcion,fecha_creacion,icon_name,iniciativas.usuario_id,iniciativa_tipo_id,fecha_evento,lugar,fecha_limite_confirmacion,respuesta_correcta_id,relevancia,fecha_limite,max_opciones_seleccionables,iniciativas.tema_id,iniciativas.is_open FROM iniciativas INNER JOIN usuarios_temas ON usuarios_temas.tema_id = iniciativas.tema_id WHERE usuarios_temas.usuario_id = {userId};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -329,17 +325,17 @@ namespace Lawful.Core.Datos.DAO
                             response.IsDBNull(2) ? "" :response.GetString(2).ToString(),
                             response.IsDBNull(3) ? "" :response.GetDateTime(3).ToString(),
                             response.IsDBNull(4) ? "" :response.GetString(4).ToString(),
-                            response.IsDBNull(5) ? "" :response.GetBoolean(5).ToString(),
+                            response.IsDBNull(5) ? "" :response.GetInt32(5).ToString(),
                             response.IsDBNull(6) ? "" :response.GetInt32(6).ToString(),
-                            response.IsDBNull(7) ? "" :response.GetInt32(7).ToString(),
-                            response.IsDBNull(8) ? "" :response.GetDateTime(8).ToString(),
-                            response.IsDBNull(9) ? "" :response.GetString(9).ToString(),
-                            response.IsDBNull(10)? "" :response.GetDateTime(10).ToString(),
+                            response.IsDBNull(7) ? "" :response.GetDateTime(7).ToString(),
+                            response.IsDBNull(8) ? "" :response.GetString(8).ToString(),
+                            response.IsDBNull(9)? "" :response.GetDateTime(9).ToString(),
+                            response.IsDBNull(10)? "" :response.GetInt32(10).ToString(),
                             response.IsDBNull(11)? "" :response.GetInt32(11).ToString(),
-                            response.IsDBNull(12)? "" :response.GetInt32(12).ToString(),
-                            response.IsDBNull(13)? "" :response.GetDateTime(13).ToString(),
+                            response.IsDBNull(12)? "" :response.GetDateTime(12).ToString(),
+                            response.IsDBNull(13)? "" :response.GetInt32(13).ToString(),
                             response.IsDBNull(14)? "" :response.GetInt32(14).ToString(),
-                            response.IsDBNull(15)? "" :response.GetInt32(15).ToString()};
+                            response.IsDBNull(15)? "" :response.GetBoolean(15).ToString()};
             return campos;
         }
     }
