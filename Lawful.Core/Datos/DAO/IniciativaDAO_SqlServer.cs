@@ -292,6 +292,43 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
+        public List<string[]> ListarTipos()
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("listar tipos");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"SELECT descripcion, class_name FROM iniciativas_tipos;";
+                    transaction.Commit();
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        List<string[]> iniciativas = new List<string[]>();
+                        while (response.Read())
+                        {
+                            string[] iniciativa = new string[] { response.GetString(0), response.GetString(1)};
+                            iniciativas.Add(iniciativa);
+                        }
+                        return iniciativas;
+                    }
+                    throw new Exception("No se ha podido encontrar el tema");
+                }
+                catch (Exception ex2)
+                {
+                    throw ex2;
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
         public void Modificar(Iniciativa iniciativa)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))

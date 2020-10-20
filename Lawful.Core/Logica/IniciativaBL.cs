@@ -11,6 +11,18 @@ namespace Lawful.Core.Logica
         {
             iniciativaDAO = new Datos.DAO.IniciativaDAO_SqlServer();
         }
+        public List<string[]> ListarTipos()
+        {
+            try
+            {
+                return iniciativaDAO.ListarTipos();
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Ha ocurrido un error");
+            }
+        }
         public void Insertar(Modelo.Iniciativa iniciativa)
         {
             try

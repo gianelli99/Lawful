@@ -13,7 +13,7 @@ namespace Lawful.Core.Modelo.Iniciativas
         {
             Opciones = new List<Opcion>();
         }
-        public DoDont NuevaInstancia(Usuario owner)
+        public static DoDont NuevaInstancia(Usuario owner)
         {
             var instancia = new DoDont(owner);
             instancia.Opciones.Add(new Opcion() { Descripcion = "Si" });

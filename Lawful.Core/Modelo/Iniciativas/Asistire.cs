@@ -15,7 +15,7 @@ namespace Lawful.Core.Modelo.Iniciativas
         {
             Opciones = new List<Opcion>();
         }
-        public Asistire NuevaInstancia(Usuario owner)
+        public static Asistire NuevaInstancia(Usuario owner)
         {
             var instancia = new Asistire(owner);
             instancia.Opciones.Add(new Opcion() { Descripcion = "Asistiré" });
