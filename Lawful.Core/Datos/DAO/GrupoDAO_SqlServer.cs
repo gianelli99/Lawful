@@ -187,21 +187,29 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO grupos VALUES(@codigo, @descripcion, 1);";
+                    command.CommandText = $"INSERT INTO grupos VALUES(@codigo, @descripcion, 1);SELECT CAST(scope_identity() AS int);";
                     command.Parameters.AddWithValue("@codigo", grupo.Codigo);
                     command.Parameters.AddWithValue("@descripcion", grupo.Descripcion);
-
-
-                    string accionesQuery = "INSERT INTO grupos_acciones VALUES";
-                    foreach (var accion in grupo.Acciones)
+                    using (SqlDataReader response = command.ExecuteReader())
                     {
-                        accionesQuery += $"({grupo.ID}, {accion.ID}),";
+                        if (response.Read())
+                        {
+                            grupo.ID = response.GetInt32(0);
+                        }
                     }
-                    accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
-                    accionesQuery += ";";
-                    command.CommandText += accionesQuery;
-
-                    command.ExecuteNonQuery();
+                    if (grupo.Acciones.Count > 0)
+                    {
+                        string accionesQuery = "INSERT INTO grupos_acciones VALUES";
+                        foreach (var accion in grupo.Acciones)
+                        {
+                            accionesQuery += $"({grupo.ID}, {accion.ID}),";
+                        }
+                        accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
+                        accionesQuery += ";";
+                        command.CommandText = accionesQuery;
+                        command.ExecuteNonQuery();
+                    }
+                   
                     transaction.Commit();
                     return;
                 }
@@ -331,7 +339,7 @@ namespace Lawful.Core.Datos.DAO
                     command.Parameters.AddWithValue("@codigo", grupo.Codigo);
                     command.Parameters.AddWithValue("@descripcion", grupo.Descripcion);
 
-                    command.CommandText += $"DELETE * FROM grupos_acciones WHERE grupo_id = {grupo.ID};";
+                    command.CommandText += $"DELETE FROM grupos_acciones WHERE grupo_id = {grupo.ID};";
                     string accionesQuery = "";
                     foreach (var accion in grupo.Acciones)
                     {

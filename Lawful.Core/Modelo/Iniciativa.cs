@@ -14,8 +14,8 @@ namespace Lawful.Core.Modelo
         public string IconName { get; set; }
         public Tema Tema { get; set; }
         public List<Comentario> Comentarios { get; set; }
-
         public readonly Usuario Owner;
+        public DateTime FechaCierre { get; set; }
         public Iniciativa(Usuario owner)
         {
             Owner = owner;

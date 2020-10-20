@@ -31,7 +31,7 @@ namespace Lawful.Views
             usuarioBL = new UsuarioBL();
             grupoBL = new GrupoBL();
             InitializeComponent();
-            Grupos = grupoBL.Listar();
+            RefreshGroups();
             Acciones = new ObservableCollection<AccionListViewItem>();
             var accionesGrupo = grupoBL.ListarAcciones();
             foreach (var item in accionesGrupo)
@@ -51,7 +51,7 @@ namespace Lawful.Views
             CreateCommandBar(AccionesBar, acciones);
 
         }
-        public List<Grupo> Grupos { get; set; }
+        public ObservableCollection<Grupo> Grupos { get; set; }
         public ObservableCollection<AccionListViewItem> Acciones { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -86,6 +86,19 @@ namespace Lawful.Views
 
         }
 
+        private void RefreshGroups()
+        {
+            
+            Grupos = new ObservableCollection<Grupo>();
+            var data = grupoBL.Listar();
+            foreach (var item in data)
+            {
+                Grupos.Add(item);
+            }
+            dgGrupos.ItemsSource = null;
+            dgGrupos.ItemsSource = Grupos;
+        }
+
         private async void Accion_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             try
@@ -107,8 +120,7 @@ namespace Lawful.Views
                         if (result == ContentDialogResult.Primary)
                         {
                             grupoBL.Eliminar(((Grupo)dgGrupos.SelectedItem).ID);
-                            Grupos = grupoBL.Listar();
-                            OnPropertyChanged("Grupos");
+                            RefreshGroups();
                         }
 
                         break;
@@ -194,10 +206,87 @@ namespace Lawful.Views
             }
             return commandBar;
         }
-
-        private void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private bool AreFieldsFilled()
         {
+            if (String.IsNullOrWhiteSpace(txtCodigo.Text) ||
+                String.IsNullOrWhiteSpace(txtDescripcion.Text))
+            {
 
+                throw new Exception("Debe completar todos los campos");
+            }
+            else
+            {
+                return true;
+            }
+        }
+        private void FillUserFields()
+        {
+            crudGrupo.Codigo = txtCodigo.Text;
+            crudGrupo.Descripcion = txtDescripcion.Text;
+            crudGrupo.Estado = true;
+            foreach (AccionListViewItem item in lvAcciones.Items)
+            {
+                if (item.IsSelected)
+                {
+                    crudGrupo.Acciones.Add(item.Accion);
+                }
+            }
+        }
+
+        private async void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            try
+            {
+                switch (accion.Descripcion)
+                {
+                    case "Agregar Grupo":
+                        if (AreFieldsFilled())
+                        {
+                            crudGrupo = new Grupo();
+                            FillUserFields();
+
+                            grupoBL.Insertar(crudGrupo);
+
+                            RefreshGroups();
+                            GruposMode();
+                        }
+                        break;
+                    case "Modificar Grupo":
+                        if (AreFieldsFilled())
+                        {
+                            crudGrupo = new Grupo();
+                            crudGrupo.ID = Selected.ID;
+                            FillUserFields();
+
+                            grupoBL.Modificar(crudGrupo);
+
+                            RefreshGroups();
+                            if (Grupos.Count>0)
+                            {
+                                Selected = Grupos[0];
+                            }
+                            else
+                            {
+                                Selected = null;
+                            }
+                            GruposMode();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ContentDialog error = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = ex.Message,
+                    CloseButtonText = "Ok"
+                };
+                await error.ShowAsync();
+            }
         }
 
         private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -207,7 +296,6 @@ namespace Lawful.Views
         private void GruposMode()
         {
             ListaGupos.MaxHeight = double.PositiveInfinity;
-            //FormularioGrupo.Visibility = Windows.UI.Xaml.Visibility.Visible;
             FormularioGrupo.MaxHeight = 0;
         }
         private void FormularioMode(bool isConsultar)
