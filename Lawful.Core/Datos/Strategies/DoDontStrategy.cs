@@ -21,7 +21,8 @@ namespace Lawful.Core.Datos.Strategies
                 " usuario_id," +
                 " iniciativa_tipo_id," +
                 " tema_id," +
-                " icon_name)" +
+                " icon_name," +
+                " fecha_cierre);" +
 
                 " VALUES " +
                 "(@titulo," +
@@ -32,7 +33,8 @@ namespace Lawful.Core.Datos.Strategies
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
                 " @tema_id," +
-                " @icon_name);";
+                " @icon_name" +
+                " @fecha_cierre);";
 
             command.Parameters.AddWithValue("@titulo", dodont.Titulo);
             command.Parameters.AddWithValue("@descripcion", dodont.Descripcion);
@@ -42,7 +44,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@usuario_id", dodont.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", dodont.Tema.ID);
-            command.Parameters.AddWithValue("@icon_name", dodont.IconName);
+            command.Parameters.AddWithValue("@fecha_cierre", dodont.FechaCierre); 
 
 
             return command;
@@ -60,7 +62,8 @@ namespace Lawful.Core.Datos.Strategies
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
                 "tema_id=@tema_id, " +
-                "icon_name=@icon_name " +
+                "icon_name=@icon_name, " +
+                "fecha_cierre=@fecha_cierre " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", dodont.Titulo);
@@ -71,7 +74,7 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@usuario_id", dodont.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", dodont.Tema.ID);
-            command.Parameters.AddWithValue("@icon_name", dodont.IconName);
+            command.Parameters.AddWithValue("@fecha_cierre", dodont.FechaCierre);
 
             return command;
         }

@@ -17,35 +17,33 @@ namespace Lawful.Core.Datos.Strategies
                 " descripcion," +
                 " fecha_creacion," +
                 " icon_name," +
-                " everyone_can_edit," +
                 " usuario_id," +
                 " iniciativa_tipo_id," +
                 " relevancia, " +
                 " tema_id, " +
-                " icon_name)" +
+                " fecha_cierre)" +
 
                 " VALUES " +
                 "(@titulo," +
                 " @descripcion," +
                 " @fecha_creacion," +
                 " @icon_name," +
-                " @everyone_can_edit," +
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
                 " @relevancia, " +
-                " @tema_id, " + 
-                " @icon_name);";
+                " @tema_id, " +
+                " @fecha_cierre);";
 
             command.Parameters.AddWithValue("@titulo", regla.Titulo);
             command.Parameters.AddWithValue("@descripcion", regla.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", regla.FechaCreacion);
             command.Parameters.AddWithValue("@icon_name", regla.IconName);
-            command.Parameters.AddWithValue("@everyone_can_edit", regla.EveryoneCanEdit);
             command.Parameters.AddWithValue("@usuario_id", regla.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@relevancia", regla.Relevancia);
             command.Parameters.AddWithValue("@tema_id", regla.Tema.ID);
-            command.Parameters.AddWithValue("@icon_name", regla.IconName);
+            command.Parameters.AddWithValue("@fecha_cierre", regla.FechaCierre);
+
 
 
             return command;
@@ -59,12 +57,11 @@ namespace Lawful.Core.Datos.Strategies
                 "descripcion=@descripcion, " +
                 "fecha_creacion=@fecha_creacion, " +
                 "icon_name=@icon_name, " +
-                "everyone_can_edit=@everyone_can_edit, " +
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
                 "relevancia=@relevancia, " +
                 "tema_id=@tema_id, " +
-                "icon_name=@icon_name " +
+                "fecha_cierre=@fecha_cierre " +
 
                 $"WHERE id = {iniciativa.ID};";
 
@@ -72,12 +69,11 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@descripcion", regla.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", regla.FechaCreacion);
             command.Parameters.AddWithValue("@icon_name", regla.IconName);
-            command.Parameters.AddWithValue("@everyone_can_edit", regla.EveryoneCanEdit);
             command.Parameters.AddWithValue("@usuario_id", regla.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@relevancia", regla.Relevancia);
             command.Parameters.AddWithValue("@tema_id", regla.Tema.ID);
-            command.Parameters.AddWithValue("@icon_name", regla.IconName);
+            command.Parameters.AddWithValue("@fecha_cierre", regla.FechaCierre);
 
 
             return command;

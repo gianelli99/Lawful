@@ -19,32 +19,29 @@ namespace Lawful.Core.Datos.Strategies
                 "(titulo, descripcion," +
                 " fecha_creacion," +
                 " icon_name," +
-                " everyone_can_edit," +
                 " usuario_id," +
                 " iniciativa_tipo_id," +
                 " tema_id," +
-                " icon_name)" +
+                " fecha_cierre)" +
 
                 " VALUES " +
                 "(@titulo," +
                 "@descripcion," +
                 "@fecha_creacion," +
                 "@icon_name," +
-                "@everyone_can_edit," +
                 "@usuario_id," +
                 "@iniciativa_tipo_id," +
                 "@tema_id," +
-                "@icon_name);";
+                "@fecha_cierre);";
 
             command.Parameters.AddWithValue("@titulo", propuestaGenerica.Titulo);
             command.Parameters.AddWithValue("@descripcion", propuestaGenerica.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", propuestaGenerica.FechaCreacion);
             command.Parameters.AddWithValue("@icon_name", propuestaGenerica.IconName);
-            command.Parameters.AddWithValue("@everyone_can_edit", propuestaGenerica.EveryoneCanEdit);
             command.Parameters.AddWithValue("@usuario_id", propuestaGenerica.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", propuestaGenerica.Tema.ID);
-            command.Parameters.AddWithValue("@icon_name", propuestaGenerica.IconName);
+            command.Parameters.AddWithValue("@fecha_cierre", propuestaGenerica.FechaCierre); 
 
 
             return command;
@@ -58,22 +55,20 @@ namespace Lawful.Core.Datos.Strategies
                 "descripcion=@descripcion, " +
                 "fecha_creacion=@fecha_creacion, " +
                 "icon_name=@icon_name, " +
-                "everyone_can_edit=@everyone_can_edit, " +
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
                 "tema_id=@tema_id, " +
-                "icon_name=@icon_name " +
+                "fecha_cierre=@fecha_cierre " +
                 $"WHERE id = {iniciativa.ID};";
 
             command.Parameters.AddWithValue("@titulo", propuestaGenerica.Titulo);
             command.Parameters.AddWithValue("@descripcion", propuestaGenerica.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", propuestaGenerica.FechaCreacion);
             command.Parameters.AddWithValue("@icon_name", propuestaGenerica.IconName);
-            command.Parameters.AddWithValue("@everyone_can_edit", propuestaGenerica.EveryoneCanEdit);
             command.Parameters.AddWithValue("@usuario_id", propuestaGenerica.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", propuestaGenerica.Tema.ID);
-            command.Parameters.AddWithValue("@icon_name", propuestaGenerica.IconName);
+            command.Parameters.AddWithValue("@fecha_cierre", propuestaGenerica.FechaCierre);
 
             return command;
         }

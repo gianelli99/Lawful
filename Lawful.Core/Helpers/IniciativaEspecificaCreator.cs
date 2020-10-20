@@ -10,15 +10,15 @@ namespace Lawful.Core.Helpers
     {
         public static Iniciativa CrearIniciativaEspecifica(string[] campos)
         {
-            Usuario owner = new Usuario() { ID = Convert.ToInt32(campos[6]) };
+            Usuario owner = new Usuario() { ID = Convert.ToInt32(campos[5]) }; // Antes era 6, ahora es 5 porque se corrió todo
             Iniciativa iniciativa;
-            switch (Convert.ToInt32(campos[7]))
+            switch (Convert.ToInt32(campos[6]))
             {
                 case 1:
                     iniciativa = new Asistire(owner);
                     ((Asistire)iniciativa).FechaEvento = Convert.ToDateTime(campos[8]);
-                    ((Asistire)iniciativa).Lugar = campos[9];
-                    ((Asistire)iniciativa).FechaLimiteConfirmacion = Convert.ToDateTime(campos[10]);
+                    ((Asistire)iniciativa).Lugar = campos[8];
+                    ((Asistire)iniciativa).FechaLimiteConfirmacion = Convert.ToDateTime(campos[9]);
                     RellenarCamposGenerales(iniciativa,campos);
                     return iniciativa;
                 case 2:
@@ -42,18 +42,18 @@ namespace Lawful.Core.Helpers
                     return iniciativa;
                 case 6:
                     iniciativa = new Regla(owner);
-                    ((Regla)iniciativa).Relevancia = Convert.ToInt32(campos[12]);
+                    ((Regla)iniciativa).Relevancia = Convert.ToInt32(campos[11]);
                     RellenarCamposGenerales(iniciativa,campos);
                     return iniciativa;
                 case 7:
                     iniciativa = new Votacion(owner);
-                    ((Votacion)iniciativa).FechaLimite = Convert.ToDateTime(campos[13]);
+                    ((Votacion)iniciativa).FechaLimite = Convert.ToDateTime(campos[12]);
                     RellenarCamposGenerales(iniciativa,campos);
                     return iniciativa;
                 case 8:
                     iniciativa = new VotacionMultiple(owner);
-                    ((VotacionMultiple)iniciativa).FechaLimite = Convert.ToDateTime(campos[13]);
-                    ((VotacionMultiple)iniciativa).MaxOpcionesSeleccionables = Convert.ToInt32(campos[14]);
+                    ((VotacionMultiple)iniciativa).FechaLimite = Convert.ToDateTime(campos[12]);
+                    ((VotacionMultiple)iniciativa).MaxOpcionesSeleccionables = Convert.ToInt32(campos[13]);
                     RellenarCamposGenerales(iniciativa,campos);
                     return iniciativa;
                 default:
@@ -68,7 +68,7 @@ namespace Lawful.Core.Helpers
             iniciativa.Descripcion = campos[2];
             iniciativa.FechaCreacion = Convert.ToDateTime(campos[3]);
             iniciativa.IconName = campos[4];
-            iniciativa.EveryoneCanEdit = Convert.ToBoolean(campos[5]);
+            iniciativa.FechaCierre = Convert.ToDateTime(campos[15]);
         } 
     }
 }
