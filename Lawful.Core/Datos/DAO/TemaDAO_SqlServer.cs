@@ -141,7 +141,7 @@ namespace Lawful.Core.Datos.DAO
                         }
                         accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
                         accionesQuery += ";";
-                        command.CommandText += accionesQuery;
+                        command.CommandText = accionesQuery;
                         command.ExecuteNonQuery();
                     }
                     

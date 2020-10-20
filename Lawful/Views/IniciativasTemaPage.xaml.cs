@@ -40,6 +40,9 @@ namespace Lawful.Views
             {
                 Iniciativas.Add(item);
             }
+            Selected = Iniciativas[0];
+            IniciativasListView.SelectedItem = Selected;
+            OnPropertyChanged("Selected");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -56,7 +59,21 @@ namespace Lawful.Views
             lvComentarios.ItemsSource = null;
             lvComentarios.ItemsSource = _selected.Comentarios;
             lvOpciones.ItemsSource = null;
-            lvOpciones.ItemsSource = ((Asistire)_selected).Opciones;
+            switch (_selected.GetType().Name)
+            {
+                case "Asistire":
+                    lvOpciones.ItemsSource = ((Asistire)_selected).Opciones;
+                    tbFechaEvento.Text = ((Asistire)_selected).FechaEvento.ToString();
+                    tbFechaLimiteConfirmacion.Text = ((Asistire)_selected).FechaLimiteConfirmacion.ToString();
+                    tbLugar.Text = ((Asistire)_selected).Lugar;
+                    spFormulario.MaxHeight = 0;
+                    spDetailDoDont.MaxHeight = 0;
+                    spDetailRegla.MaxHeight = 0;
+                    spDetailVotacionMultiple.MaxHeight = 0;
+                    break;
+                default:
+                    break;
+            }
             OnPropertyChanged(propertyName);
         }
 

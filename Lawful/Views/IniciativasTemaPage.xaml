@@ -44,9 +44,8 @@
                 <StackPanel Grid.Row="1" x:Name="spFormulario" Padding="{StaticResource DetailPageMargin}">
                     <TextBox x:Name="txtTitulo" Header= "Título" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                     <TextBox x:Name="txtDescripcion" Header= "Descripción" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
-                    <ComboBox x:Name="cbTipoIniciativa" Header="Tipo de iniciativa" Margin="0,24,0,0" Width="400">
-
-                    </ComboBox>
+                    <DatePicker Header="Fecha de cierre" x:Name="dpFechaCierre" Width="400" Margin="0,24,0,0"/>
+                    <ComboBox x:Name="cbTipoIniciativa" Header="Tipo de iniciativa" Margin="0,24,0,0" Width="400"/>
 
                     <StackPanel x:Name="spFormularioAsistire" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha del evento" />
@@ -60,22 +59,23 @@
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Relevancia" />
                         <Slider x:Name="slFormularioRelevancia" Maximum="10" Minimum="1" Width="400"/>
                     </StackPanel>
-                    <StackPanel x:Name="spFormularioVotacion" HorizontalAlignment="Left">
-                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha límite" />
-                        <DatePicker IsEnabled="False" x:Name="dpFechaLimiteVotacion" Width="400"/>
-                    </StackPanel>
                     <StackPanel x:Name="spFormularioVotacionMultiple" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
                         <Slider x:Name="slFormularioMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
                     </StackPanel>
+                    <StackPanel x:Name="Buttons" Orientation="Horizontal">
+                        <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
+                        <Button x:Name="btnCancelar" Content="Cancelar" Margin="24" Click="btnCancelar_Click"/>
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="2" x:Name="spDetails"
                 DataContext="{Binding SelectedItem, ElementName=IniciativasListView}"
-                Margin="0,44,0,0"
                 Padding="{StaticResource DetailPageMargin}">
                     <TextBlock  x:Name="tbTitulo" Text="{Binding Titulo}" Style="{ThemeResource TitleTextBlockStyle}"/>
                     <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Descripcion" />
                     <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding Descripcion}"/>
+                    <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Fecha de cierre" />
+                    <TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{Binding FechaCierre}"/>
 
                     <StackPanel x:Name="spDetailAsistire" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha del evento" />
@@ -93,10 +93,6 @@
                     <StackPanel x:Name="spDetailRegla" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Relevancia" />
                         <Slider IsEnabled="False" x:Name="slDetailRelevancia" Maximum="10" Minimum="1" Width="400"/>
-                    </StackPanel>
-                    <StackPanel x:Name="spDetailVotacion" HorizontalAlignment="Left">
-                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha límite" />
-                        <TextBlock x:Name="tbFechaLimiteVotacion" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                     </StackPanel>
                     <StackPanel x:Name="spDetailVotacionMultiple" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
@@ -129,12 +125,9 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                        <TextBox IsEnabled="False" Margin="0,10,0,0" x:Name="txtComentario" Width="400"/>
+                        <TextBox Margin="0,10,0,0" x:Name="txtComentario" Width="400"/>
                     </StackPanel>
-                    <StackPanel x:Name="Buttons" Orientation="Horizontal">
-                        <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
-                        <Button x:Name="btnCancelar" Content="Cancelar" Margin="24" Click="btnCancelar_Click"/>
-                    </StackPanel>
+                    
                     
                     <Button x:Name="btnVotar" Content="Votar" Margin="24" Click="btnVotar_Click"/>
                     

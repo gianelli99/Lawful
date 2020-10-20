@@ -6,7 +6,6 @@ namespace Lawful.Core.Modelo.Iniciativas
 {
     public class Votacion : Iniciativa
     {
-        public DateTime FechaLimite { get; set; }
         public List<Opcion> Opciones { get; set; }
         public Votacion(Usuario owner)
         : base(owner)

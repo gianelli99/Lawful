@@ -17,11 +17,9 @@ namespace Lawful.Core.Datos.Strategies
                 " descripcion," +
                 " fecha_creacion," +
                 " icon_name," +
-                " everyone_can_edit," +
                 " usuario_id," +
                 " iniciativa_tipo_id," +
                 " tema_id," +
-                " icon_name," +
                 " fecha_cierre);" +
 
                 " VALUES " +
@@ -29,18 +27,15 @@ namespace Lawful.Core.Datos.Strategies
                 " @descripcion," +
                 " @fecha_creacion," +
                 " @icon_name," +
-                " @everyone_can_edit," +
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
                 " @tema_id," +
-                " @icon_name" +
                 " @fecha_cierre);";
 
             command.Parameters.AddWithValue("@titulo", dodont.Titulo);
             command.Parameters.AddWithValue("@descripcion", dodont.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", dodont.FechaCreacion);
             command.Parameters.AddWithValue("@icon_name", dodont.IconName);
-            command.Parameters.AddWithValue("@everyone_can_edit", dodont.EveryoneCanEdit);
             command.Parameters.AddWithValue("@usuario_id", dodont.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", dodont.Tema.ID);
@@ -58,11 +53,9 @@ namespace Lawful.Core.Datos.Strategies
                 "descripcion=@descripcion, " +
                 "fecha_creacion=@fecha_creacion, " +
                 "icon_name=@icon_name, " +
-                "everyone_can_edit=@everyone_can_edit, " +
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
                 "tema_id=@tema_id, " +
-                "icon_name=@icon_name, " +
                 "fecha_cierre=@fecha_cierre " +
                 $"WHERE id = {iniciativa.ID};";
 
@@ -70,7 +63,6 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@descripcion", dodont.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", dodont.FechaCreacion);
             command.Parameters.AddWithValue("@icon_name", dodont.IconName);
-            command.Parameters.AddWithValue("@everyone_can_edit", dodont.EveryoneCanEdit);
             command.Parameters.AddWithValue("@usuario_id", dodont.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
             command.Parameters.AddWithValue("@tema_id", dodont.Tema.ID);

@@ -43,7 +43,6 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@descripcion", asistire.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", asistire.FechaCreacion);
             command.Parameters.AddWithValue("@icon_name", asistire.IconName);
-            command.Parameters.AddWithValue("@everyone_can_edit", asistire.EveryoneCanEdit);
             command.Parameters.AddWithValue("@usuario_id", asistire.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
 
@@ -51,7 +50,6 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@lugar", asistire.Lugar);
             command.Parameters.AddWithValue("@fecha_limite_confirmacion", asistire.FechaLimiteConfirmacion);
             command.Parameters.AddWithValue("@tema_id", asistire.Tema.ID);
-            command.Parameters.AddWithValue("@icon_name", asistire.IconName);
             command.Parameters.AddWithValue("@fecha_cierre", asistire.FechaCierre);
 
 

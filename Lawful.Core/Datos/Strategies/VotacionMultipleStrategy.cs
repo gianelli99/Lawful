@@ -22,7 +22,6 @@ namespace Lawful.Core.Datos.Strategies
                 " icon_name," +
                 " usuario_id," +
                 " iniciativa_tipo_id," +
-                " fecha_limite," +
                 " max_opciones_seleccionables," +
                 " tema_id, " +
                 " fecha_cierre)" +
@@ -34,7 +33,6 @@ namespace Lawful.Core.Datos.Strategies
                 " @icon_name," +
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
-                " @fecha_limite, " +
                 " @max_opciones_seleccionables," +
                 " @tema_id," +
                 " @fecha_cierre);";
@@ -45,7 +43,6 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@icon_name", votacionMultiple.IconName);
             command.Parameters.AddWithValue("@usuario_id", votacionMultiple.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
-            command.Parameters.AddWithValue("@fecha_limite", votacionMultiple.FechaLimite);
             command.Parameters.AddWithValue("@max_opciones_seleccionables", votacionMultiple.MaxOpcionesSeleccionables);
             command.Parameters.AddWithValue("@tema_id", votacionMultiple.Tema.ID);
             command.Parameters.AddWithValue("@fecha_cierre", votacionMultiple.FechaCierre);
@@ -64,7 +61,6 @@ namespace Lawful.Core.Datos.Strategies
                 "icon_name=@icon_name, " +
                 "usuario_id=@usuario_id, " +
                 "iniciativa_tipo_id=@iniciativa_tipo_id, " +
-                "fecha_limite=@fecha_limite," +
                 "max_opciones_seleccionables=@max_opciones_seleccionables," +
                 "tema_id=@tema_id, " +
                 "fecha_cierre=@fecha_cierre " +
@@ -76,7 +72,6 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@icon_name", votacionMultiple.IconName);
             command.Parameters.AddWithValue("@usuario_id", votacionMultiple.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
-            command.Parameters.AddWithValue("@fecha_limite", votacionMultiple.FechaLimite);
             command.Parameters.AddWithValue("@max_opciones_seleccionables", votacionMultiple.MaxOpcionesSeleccionables);
             command.Parameters.AddWithValue("@tema_id", votacionMultiple.Tema.ID);
             command.Parameters.AddWithValue("@fecha_cierre", votacionMultiple.FechaCierre);
