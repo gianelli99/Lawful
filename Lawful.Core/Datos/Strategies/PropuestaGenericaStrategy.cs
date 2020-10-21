@@ -72,5 +72,10 @@ namespace Lawful.Core.Datos.Strategies
 
             return command;
         }
+
+        public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

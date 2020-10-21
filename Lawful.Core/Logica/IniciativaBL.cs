@@ -1,4 +1,6 @@
 ﻿using Lawful.Core.Datos.QueryMiddleware;
+using Lawful.Core.Datos.Strategies;
+using Lawful.Core.Modelo.Iniciativas;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,6 +34,20 @@ namespace Lawful.Core.Logica
                 {
                     case "Asistire":
                         iniciativaDAO.SetStrategy(new AsistireStrategy());
+                        break;
+                    case "DoDont":
+                        if (((DoDont)iniciativa).Tipo == "Do")
+                        {
+                            iniciativaDAO.SetStrategy(new DoDontStrategy(2, "Like"));
+                        }
+                        else
+                        {
+                            iniciativaDAO.SetStrategy(new DoDontStrategy(3, "Dislike"));
+                        }
+                        
+                        break;
+                    case "FAQ":
+                        iniciativaDAO.SetStrategy(new FAQStrategy());
                         break;
                     default:
                         break;

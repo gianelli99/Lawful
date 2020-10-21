@@ -195,8 +195,22 @@ namespace Lawful.Core.Datos.DAO
                 {
                     
                     Strategy.SetInsertCommand(command, iniciativa);
-                    
-                    command.ExecuteNonQuery();
+
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        if (response.Read())
+                        {
+                            iniciativa.ID = response.GetInt32(0);
+                        }
+                    }
+                    command.CommandText = "";
+                    Strategy.SetInsertOpciones(command, iniciativa);
+
+                    if (command.CommandText != "")
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
                     transaction.Commit();
                     return;
                 }

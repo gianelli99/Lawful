@@ -2,6 +2,7 @@
 using Lawful.Core.Modelo;
 using Lawful.Core.Modelo.Iniciativas;
 using Microsoft.Data.SqlClient;
+using System;
 
 namespace Lawful.Core.Datos.Strategies
 {
@@ -69,6 +70,11 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@fecha_cierre", votacion.FechaCierre);
 
             return command;
+        }
+
+        public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
+        {
+            throw new NotImplementedException();
         }
     }
 }

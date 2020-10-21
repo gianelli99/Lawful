@@ -2,12 +2,19 @@
 using Lawful.Core.Modelo;
 using Lawful.Core.Modelo.Iniciativas;
 using Microsoft.Data.SqlClient;
+using System;
 
 namespace Lawful.Core.Datos.Strategies
 {
     public class FAQStrategy : IQueryStrategy
     {
         public int Tipo { get; set; }
+        public string IconName { get; set; }
+        public FAQStrategy()
+        {
+            Tipo = 4;
+            IconName = "Message";
+        }
 
         public SqlCommand SetInsertCommand(SqlCommand command, Iniciativa iniciativa)
         {
@@ -19,7 +26,6 @@ namespace Lawful.Core.Datos.Strategies
                 " icon_name," +
                 " usuario_id," +
                 " iniciativa_tipo_id," +
-                " respuesta_correcta_id," +
                 " tema_id," +
                 " fecha_cierre)" +
                 " VALUES " +
@@ -30,17 +36,15 @@ namespace Lawful.Core.Datos.Strategies
                 " @icon_name," +
                 " @usuario_id," +
                 " @iniciativa_tipo_id," +
-                " @respuesta_correcta_id," +
                 " @tema_id," +
                 " @fecha_cierre);";
 
             command.Parameters.AddWithValue("@titulo", faq.Titulo);
             command.Parameters.AddWithValue("@descripcion", faq.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", faq.FechaCreacion);
-            command.Parameters.AddWithValue("@icon_name", faq.IconName);
+            command.Parameters.AddWithValue("@icon_name", IconName);
             command.Parameters.AddWithValue("@usuario_id", faq.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
-            command.Parameters.AddWithValue("@respuesta_correcta_id", faq.RespuestaCorrecta.ID);
             command.Parameters.AddWithValue("@tema_id", faq.Tema.ID);
             command.Parameters.AddWithValue("@fecha_cierre", faq.FechaCierre);
 
@@ -73,6 +77,12 @@ namespace Lawful.Core.Datos.Strategies
             command.Parameters.AddWithValue("@fecha_cierre", faq.FechaCierre);
 
 
+            return command;
+        }
+
+        public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
+        {
+            command.CommandText = "";
             return command;
         }
     }

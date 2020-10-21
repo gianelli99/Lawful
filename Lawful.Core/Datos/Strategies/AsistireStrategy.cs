@@ -96,5 +96,10 @@ namespace Lawful.Core.Datos.QueryMiddleware
 
             return command;
         }
+
+        public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
