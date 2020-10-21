@@ -52,13 +52,7 @@ namespace Lawful.Views
         {
             temaID = Convert.ToInt32(e.Parameter);
             base.OnNavigatedTo(e);
-            var iniciativas = temaBL.ListarIniciativas(temaID);
-            foreach (var item in iniciativas)
-            {
-                Iniciativas.Add(item);
-            }
-            Selected = Iniciativas[0];
-            IniciativasListView.SelectedItem = Selected;
+            RefreshIniciativasListView();
             OnPropertyChanged("Selected");
         }
 
@@ -72,12 +66,8 @@ namespace Lawful.Views
             }
 
             storage = value;
-            _selected = iniciativaBL.Consultar(_selected.ID);
-            lvComentarios.ItemsSource = null;
-            lvComentarios.ItemsSource = _selected.Comentarios;
-            lvDetailOpciones.ItemsSource = null;
-            DetailsMode();
             OnPropertyChanged(propertyName);
+            DetailsMode();
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -109,14 +99,14 @@ namespace Lawful.Views
 
         }
 
-        private void Accion_Click(object sender, RoutedEventArgs e)
+        private async void Accion_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 accion = (sender as AccionAppBarButton).Accion;
                 if (accion.Descripcion != "Agregar Iniciativa" && IniciativasListView.SelectedItem == null)
                 {
-                    //DisplayNoTopicSelected();
+                    DisplayNoIniciativaSelected();
                     return;
                 }
                 switch (accion.Descripcion)
@@ -126,18 +116,19 @@ namespace Lawful.Views
 
                         break;
                     case "Eliminar Iniciativa":
-                        //ContentDialogResult result = await DisplayDeleteConfirmation();
-                        //if (result == ContentDialogResult.Primary)
-                        //{
-                        //    temaBL.Eliminar(((Tema)TemasListView.SelectedItem).ID);
-                        //    RefreshTemasListView();
-                        //}
-                        //if (Temas[0] != null)
-                        //{
-                        //    Selected = Temas[0];
-                        //}
+                        ContentDialogResult result = await DisplayDeleteConfirmation();
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            iniciativaBL.Eliminar(Selected.ID);
+                            RefreshIniciativasListView();
+                        }
+                        if (Iniciativas.Count!= 0 && Iniciativas[0] != null)
+                        {
+                                Selected = Iniciativas[0];
+                                lvComentarios.ItemsSource = Selected.Comentarios;
+                        }
 
-                        //OnPropertyChanged("Selected");
+                        OnPropertyChanged("Selected");
                         break;
                     default:
                         break;
@@ -145,13 +136,58 @@ namespace Lawful.Views
             }
             catch (Exception)
             {
-                new ContentDialog
+                var error = new ContentDialog
                 {
                     Title = "Error",
                     Content = "Ocurrió un error inesperado, vuelva a intentarlo",
                     CloseButtonText = "Ok"
                 };
+                await error.ShowAsync();
             }
+        }
+        private async void DisplayNoIniciativaSelected()
+        {
+            ContentDialog noTopicSelected = new ContentDialog
+            {
+                Title = "Iniciativa no seleccionada",
+                Content = "Seleccione uno e intente de nuevo.",
+                CloseButtonText = "Ok"
+            };
+
+            await noTopicSelected.ShowAsync();
+        }
+        private async System.Threading.Tasks.Task<ContentDialogResult> DisplayDeleteConfirmation()
+        {
+            ContentDialog noIniciativaSelected = new ContentDialog
+            {
+                Title = "Atención",
+                Content = "¿Está seguro que desea eliminarla?",
+                PrimaryButtonText = "Si",
+                SecondaryButtonText = "No"
+            };
+
+            ContentDialogResult result = await noIniciativaSelected.ShowAsync();
+            return result;
+        }
+        private void RefreshIniciativasListView()
+        {
+            Iniciativas = new ObservableCollection<Iniciativa>();
+            var data = temaBL.ListarIniciativas(temaID);
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    Iniciativas.Add(item);
+                }
+                if (Iniciativas.Count > 0)
+                {
+                    Selected = Iniciativas[0];
+                    lvComentarios.ItemsSource = null;
+                    lvDetailOpciones.ItemsSource = null;
+                }
+            }
+            DetailsMode();
+            OnPropertyChanged("Iniciativas");
         }
 
         private void FormularioMode()
@@ -242,80 +278,173 @@ namespace Lawful.Views
         {
             spFormulario.MaxHeight = 0;
             spDetails.MaxHeight = double.PositiveInfinity;
-            switch (_selected.GetType().Name)
+            spDetailAsistire.MaxHeight = 0;
+            spDetailDoDont.MaxHeight = 0;
+            spDetailRegla.MaxHeight = 0;
+            spDetailVotacionMultiple.MaxHeight = 0;
+            spDetailOpciones.MaxHeight = 0;
+            if (Selected!=null)
+            {
+                switch (_selected.GetType().Name)
+                {
+                    case "Asistire":
+                        lvDetailOpciones.ItemsSource = ((Asistire)_selected).Opciones;
+                        tbFechaEvento.Text = ((Asistire)_selected).FechaEvento.ToString();
+                        tbFechaLimiteConfirmacion.Text = ((Asistire)_selected).FechaLimiteConfirmacion.ToString();
+                        tbLugar.Text = ((Asistire)_selected).Lugar;
+
+                        spDetailAsistire.MaxHeight = double.PositiveInfinity;
+                        spDetailDoDont.MaxHeight = 0;
+                        spDetailRegla.MaxHeight = 0;
+                        spDetailVotacionMultiple.MaxHeight = 0;
+                        break;
+                    case "DoDont":
+                        lvDetailOpciones.ItemsSource = ((DoDont)_selected).Opciones;
+                        rbDo.IsChecked = ((DoDont)_selected).Tipo == "Do" ? true : false;
+                        rbDont.IsChecked = ((DoDont)_selected).Tipo == "Dont" ? true : false;
+
+                        spDetailDoDont.MaxHeight = double.PositiveInfinity;
+                        spDetailAsistire.MaxHeight = 0;
+                        spDetailRegla.MaxHeight = 0;
+                        spDetailVotacionMultiple.MaxHeight = 0;
+                        break;
+                    case "FAQ":
+                        //marcar comentario correcto
+                        spDetailAsistire.MaxHeight = 0;
+                        spDetailDoDont.MaxHeight = 0;
+                        spDetailRegla.MaxHeight = 0;
+                        spDetailVotacionMultiple.MaxHeight = 0;
+                        break;
+                    case "PropuestaGenerica":
+                        spDetailAsistire.MaxHeight = 0;
+                        spDetailDoDont.MaxHeight = 0;
+                        spDetailRegla.MaxHeight = 0;
+                        spDetailVotacionMultiple.MaxHeight = 0;
+                        break;
+                    case "Regla":
+                        lvDetailOpciones.ItemsSource = ((Regla)_selected).Opciones;
+                        slDetailRelevancia.Value = ((Regla)_selected).Relevancia;
+
+                        spDetailAsistire.MaxHeight = 0;
+                        spDetailDoDont.MaxHeight = 0;
+                        spDetailRegla.MaxHeight = double.PositiveInfinity;
+                        spDetailVotacionMultiple.MaxHeight = 0;
+                        break;
+                    case "Votacion":
+                        lvDetailOpciones.ItemsSource = ((Votacion)_selected).Opciones;
+
+                        spDetailAsistire.MaxHeight = 0;
+                        spDetailDoDont.MaxHeight = 0;
+                        spDetailRegla.MaxHeight = 0;
+                        spDetailVotacionMultiple.MaxHeight = 0;
+                        break;
+                    case "VotacionMultiple":
+                        lvDetailOpciones.ItemsSource = ((VotacionMultiple)_selected).Opciones;
+                        slDetailMaxOpcionesSeleccionables.Value = ((VotacionMultiple)_selected).MaxOpcionesSeleccionables;
+
+                        spDetailAsistire.MaxHeight = 0;
+                        spDetailDoDont.MaxHeight = 0;
+                        spDetailRegla.MaxHeight = 0;
+                        spDetailVotacionMultiple.MaxHeight = double.PositiveInfinity;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+        }
+        private void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Usuario owner = SesionActiva.ObtenerInstancia().Usuario;
+            switch (crudIniciativa.GetType().Name)
             {
                 case "Asistire":
-                    lvDetailOpciones.ItemsSource = ((Asistire)_selected).Opciones;
-                    tbFechaEvento.Text = ((Asistire)_selected).FechaEvento.ToString();
-                    tbFechaLimiteConfirmacion.Text = ((Asistire)_selected).FechaLimiteConfirmacion.ToString();
-                    tbLugar.Text = ((Asistire)_selected).Lugar;
+                    if (String.IsNullOrWhiteSpace(txtLugar.Text)
+                        || dpFechaLimiteConfirmacion.SelectedDate.Value.Date < DateTime.Now.Date
+                        || dpFechaEvento.SelectedDate.Value.Date < DateTime.Now.Date)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        crudIniciativa.Tema = new Tema() { ID = temaID };
 
-                    spDetailAsistire.MaxHeight = double.PositiveInfinity;
-                    spDetailDoDont.MaxHeight = 0;
-                    spDetailRegla.MaxHeight = 0;
-                    spDetailVotacionMultiple.MaxHeight = 0;
-                    break;
-                case "DoDont":
-                    lvDetailOpciones.ItemsSource = ((DoDont)_selected).Opciones;
-                    rbDo.IsChecked = ((DoDont)_selected).Tipo == "Do" ? true : false;
-                    rbDont.IsChecked = ((DoDont)_selected).Tipo == "Dont" ? true : false;
+                        crudIniciativa.FechaCreacion = DateTime.Now.Date;
+                        crudIniciativa.FechaCierre = dpFechaCierre.SelectedDate.Value.Date;
 
-                    spDetailDoDont.MaxHeight = double.PositiveInfinity;
-                    spDetailAsistire.MaxHeight = 0;
-                    spDetailRegla.MaxHeight = 0;
-                    spDetailVotacionMultiple.MaxHeight = 0;
+                        crudIniciativa.Titulo = txtTitulo.Text;
+                        crudIniciativa.Descripcion = txtDescripcion.Text;
+                        ((Asistire)crudIniciativa).Lugar = txtLugar.Text;
+                        ((Asistire)crudIniciativa).FechaLimiteConfirmacion = dpFechaLimiteConfirmacion.SelectedDate.Value.Date;
+                        ((Asistire)crudIniciativa).FechaEvento = dpFechaEvento.SelectedDate.Value.Date;
+                        iniciativaBL.Insertar(crudIniciativa);
+                        RefreshIniciativasListView();
+                        DetailsMode();
+                    }
                     break;
-                case "FAQ":
-                    //marcar comentario correcto
-                    spDetailAsistire.MaxHeight = 0;
-                    spDetailDoDont.MaxHeight = 0;
-                    spDetailRegla.MaxHeight = 0;
-                    spDetailVotacionMultiple.MaxHeight = 0;
-                    break;
-                case "PropuestaGenerica":
-                    spDetailAsistire.MaxHeight = 0;
-                    spDetailDoDont.MaxHeight = 0;
-                    spDetailRegla.MaxHeight = 0;
-                    spDetailVotacionMultiple.MaxHeight = 0;
-                    break;
-                case "Regla":
-                    lvDetailOpciones.ItemsSource = ((Regla)_selected).Opciones;
-                    slDetailRelevancia.Value = ((Regla)_selected).Relevancia;
+                //case "DoDont":
+                //    crudIniciativa = DoDont.NuevaInstancia(owner);
+                //    lvFormularioOpciones.ItemsSource = ((DoDont)crudIniciativa).Opciones;
+                //    ((DoDont)crudIniciativa).Tipo = "Do";
+                //    rbDo.IsChecked = ((DoDont)crudIniciativa).Tipo == "Do" ? true : false;
+                //    rbDont.IsChecked = ((DoDont)crudIniciativa).Tipo == "Dont" ? true : false;
 
-                    spDetailAsistire.MaxHeight = 0;
-                    spDetailDoDont.MaxHeight = 0;
-                    spDetailRegla.MaxHeight = double.PositiveInfinity;
-                    spDetailVotacionMultiple.MaxHeight = 0;
-                    break;
-                case "Votacion":
-                    lvDetailOpciones.ItemsSource = ((Votacion)_selected).Opciones;
+                //    spFormularioAsistire.MaxHeight = 0;
+                //    spFormularioRegla.MaxHeight = 0;
+                //    spFormularioVotacionMultiple.MaxHeight = 0;
+                //    spFormularioOpciones.MaxHeight = 0;
+                //    break;
+                //case "FAQ":
+                //    crudIniciativa = new FAQ(owner);
+                //    //marcar comentario correcto
+                //    spFormularioAsistire.MaxHeight = 0;
+                //    spFormularioRegla.MaxHeight = 0;
+                //    spFormularioVotacionMultiple.MaxHeight = 0;
+                //    spFormularioOpciones.MaxHeight = 0;
+                //    break;
+                //case "PropuestaGenerica":
+                //    crudIniciativa = new PropuestaGenerica(owner);
 
-                    spDetailAsistire.MaxHeight = 0;
-                    spDetailDoDont.MaxHeight = 0;
-                    spDetailRegla.MaxHeight = 0;
-                    spDetailVotacionMultiple.MaxHeight = 0;
-                    break;
-                case "VotacionMultiple":
-                    lvDetailOpciones.ItemsSource = ((VotacionMultiple)_selected).Opciones;
-                    slDetailMaxOpcionesSeleccionables.Value = ((VotacionMultiple)_selected).MaxOpcionesSeleccionables;
+                //    spFormularioAsistire.MaxHeight = 0;
+                //    spFormularioRegla.MaxHeight = 0;
+                //    spFormularioVotacionMultiple.MaxHeight = 0;
+                //    spFormularioOpciones.MaxHeight = 0;
+                //    break;
+                //case "Regla":
+                //    crudIniciativa = new Regla(owner);
+                //    lvFormularioOpciones.ItemsSource = ((Regla)crudIniciativa).Opciones;
+                //    slFormularioRelevancia.Value = ((Regla)crudIniciativa).Relevancia;
 
-                    spDetailAsistire.MaxHeight = 0;
-                    spDetailDoDont.MaxHeight = 0;
-                    spDetailRegla.MaxHeight = 0;
-                    spDetailVotacionMultiple.MaxHeight = double.PositiveInfinity;
-                    break;
+                //    spFormularioAsistire.MaxHeight = 0;
+                //    spFormularioRegla.MaxHeight = double.PositiveInfinity;
+                //    spFormularioVotacionMultiple.MaxHeight = 0;
+                //    spFormularioOpciones.MaxHeight = 0;
+                //    break;
+                //case "Votacion":
+                //    crudIniciativa = new Votacion(owner);
+                //    spFormularioOpciones.MaxHeight = double.PositiveInfinity;
+
+                //    spFormularioAsistire.MaxHeight = 0;
+                //    spFormularioRegla.MaxHeight = 0;
+                //    spFormularioVotacionMultiple.MaxHeight = 0;
+                //    break;
+                //case "VotacionMultiple":
+                //    crudIniciativa = new VotacionMultiple(owner);
+                //    slDetailMaxOpcionesSeleccionables.Value = ((VotacionMultiple)crudIniciativa).MaxOpcionesSeleccionables;
+                //    spFormularioOpciones.MaxHeight = double.PositiveInfinity;
+
+                //    spFormularioAsistire.MaxHeight = 0;
+                //    spFormularioRegla.MaxHeight = 0;
+                //    spFormularioVotacionMultiple.MaxHeight = double.PositiveInfinity;
+                //    break;
                 default:
                     break;
             }
         }
-        private void btnGuardar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-
-        }
 
         private void btnCancelar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-
+            DetailsMode();
         }
 
         private void btnVotar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)

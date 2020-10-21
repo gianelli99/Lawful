@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lawful.Core.Datos.QueryMiddleware;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -27,6 +28,14 @@ namespace Lawful.Core.Logica
         {
             try
             {
+                switch (iniciativa.GetType().Name)
+                {
+                    case "Asistire":
+                        iniciativaDAO.SetStrategy(new AsistireStrategy());
+                        break;
+                    default:
+                        break;
+                }
                 iniciativaDAO.Insertar(iniciativa);
             }
             catch (Exception)

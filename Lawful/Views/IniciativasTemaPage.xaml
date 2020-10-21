@@ -42,6 +42,7 @@
                 </Grid.RowDefinitions>
                 <CommandBar Grid.Row="0" x:Name="AccionesBar"></CommandBar>
                 <StackPanel Grid.Row="1" x:Name="spFormulario" Padding="{StaticResource DetailPageMargin}">
+                    <TextBlock  x:Name="tbNuevaIniciativa" Text="Nueva iniciativa" Style="{ThemeResource TitleTextBlockStyle}"/>
                     <TextBox x:Name="txtTitulo" Header= "Título" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                     <TextBox x:Name="txtDescripcion" Header= "Descripción" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                     <DatePicker Header="Fecha de cierre" x:Name="dpFechaCierre" Width="400" Margin="0,24,0,0"/>
