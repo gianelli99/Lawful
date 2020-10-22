@@ -11,5 +11,9 @@ namespace Lawful.Core.Modelo.Iniciativas
         : base(owner)
         {
         }
+        public override string GetIniciativaType()
+        {
+            return "Frequently asked question";
+        }
     }
 }

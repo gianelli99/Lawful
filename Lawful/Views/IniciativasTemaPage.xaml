@@ -103,16 +103,16 @@
                     </StackPanel>
                     <StackPanel x:Name="spDetailDoDont" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Tipo" />
-                        <RadioButton  x:Name="rbDo" Content="Do" Margin="4,5,0,0" IsChecked="True" GroupName="DoDont"/>
-                        <RadioButton  x:Name="rbDont" Content="Don't" Margin="4,5,0,0" IsChecked="False" GroupName="DoDont"/>
+                        <RadioButton IsEnabled="False" x:Name="rbDo" Content="Do" Margin="4,5,0,0" IsChecked="True" GroupName="DoDont"/>
+                        <RadioButton IsEnabled="False" x:Name="rbDont" Content="Don't" Margin="4,5,0,0" IsChecked="False" GroupName="DoDont"/>
                     </StackPanel>
                     <StackPanel x:Name="spDetailRegla" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Relevancia" />
-                        <Slider  x:Name="slDetailRelevancia" Maximum="10" Minimum="1" Width="400"/>
+                        <Slider IsEnabled="False" x:Name="slDetailRelevancia" Maximum="10" Minimum="1" Width="400"/>
                     </StackPanel>
                     <StackPanel x:Name="spDetailVotacionMultiple" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
-                        <Slider   x:Name="slDetailMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
+                        <Slider IsEnabled="False"  x:Name="slDetailMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
                     </StackPanel>
 
                     <StackPanel x:Name="spDetailOpciones" HorizontalAlignment="Left">
@@ -141,7 +141,7 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                        <TextBox Margin="0,10,0,0" x:Name="txtComentario" Width="400"/>
+                        <TextBox Margin="0,10,0,0" x:Name="txtComentario" Width="400" KeyDown="txtComentario_KeyDown"/>
                     </StackPanel>
                     
                     

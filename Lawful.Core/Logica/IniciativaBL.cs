@@ -1,5 +1,6 @@
 ﻿using Lawful.Core.Datos.QueryMiddleware;
 using Lawful.Core.Datos.Strategies;
+using Lawful.Core.Modelo;
 using Lawful.Core.Modelo.Iniciativas;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,31 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
+        public void InsertarComentario(int iniciativaID, Comentario comentario)
+        {
+            try
+            {
+                iniciativaDAO.InsertarComentario(iniciativaID, comentario);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Ha ocurrido un error");
+            }
+        }
+        public void InsertarVoto(int userId, List<Opcion> opciones)
+        {
+            try
+            {
+                iniciativaDAO.InsertarVoto(userId, opciones);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Ha ocurrido un error");
+            }
+        }
+
         public void Insertar(Modelo.Iniciativa iniciativa)
         {
             try
@@ -48,6 +74,18 @@ namespace Lawful.Core.Logica
                         break;
                     case "FAQ":
                         iniciativaDAO.SetStrategy(new FAQStrategy());
+                        break;
+                    case "PropuestaGenerica":
+                        iniciativaDAO.SetStrategy(new PropuestaGenericaStrategy());
+                        break;
+                    case "Regla":
+                        iniciativaDAO.SetStrategy(new ReglaStrategy());
+                        break;
+                    case "Votacion":
+                        iniciativaDAO.SetStrategy(new VotacionStrategy());
+                        break;
+                    case "VotacionMultiple":
+                        iniciativaDAO.SetStrategy(new VotacionMultipleStrategy());
                         break;
                     default:
                         break;

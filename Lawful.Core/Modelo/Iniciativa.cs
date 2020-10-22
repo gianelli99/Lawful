@@ -20,7 +20,7 @@ namespace Lawful.Core.Modelo
             Owner = owner;
             Comentarios = new List<Comentario>();
         }
-        public string GetIniciativaType()
+        public virtual string GetIniciativaType()
         {
             return this.GetType().Name;
         }

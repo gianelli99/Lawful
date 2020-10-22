@@ -211,6 +211,12 @@ namespace Lawful.Views
             spFormularioRegla.MaxHeight = 0;
             spFormularioVotacionMultiple.MaxHeight = 0;
             spFormularioOpciones.MaxHeight = 0;
+
+            txtComentario.Text = "";
+            txtDescripcion.Text = "";
+            txtLugar.Text = "";
+            txtOpcion.Text = "";
+            txtTitulo.Text = "";
             switch (cbTipoIniciativa.SelectedValue)
             {
                 case "Asistire":
@@ -261,7 +267,7 @@ namespace Lawful.Views
                     spFormularioOpciones.MaxHeight = 0;
                     break;
                 case "Regla":
-                    crudIniciativa = new Regla(owner);
+                    crudIniciativa = Regla.NuevaInstancia(owner);
                     lvFormularioOpciones.ItemsSource = ((Regla)crudIniciativa).Opciones;
                     slFormularioRelevancia.Value = ((Regla)crudIniciativa).Relevancia;
 
@@ -301,6 +307,7 @@ namespace Lawful.Views
             spDetailRegla.MaxHeight = 0;
             spDetailVotacionMultiple.MaxHeight = 0;
             spDetailOpciones.MaxHeight = 0;
+            lvDetailOpciones.SelectionMode = ListViewSelectionMode.Single;
             if (Selected!=null)
             {
                 switch (_selected.GetType().Name)
@@ -347,6 +354,7 @@ namespace Lawful.Views
 
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
+                        spDetailOpciones.MaxHeight = double.PositiveInfinity;
                         spDetailRegla.MaxHeight = double.PositiveInfinity;
                         spDetailVotacionMultiple.MaxHeight = 0;
                         break;
@@ -357,6 +365,7 @@ namespace Lawful.Views
                         spDetailDoDont.MaxHeight = 0;
                         spDetailRegla.MaxHeight = 0;
                         spDetailVotacionMultiple.MaxHeight = 0;
+                        spDetailOpciones.MaxHeight = double.PositiveInfinity;
                         break;
                     case "VotacionMultiple":
                         lvDetailOpciones.ItemsSource = ((VotacionMultiple)_selected).Opciones;
@@ -366,6 +375,9 @@ namespace Lawful.Views
                         spDetailDoDont.MaxHeight = 0;
                         spDetailRegla.MaxHeight = 0;
                         spDetailVotacionMultiple.MaxHeight = double.PositiveInfinity;
+                        spDetailOpciones.MaxHeight = double.PositiveInfinity;
+
+                        lvDetailOpciones.SelectionMode = ListViewSelectionMode.Multiple;
                         break;
                     default:
                         break;
@@ -437,41 +449,46 @@ namespace Lawful.Views
                     case "FAQ":
 
                         break;
-                    //case "PropuestaGenerica":
-                    //    crudIniciativa = new PropuestaGenerica(owner);
+                    case "PropuestaGenerica":
+                        break;
+                    case "Regla":
+                        ((Regla)crudIniciativa).Relevancia = Convert.ToInt32(slFormularioRelevancia.Value);
+                        break;
+                    case "Votacion":
+                        if (lvFormularioOpciones.Items.Count>0)
+                        {
+                            foreach (Opcion item in lvFormularioOpciones.Items)
+                            {
+                                ((Votacion)crudIniciativa).Opciones.Add(item);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Debe crear al menos una opción");
+                        }
 
-                    //    spFormularioAsistire.MaxHeight = 0;
-                    //    spFormularioRegla.MaxHeight = 0;
-                    //    spFormularioVotacionMultiple.MaxHeight = 0;
-                    //    spFormularioOpciones.MaxHeight = 0;
-                    //    break;
-                    //case "Regla":
-                    //    crudIniciativa = new Regla(owner);
-                    //    lvFormularioOpciones.ItemsSource = ((Regla)crudIniciativa).Opciones;
-                    //    slFormularioRelevancia.Value = ((Regla)crudIniciativa).Relevancia;
-
-                    //    spFormularioAsistire.MaxHeight = 0;
-                    //    spFormularioRegla.MaxHeight = double.PositiveInfinity;
-                    //    spFormularioVotacionMultiple.MaxHeight = 0;
-                    //    spFormularioOpciones.MaxHeight = 0;
-                    //    break;
-                    //case "Votacion":
-                    //    crudIniciativa = new Votacion(owner);
-                    //    spFormularioOpciones.MaxHeight = double.PositiveInfinity;
-
-                    //    spFormularioAsistire.MaxHeight = 0;
-                    //    spFormularioRegla.MaxHeight = 0;
-                    //    spFormularioVotacionMultiple.MaxHeight = 0;
-                    //    break;
-                    //case "VotacionMultiple":
-                    //    crudIniciativa = new VotacionMultiple(owner);
-                    //    slDetailMaxOpcionesSeleccionables.Value = ((VotacionMultiple)crudIniciativa).MaxOpcionesSeleccionables;
-                    //    spFormularioOpciones.MaxHeight = double.PositiveInfinity;
-
-                    //    spFormularioAsistire.MaxHeight = 0;
-                    //    spFormularioRegla.MaxHeight = 0;
-                    //    spFormularioVotacionMultiple.MaxHeight = double.PositiveInfinity;
-                    //    break;
+                        break;
+                    case "VotacionMultiple":
+                        ((VotacionMultiple)crudIniciativa).MaxOpcionesSeleccionables = Convert.ToInt32(slFormularioMaxOpcionesSeleccionables.Value);
+                        if (((VotacionMultiple)crudIniciativa).MaxOpcionesSeleccionables > lvFormularioOpciones.Items.Count)
+                        {
+                            throw new Exception("La cantidad de opciones debe ser mayor o igual al máximo de opciones seleccionables");
+                        }
+                        else
+                        {
+                            if (lvFormularioOpciones.Items.Count > 0)
+                            {
+                                foreach (Opcion item in lvFormularioOpciones.Items)
+                                {
+                                    ((VotacionMultiple)crudIniciativa).Opciones.Add(item);
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("Debe crear al menos una opción");
+                            }
+                        }     
+                        break;
                     default:
                         break;
                 }
@@ -496,7 +513,24 @@ namespace Lawful.Views
 
         private void btnVotar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            List<Opcion> opciones = new List<Opcion>();
 
+            var opcion = new Opcion()
+            {
+                ID = 21
+
+            };
+            var opcion2 = new Opcion()
+            {
+                ID = 22
+
+            };
+            opciones.Add(opcion);
+            opciones.Add(opcion2);
+            if (opciones.Count>0)
+            {
+                iniciativaBL.InsertarVoto(SesionActiva.ObtenerInstancia().Usuario.ID, opciones);
+            }
         }
 
         private void cbTipoIniciativa_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -510,7 +544,7 @@ namespace Lawful.Views
 
         private void txtOpcion_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
-            if (e.Key == Windows.System.VirtualKey.Enter)
+            if (e.Key == Windows.System.VirtualKey.Enter && !String.IsNullOrWhiteSpace(txtOpcion.Text))
             {
                 var opcion = new Opcion() { Descripcion = txtOpcion.Text };
                 txtOpcion.Text = "";
@@ -527,6 +561,39 @@ namespace Lawful.Views
                     lvFormularioOpciones.Items.Remove(item);
                     break;
                 }
+            }
+        }
+
+        private void txtComentario_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            try
+            {
+                if (e.Key == Windows.System.VirtualKey.Enter && !String.IsNullOrWhiteSpace(txtComentario.Text))
+                {
+                    var comentario = new Comentario()
+                    {
+                        Descripcion = txtComentario.Text,
+                        Owner = SesionActiva.ObtenerInstancia().Usuario,
+                        Fecha = DateTime.Now
+                    };
+                    txtComentario.Text = "";
+                    iniciativaBL.InsertarComentario(Selected.ID, comentario);
+                    var iniciativa = iniciativaBL.Consultar(Selected.ID);
+                    for (int i = 0; i < Iniciativas.Count; i++)
+                    {
+                        if (Iniciativas[i].ID == iniciativa.ID)
+                        {
+                            Iniciativas[i] = iniciativa;
+                            Selected = Iniciativas[i];
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
     }

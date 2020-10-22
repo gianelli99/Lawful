@@ -21,5 +21,20 @@ namespace Lawful.Core.Modelo.Iniciativas
             instancia.Opciones.Capacity = 2;
             return instancia;
         }
+        public override string GetIniciativaType()
+        {
+            if (Tipo == "Do")
+            {
+                return "Do";
+            }
+            else if (Tipo == "Don't")
+            {
+                return "Don't";
+            }
+            else
+            {
+                return "Do or Don't";
+            }
+        }
     }
 }

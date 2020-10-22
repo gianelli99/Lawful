@@ -58,6 +58,7 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@tema_id", asistire.Tema.ID);
             command.Parameters.AddWithValue("@fecha_cierre", asistire.FechaCierre);
 
+            command.CommandText += "SELECT CAST(scope_identity() AS int);";
 
             return command;
         }
@@ -99,7 +100,15 @@ namespace Lawful.Core.Datos.QueryMiddleware
 
         public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
         {
-            throw new NotImplementedException();
+            Asistire asistire = (Asistire)iniciativa;
+
+            command.CommandText = "INSERT INTO opciones VALUES ";
+            foreach (Opcion item in asistire.Opciones)
+            {
+                command.CommandText += $"('{item.Descripcion}',{asistire.ID}),";
+            }
+            command.CommandText = command.CommandText.Remove(command.CommandText.Length - 1);
+            return command;
         }
     }
 }

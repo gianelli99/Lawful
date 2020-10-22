@@ -230,6 +230,91 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }//done
 
+        public void InsertarComentario(int iniciativaID, Comentario comentario)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Insertar comentario");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"INSERT INTO comentarios VALUES (@descripcion, @usuario_id, @iniciativa_id);";
+                    command.Parameters.AddWithValue("@descripcion", comentario.Descripcion);
+                    command.Parameters.AddWithValue("@usuario_id", comentario.Owner.ID);
+                    command.Parameters.AddWithValue("@iniciativa_id", iniciativaID);
+                    command.ExecuteNonQuery();
+
+                    transaction.Commit();
+                    return;
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+
+                        throw ex2;
+                    }
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
+        public void InsertarVoto(int userID, List<Opcion> opciones)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Insertar voto");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    
+                    string accionesQuery = "INSERT INTO votos VALUES ";
+                    foreach (var opcion in opciones)
+                    {
+                        accionesQuery += $"({userID}, {opcion.ID}),";
+                    }
+                    accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
+                    accionesQuery += ";";
+                    command.CommandText = accionesQuery;
+                    command.ExecuteNonQuery();
+
+                    transaction.Commit();
+                    return;
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+
+                        throw ex2;
+                    }
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
         public List<Iniciativa> ListarPorTema(int temaId)//done
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))

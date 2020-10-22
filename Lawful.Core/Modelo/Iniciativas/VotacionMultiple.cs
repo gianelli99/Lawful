@@ -13,5 +13,9 @@ namespace Lawful.Core.Modelo.Iniciativas
         {
             Opciones = new List<Opcion>();
         }
+        public override string GetIniciativaType()
+        {
+            return "Votación múltiple";
+        }
     }
 }

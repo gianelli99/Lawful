@@ -23,5 +23,9 @@ namespace Lawful.Core.Modelo.Iniciativas
             instancia.Opciones.Capacity = 2;
             return instancia;
         }
+        public override string GetIniciativaType()
+        {
+            return "Asistiré";
+        }
     }
 }
