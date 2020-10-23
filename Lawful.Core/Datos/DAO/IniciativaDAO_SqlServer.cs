@@ -49,7 +49,7 @@ namespace Lawful.Core.Datos.DAO
 
                     command.CommandText += $"SELECT opciones.id, opciones.descripcion FROM opciones WHERE iniciativa_id = {id};";
 
-                    command.CommandText += $"SELECT opciones.id,usuarios.nombre, usuarios.apellido FROM opciones INNER JOIN votos ON opciones.id =votos.opcion_id INNER JOIN usuarios ON usuarios.id = votos.usuario_id WHERE iniciativa_id = {id};";
+                    command.CommandText += $"SELECT opciones.id,usuarios.nombre, usuarios.apellido, usuarios.id FROM opciones INNER JOIN votos ON opciones.id =votos.opcion_id INNER JOIN usuarios ON usuarios.id = votos.usuario_id WHERE iniciativa_id = {id};";
                     
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
@@ -92,6 +92,7 @@ namespace Lawful.Core.Datos.DAO
                                 Usuario votante = new Usuario();
                                 votante.Nombre = response.GetString(1);
                                 votante.Apellido = response.GetString(2);
+                                votante.ID = response.GetInt32(3);
                                 int opcionId = response.GetInt32(0);
                                 foreach (var opcion in opciones)
                                 {

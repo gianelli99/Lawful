@@ -160,6 +160,7 @@
     <Compile Include="Helpers\FrameGlobal.cs" />
     <Compile Include="Helpers\GrupoListViewItem.cs" />
     <Compile Include="Helpers\NavHelper.cs" />
+    <Compile Include="Helpers\OpcionListViewItem.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\UsuarioListViewItem.cs" />
     <Compile Include="Services\ActivationService.cs" />

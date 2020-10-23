@@ -21,6 +21,7 @@ namespace Lawful.Views
         private Accion accion;
         private Iniciativa _selected;
         private Iniciativa crudIniciativa;
+        ObservableCollection<OpcionListViewItem> opciones;
         private int temaID;
         public ObservableCollection<Iniciativa> Iniciativas { get; set; }
         public Iniciativa Selected
@@ -38,6 +39,7 @@ namespace Lawful.Views
             temaBL = new TemaBL();
             usuarioBL = new UsuarioBL();
             Iniciativas = new ObservableCollection<Iniciativa>();
+            opciones = new ObservableCollection<OpcionListViewItem>();
 
             var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 9);
             CreateCommandBar(this.AccionesBar, acciones);
@@ -69,11 +71,11 @@ namespace Lawful.Views
             }
 
             storage = value;
-            if (_selected != null)
-            {
-                _selected = iniciativaBL.Consultar(Selected.ID);
-                lvComentarios.ItemsSource = _selected.Comentarios;
-            }
+            //if (_selected != null)
+            //{
+            //    _selected = iniciativaBL.Consultar(Selected.ID);
+            //    lvComentarios.ItemsSource = _selected.Comentarios;
+            //}
             DetailsMode();
             OnPropertyChanged(propertyName);
         }
@@ -120,6 +122,13 @@ namespace Lawful.Views
                 switch (accion.Descripcion)
                 {
                     case "Agregar Iniciativa":
+                        txtComentario.Text = "";
+                        txtDescripcion.Text = "";
+                        txtLugar.Text = "";
+                        txtOpcion.Text = "";
+                        txtTitulo.Text = "";
+                        slFormularioRelevancia.Value = 0;
+                        slFormularioMaxOpcionesSeleccionables.Value = 0;
                         FormularioMode();
 
                         break;
@@ -195,6 +204,8 @@ namespace Lawful.Views
                     lvComentarios.ItemsSource = null;
 
                     lvDetailOpciones.ItemsSource = null;
+                    Iniciativas[0] = iniciativaBL.Consultar(Iniciativas[0].ID);
+                    Selected = Iniciativas[0];
                 }
             }
             DetailsMode();
@@ -211,12 +222,6 @@ namespace Lawful.Views
             spFormularioRegla.MaxHeight = 0;
             spFormularioVotacionMultiple.MaxHeight = 0;
             spFormularioOpciones.MaxHeight = 0;
-
-            txtComentario.Text = "";
-            txtDescripcion.Text = "";
-            txtLugar.Text = "";
-            txtOpcion.Text = "";
-            txtTitulo.Text = "";
             switch (cbTipoIniciativa.SelectedValue)
             {
                 case "Asistire":
@@ -269,7 +274,6 @@ namespace Lawful.Views
                 case "Regla":
                     crudIniciativa = Regla.NuevaInstancia(owner);
                     lvFormularioOpciones.ItemsSource = ((Regla)crudIniciativa).Opciones;
-                    slFormularioRelevancia.Value = ((Regla)crudIniciativa).Relevancia;
 
                     spFormularioAsistire.MaxHeight = 0;
                     spFormularioRegla.MaxHeight = double.PositiveInfinity;
@@ -286,9 +290,8 @@ namespace Lawful.Views
                     break;
                 case "VotacionMultiple":
                     crudIniciativa = new VotacionMultiple(owner);
-                    slDetailMaxOpcionesSeleccionables.Value = ((VotacionMultiple)crudIniciativa).MaxOpcionesSeleccionables;
+                    
                     spFormularioOpciones.MaxHeight = double.PositiveInfinity;
-
                     spFormularioAsistire.MaxHeight = 0;
                     spFormularioRegla.MaxHeight = 0;
                     spFormularioVotacionMultiple.MaxHeight = double.PositiveInfinity;
@@ -313,7 +316,10 @@ namespace Lawful.Views
                 switch (_selected.GetType().Name)
                 {
                     case "Asistire":
-                        lvDetailOpciones.ItemsSource = ((Asistire)_selected).Opciones;
+                        opciones = CreateListViewOpciones(((Asistire)_selected).Opciones);
+                        lvDetailOpciones.ItemsSource = opciones;
+                        btnVotar.IsEnabled = IsVotarEnabled(_selected);
+                        
                         tbFechaEvento.Text = ((Asistire)_selected).FechaEvento.ToString();
                         tbFechaLimiteConfirmacion.Text = ((Asistire)_selected).FechaLimiteConfirmacion.ToString();
                         tbLugar.Text = ((Asistire)_selected).Lugar;
@@ -325,7 +331,8 @@ namespace Lawful.Views
                         spDetailVotacionMultiple.MaxHeight = 0;
                         break;
                     case "DoDont":
-                        lvDetailOpciones.ItemsSource = ((DoDont)_selected).Opciones;
+                        opciones = CreateListViewOpciones(((DoDont)_selected).Opciones);
+                        lvDetailOpciones.ItemsSource = opciones;
                         rbDo.IsChecked = ((DoDont)_selected).Tipo == "Do" ? true : false;
                         rbDont.IsChecked = ((DoDont)_selected).Tipo == "Don't" ? true : false;
 
@@ -349,7 +356,8 @@ namespace Lawful.Views
                         spDetailVotacionMultiple.MaxHeight = 0;
                         break;
                     case "Regla":
-                        lvDetailOpciones.ItemsSource = ((Regla)_selected).Opciones;
+                        opciones = CreateListViewOpciones(((Regla)_selected).Opciones);
+                        lvDetailOpciones.ItemsSource = opciones;
                         slDetailRelevancia.Value = ((Regla)_selected).Relevancia;
 
                         spDetailAsistire.MaxHeight = 0;
@@ -359,7 +367,8 @@ namespace Lawful.Views
                         spDetailVotacionMultiple.MaxHeight = 0;
                         break;
                     case "Votacion":
-                        lvDetailOpciones.ItemsSource = ((Votacion)_selected).Opciones;
+                        opciones = CreateListViewOpciones(((Votacion)_selected).Opciones);
+                        lvDetailOpciones.ItemsSource = opciones;
 
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
@@ -368,8 +377,9 @@ namespace Lawful.Views
                         spDetailOpciones.MaxHeight = double.PositiveInfinity;
                         break;
                     case "VotacionMultiple":
-                        lvDetailOpciones.ItemsSource = ((VotacionMultiple)_selected).Opciones;
-                        slDetailMaxOpcionesSeleccionables.Value = ((VotacionMultiple)_selected).MaxOpcionesSeleccionables;
+                        opciones = CreateListViewOpciones(((VotacionMultiple)_selected).Opciones);
+                        lvDetailOpciones.ItemsSource = opciones;
+                        tbDetailMaxOpcionesSeleccionables.Text = ((VotacionMultiple)_selected).MaxOpcionesSeleccionables.ToString();
 
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
@@ -385,6 +395,21 @@ namespace Lawful.Views
             }
             
         }
+
+        private ObservableCollection<OpcionListViewItem> CreateListViewOpciones(List<Opcion> IniciativaOpciones)
+        {
+            ObservableCollection<OpcionListViewItem> opciones = new ObservableCollection<OpcionListViewItem>();
+            foreach (var item in IniciativaOpciones)
+            {
+                var opcion = new OpcionListViewItem();
+                opcion.Opcion = item;
+                opcion.Content = opcion.Opcion.Descripcion;
+                opciones.Add(opcion);
+            }
+
+            return opciones;
+        }
+
         private async void DisplayError(string errorM)
         {
             ContentDialog error = new ContentDialog
@@ -513,24 +538,40 @@ namespace Lawful.Views
 
         private void btnVotar_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            List<Opcion> opciones = new List<Opcion>();
-
-            var opcion = new Opcion()
+            try
             {
-                ID = 21
+                List<Opcion> opcionesSelected = new List<Opcion>();
 
-            };
-            var opcion2 = new Opcion()
-            {
-                ID = 22
+                foreach (var item in opciones)
+                {
+                    if (item.IsSelected)
+                    {
+                        opcionesSelected.Add(item.Opcion);
+                    }
+                }
+                if (_selected.GetType().Name == "VotacionMultiple")
+                {
+                    if (opcionesSelected.Count > ((VotacionMultiple)_selected).MaxOpcionesSeleccionables)
+                    {
+                        throw new Exception("El máximo de opciones seleccionables es " + ((VotacionMultiple)_selected).MaxOpcionesSeleccionables + ".");
+                    }
+                }
 
-            };
-            opciones.Add(opcion);
-            opciones.Add(opcion2);
-            if (opciones.Count>0)
-            {
-                iniciativaBL.InsertarVoto(SesionActiva.ObtenerInstancia().Usuario.ID, opciones);
+                if (opcionesSelected.Count > 0)
+                {
+                    iniciativaBL.InsertarVoto(SesionActiva.ObtenerInstancia().Usuario.ID, opcionesSelected);
+                }
+                else
+                {
+                    throw new Exception("Debe seleccionar al menos una opción.");
+                }
             }
+            catch (Exception ex)
+            {
+
+                DisplayError(ex.Message);
+            }
+            
         }
 
         private void cbTipoIniciativa_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -595,6 +636,11 @@ namespace Lawful.Views
 
                 throw;
             }
+        }
+
+        private bool IsVotarEnabled(Iniciativa iniciativa)
+        {
+            return !iniciativa.UserHasVoted(SesionActiva.ObtenerInstancia().Usuario.ID);
         }
     }
 }

@@ -24,5 +24,13 @@ namespace Lawful.Core.Modelo
         {
             return this.GetType().Name;
         }
+        public virtual bool UserHasVoted(int userId)
+        {
+            return false;
+        }
+        public virtual List<Opcion> OptionsVoted(int userId)
+        {
+            return null;
+        }
     }
 }

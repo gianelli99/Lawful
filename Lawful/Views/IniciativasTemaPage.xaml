@@ -112,17 +112,12 @@
                     </StackPanel>
                     <StackPanel x:Name="spDetailVotacionMultiple" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
-                        <Slider IsEnabled="False"  x:Name="slDetailMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
+                        <TextBlock x:Name="tbDetailMaxOpcionesSeleccionables" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                     </StackPanel>
 
                     <StackPanel x:Name="spDetailOpciones" HorizontalAlignment="Left">
-                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Opciones" />
-                        <ListView x:Name="lvDetailOpciones" MaxHeight="500" Width="400" >
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="modelo:Opcion">
-                                    <TextBlock Text="{x:Bind Descripcion}" FontWeight="SemiBold"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Opciones"/>
+                        <ListView x:Name="lvDetailOpciones" MaxHeight="500" Width="400">
                         </ListView>
                     </StackPanel>
 
