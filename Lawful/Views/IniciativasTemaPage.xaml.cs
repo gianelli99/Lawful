@@ -58,7 +58,6 @@ namespace Lawful.Views
             temaID = Convert.ToInt32(e.Parameter);
             base.OnNavigatedTo(e);
             RefreshIniciativasListView();
-            OnPropertyChanged("Selected");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -71,11 +70,33 @@ namespace Lawful.Views
             }
 
             storage = value;
-            //if (_selected != null)
-            //{
-            //    _selected = iniciativaBL.Consultar(Selected.ID);
-            //    lvComentarios.ItemsSource = _selected.Comentarios;
-            //}
+            if (_selected != null)
+            {
+                Iniciativa consulta = iniciativaBL.Consultar(Selected.ID);
+                _selected.Comentarios = consulta.Comentarios;
+                lvComentarios.ItemsSource = _selected.Comentarios;
+                switch (_selected.GetType().Name)
+                {
+                    case "Asistire":
+                        ((Asistire)_selected).Opciones = ((Asistire)consulta).Opciones;
+                        break;
+                    case "DoDont":
+                        ((DoDont)_selected).Opciones = ((DoDont)consulta).Opciones;
+                        break;
+
+                    case "Regla":
+                        ((Regla)_selected).Opciones = ((Regla)consulta).Opciones;
+                        break;
+                    case "Votacion":
+                        ((Votacion)_selected).Opciones = ((Votacion)consulta).Opciones;
+                        break;
+                    case "VotacionMultiple":
+                        ((VotacionMultiple)_selected).Opciones = ((VotacionMultiple)consulta).Opciones;
+                        break;
+                    default:
+                        break;
+                }
+            }
             DetailsMode();
             OnPropertyChanged(propertyName);
         }
@@ -139,16 +160,6 @@ namespace Lawful.Views
                             iniciativaBL.Eliminar(Selected.ID);
                             RefreshIniciativasListView();
                         }
-                        if (Iniciativas.Count!= 0 && Iniciativas[0] != null)
-                        {
-                                Selected = Iniciativas[0];
-                            if (Selected!=null)
-                            {
-                                lvComentarios.ItemsSource = Selected.Comentarios;
-                            }
-                        }
-
-                        OnPropertyChanged("Selected");
                         break;
                     default:
                         break;
@@ -199,17 +210,19 @@ namespace Lawful.Views
                 {
                     Iniciativas.Add(item);
                 }
-                if (Iniciativas.Count > 0)
+                OnPropertyChanged("Iniciativas");
+                if (Iniciativas.Count != 0 && Iniciativas[0] != null)
                 {
                     lvComentarios.ItemsSource = null;
 
                     lvDetailOpciones.ItemsSource = null;
                     Iniciativas[0] = iniciativaBL.Consultar(Iniciativas[0].ID);
-                    Selected = Iniciativas[0];
+                    Iniciativa cero = Iniciativas[0];
+                    Selected = cero;
                 }
             }
+            
             DetailsMode();
-            OnPropertyChanged("Iniciativas");
         }
 
         private void FormularioMode()
@@ -303,6 +316,7 @@ namespace Lawful.Views
 
         private void DetailsMode()
         {
+            bool canVote = true;
             spFormulario.MaxHeight = 0;
             spDetails.MaxHeight = double.PositiveInfinity;
             spDetailAsistire.MaxHeight = 0;
@@ -318,8 +332,14 @@ namespace Lawful.Views
                     case "Asistire":
                         opciones = CreateListViewOpciones(((Asistire)_selected).Opciones);
                         lvDetailOpciones.ItemsSource = opciones;
-                        btnVotar.IsEnabled = IsVotarEnabled(_selected);
-                        
+                        canVote = CanVote(_selected);
+                        btnVotar.IsEnabled = canVote;
+
+                        if (!canVote)
+                        {
+                            ShowVotedOption();
+                        }
+
                         tbFechaEvento.Text = ((Asistire)_selected).FechaEvento.ToString();
                         tbFechaLimiteConfirmacion.Text = ((Asistire)_selected).FechaLimiteConfirmacion.ToString();
                         tbLugar.Text = ((Asistire)_selected).Lugar;
@@ -329,12 +349,20 @@ namespace Lawful.Views
                         spDetailDoDont.MaxHeight = 0;
                         spDetailRegla.MaxHeight = 0;
                         spDetailVotacionMultiple.MaxHeight = 0;
+
                         break;
                     case "DoDont":
                         opciones = CreateListViewOpciones(((DoDont)_selected).Opciones);
                         lvDetailOpciones.ItemsSource = opciones;
                         rbDo.IsChecked = ((DoDont)_selected).Tipo == "Do" ? true : false;
                         rbDont.IsChecked = ((DoDont)_selected).Tipo == "Don't" ? true : false;
+                        canVote = CanVote(_selected);
+                        btnVotar.IsEnabled = canVote;
+
+                        if (!canVote)
+                        {
+                            ShowVotedOption();
+                        }
 
                         spDetailDoDont.MaxHeight = double.PositiveInfinity;
                         spDetailOpciones.MaxHeight = double.PositiveInfinity;
@@ -348,17 +376,30 @@ namespace Lawful.Views
                         spDetailDoDont.MaxHeight = 0;
                         spDetailRegla.MaxHeight = 0;
                         spDetailVotacionMultiple.MaxHeight = 0;
+                        canVote = false;
+                        btnVotar.IsEnabled = canVote;
+
                         break;
                     case "PropuestaGenerica":
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
                         spDetailRegla.MaxHeight = 0;
                         spDetailVotacionMultiple.MaxHeight = 0;
+                        canVote = false;
+                        btnVotar.IsEnabled = canVote;
+
                         break;
                     case "Regla":
                         opciones = CreateListViewOpciones(((Regla)_selected).Opciones);
                         lvDetailOpciones.ItemsSource = opciones;
                         slDetailRelevancia.Value = ((Regla)_selected).Relevancia;
+                        canVote = CanVote(_selected);
+                        btnVotar.IsEnabled = canVote;
+
+                        if (!canVote)
+                        {
+                            ShowVotedOption();
+                        }
 
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
@@ -369,6 +410,13 @@ namespace Lawful.Views
                     case "Votacion":
                         opciones = CreateListViewOpciones(((Votacion)_selected).Opciones);
                         lvDetailOpciones.ItemsSource = opciones;
+                        canVote = CanVote(_selected);
+                        btnVotar.IsEnabled = canVote;
+
+                        if (!canVote)
+                        {
+                            ShowVotedOption();
+                        }
 
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
@@ -380,6 +428,21 @@ namespace Lawful.Views
                         opciones = CreateListViewOpciones(((VotacionMultiple)_selected).Opciones);
                         lvDetailOpciones.ItemsSource = opciones;
                         tbDetailMaxOpcionesSeleccionables.Text = ((VotacionMultiple)_selected).MaxOpcionesSeleccionables.ToString();
+                        canVote = CanVote(_selected);
+                        btnVotar.IsEnabled = canVote;
+
+                        lvDetailOpciones.SelectionMode = ListViewSelectionMode.Multiple;
+                        if (!canVote)
+                        {
+                            foreach (var item in lvDetailOpciones.Items)
+                            {
+                                if (((OpcionListViewItem)item).Opcion.Votantes.FindIndex(x => x.ID == SesionActiva.ObtenerInstancia().Usuario.ID) != -1)
+                                {
+                                    lvDetailOpciones.SelectedItems.Add(item);
+                                }
+
+                            }
+                        }
 
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
@@ -387,13 +450,24 @@ namespace Lawful.Views
                         spDetailVotacionMultiple.MaxHeight = double.PositiveInfinity;
                         spDetailOpciones.MaxHeight = double.PositiveInfinity;
 
-                        lvDetailOpciones.SelectionMode = ListViewSelectionMode.Multiple;
                         break;
                     default:
                         break;
                 }
             }
             
+        }
+
+        private void ShowVotedOption()
+        {
+            foreach (OpcionListViewItem item in lvDetailOpciones.Items)
+            {
+                if (item.Opcion.Votantes.FindIndex(x => x.ID == SesionActiva.ObtenerInstancia().Usuario.ID) != -1)
+                {
+                    lvDetailOpciones.SelectedItem = item;
+                    break;
+                }
+            }
         }
 
         private ObservableCollection<OpcionListViewItem> CreateListViewOpciones(List<Opcion> IniciativaOpciones)
@@ -560,6 +634,7 @@ namespace Lawful.Views
                 if (opcionesSelected.Count > 0)
                 {
                     iniciativaBL.InsertarVoto(SesionActiva.ObtenerInstancia().Usuario.ID, opcionesSelected);
+                    btnVotar.IsEnabled = false;
                 }
                 else
                 {
@@ -638,7 +713,7 @@ namespace Lawful.Views
             }
         }
 
-        private bool IsVotarEnabled(Iniciativa iniciativa)
+        private bool CanVote(Iniciativa iniciativa)
         {
             return !iniciativa.UserHasVoted(SesionActiva.ObtenerInstancia().Usuario.ID);
         }
