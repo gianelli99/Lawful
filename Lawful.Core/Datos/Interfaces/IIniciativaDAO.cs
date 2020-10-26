@@ -20,5 +20,6 @@ namespace Lawful.Core.Datos.Interfaces
         List<string[]> ListarTipos();
         void InsertarComentario(int iniciativaID, Comentario comentario);
         void InsertarVoto(int userID, List<Opcion> opciones);
+        void SeleccionarRespuestaCorrecta(int iniciativaID, int comentarioID);
     }
 }

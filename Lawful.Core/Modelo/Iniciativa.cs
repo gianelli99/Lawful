@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Lawful.Core.Modelo
@@ -31,6 +32,28 @@ namespace Lawful.Core.Modelo
         public virtual List<Opcion> OptionsVoted(int userId)
         {
             return null;
+        }
+        public string GetState()
+        {
+            if (FechaCierre.Date < DateTime.Now.Date)
+            {
+                return "Cerrada";
+            }
+            else
+            {
+                return "Abierta";
+            }
+        }
+        public bool isOpen()
+        {
+            if (FechaCierre.Date < DateTime.Now.Date)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

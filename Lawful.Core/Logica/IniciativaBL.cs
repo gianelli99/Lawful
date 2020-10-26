@@ -134,6 +134,17 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
+        public void SeleccionarRespuestaCorrecta(int iniciativaID, int comentarioID)
+        {
+            try
+            {
+                iniciativaDAO.SeleccionarRespuestaCorrecta(iniciativaID, comentarioID);
+            }
+            catch (Exception)
+            {
 
+                throw new Exception("Ha ocurrido un error");
+            }
+        }
     }
 }

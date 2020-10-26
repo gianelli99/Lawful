@@ -10,6 +10,7 @@ namespace Lawful.Core.Modelo.Iniciativas
         public FAQ(Usuario owner)
         : base(owner)
         {
+            RespuestaCorrecta = new Comentario();
         }
         public override string GetIniciativaType()
         {

@@ -19,14 +19,26 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" x:Name="Master">
+            <Border Height="40" Background="{ThemeResource AppBarBackgroundThemeBrush}" >
+                <TextBlock Text="{x:Bind Tema.Titulo}" Margin="5,0,0,0" Style="{StaticResource DetailBodyBaseMediumStyle}" VerticalAlignment="Center"/>
+            </Border>
+            
             <ListView x:Name="IniciativasListView" ItemsSource="{x:Bind Iniciativas, Mode=TwoWay}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" IsItemClickEnabled="True">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="modelo:Iniciativa">
-                        <StackPanel Orientation="Horizontal" Margin="6">
+                        <StackPanel Orientation="Horizontal" Margin="6" Width="338">
                             <SymbolIcon Symbol="{x:Bind IconName}" Margin="0,0,12,0"/>
-                            <StackPanel>
+                            <StackPanel Width="280">
                                 <TextBlock Text="{x:Bind Titulo}"  Style="{ThemeResource ListTitleStyle}"/>
-                                <TextBlock Text="{x:Bind GetIniciativaType()}" Style="{StaticResource ListSubTitleStyle}" />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="{x:Bind GetIniciativaType()}" Style="{StaticResource ListSubTitleStyle}" />
+                                    <TextBlock Grid.Row="1" Text="{x:Bind GetState()}" Style="{StaticResource ListSubTitleStyle}" FontStyle="Italic" FontSize="12"/>
+                                </Grid>
+                                
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>

@@ -22,7 +22,7 @@ namespace Lawful.Views
         private Iniciativa _selected;
         private Iniciativa crudIniciativa;
         ObservableCollection<OpcionListViewItem> opciones;
-        private int temaID;
+        private Tema Tema;
         public ObservableCollection<Iniciativa> Iniciativas { get; set; }
         public Iniciativa Selected
         {
@@ -55,7 +55,8 @@ namespace Lawful.Views
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            temaID = Convert.ToInt32(e.Parameter);
+            int temaID = Convert.ToInt32(e.Parameter);
+            Tema = temaBL.Consultar(temaID);
             base.OnNavigatedTo(e);
             RefreshIniciativasListView();
         }
@@ -83,7 +84,6 @@ namespace Lawful.Views
                     case "DoDont":
                         ((DoDont)_selected).Opciones = ((DoDont)consulta).Opciones;
                         break;
-
                     case "Regla":
                         ((Regla)_selected).Opciones = ((Regla)consulta).Opciones;
                         break;
@@ -203,7 +203,7 @@ namespace Lawful.Views
         private void RefreshIniciativasListView()
         {
             Iniciativas = new ObservableCollection<Iniciativa>();
-            var data = temaBL.ListarIniciativas(temaID);
+            var data = temaBL.ListarIniciativas(Tema.ID);
             if (data != null)
             {
                 foreach (var item in data)
@@ -316,6 +316,7 @@ namespace Lawful.Views
 
         private void DetailsMode()
         {
+            btnVotar.Content = "Votar";
             bool canVote = true;
             spFormulario.MaxHeight = 0;
             spDetails.MaxHeight = double.PositiveInfinity;
@@ -325,6 +326,7 @@ namespace Lawful.Views
             spDetailVotacionMultiple.MaxHeight = 0;
             spDetailOpciones.MaxHeight = 0;
             lvDetailOpciones.SelectionMode = ListViewSelectionMode.Single;
+            lvComentarios.SelectionMode = ListViewSelectionMode.None;
             if (Selected!=null)
             {
                 switch (_selected.GetType().Name)
@@ -376,8 +378,14 @@ namespace Lawful.Views
                         spDetailDoDont.MaxHeight = 0;
                         spDetailRegla.MaxHeight = 0;
                         spDetailVotacionMultiple.MaxHeight = 0;
-                        canVote = false;
+                        canVote = _selected.isOpen() && _selected.Owner.ID == SesionActiva.ObtenerInstancia().Usuario.ID && ((FAQ)_selected).RespuestaCorrecta.ID == 0;
                         btnVotar.IsEnabled = canVote;
+                        if (!canVote)
+                        {
+                            ShowVotedComment();
+                        }
+                        btnVotar.Content = "Seleccionar respuesta correcta";
+                        lvComentarios.SelectionMode = ListViewSelectionMode.Single;
 
                         break;
                     case "PropuestaGenerica":
@@ -457,7 +465,17 @@ namespace Lawful.Views
             }
             
         }
-
+        private void ShowVotedComment()
+        {
+            for (int i = 0; i < _selected.Comentarios.Count; i++)
+            {
+                if (((FAQ)_selected).RespuestaCorrecta.ID == _selected.Comentarios[i].ID)
+                {
+                    lvComentarios.SelectedItem= lvComentarios.Items[i];
+                    break;
+                }
+            }
+        }
         private void ShowVotedOption()
         {
             foreach (OpcionListViewItem item in lvDetailOpciones.Items)
@@ -499,7 +517,7 @@ namespace Lawful.Views
         {
             try
             {
-                crudIniciativa.Tema = new Tema() { ID = temaID };
+                crudIniciativa.Tema = new Tema() { ID = Tema.ID };
                 crudIniciativa.FechaCreacion = DateTime.Now.Date;
                 if (String.IsNullOrWhiteSpace(txtTitulo.Text)
                     || String.IsNullOrWhiteSpace(txtDescripcion.Text))
@@ -545,9 +563,7 @@ namespace Lawful.Views
                     case "DoDont":
                         ((DoDont)crudIniciativa).Tipo = ((KeyValuePair<string,string>)cbTipoIniciativa.SelectedItem).Value;
                         break;
-                    case "FAQ":
-
-                        break;
+                    
                     case "PropuestaGenerica":
                         break;
                     case "Regla":
@@ -631,7 +647,19 @@ namespace Lawful.Views
                     }
                 }
 
-                if (opcionesSelected.Count > 0)
+                if (_selected.GetType().Name == "FAQ")
+                {
+                    if (lvComentarios.SelectedItem == null)
+                    {
+                        throw new Exception("Debe seleccionar un comentario.");
+                    }
+                    else
+                    {
+                        iniciativaBL.SeleccionarRespuestaCorrecta(_selected.ID, ((Comentario)lvComentarios.SelectedItem).ID);
+                        btnVotar.IsEnabled = false;
+                    }
+                    
+                }else if (opcionesSelected.Count > 0)//si no es faq
                 {
                     iniciativaBL.InsertarVoto(SesionActiva.ObtenerInstancia().Usuario.ID, opcionesSelected);
                     btnVotar.IsEnabled = false;
@@ -715,7 +743,14 @@ namespace Lawful.Views
 
         private bool CanVote(Iniciativa iniciativa)
         {
-            return !iniciativa.UserHasVoted(SesionActiva.ObtenerInstancia().Usuario.ID);
+            if (iniciativa.isOpen() && !iniciativa.UserHasVoted(SesionActiva.ObtenerInstancia().Usuario.ID))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
