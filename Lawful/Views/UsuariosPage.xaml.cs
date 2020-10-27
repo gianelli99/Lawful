@@ -14,14 +14,12 @@ using System.Threading.Tasks;
 
 namespace Lawful.Views
 {
-    public sealed partial class UsuariosPage : Page, INotifyPropertyChanged
+    public sealed partial class UsuariosPage : Page
     {
         Accion accion;
         List<Grupo> grupos;
         UsuarioBL usuarioBL;
         Usuario user;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public UsuariosPage()
         {
