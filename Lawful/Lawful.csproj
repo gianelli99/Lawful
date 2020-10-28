@@ -179,6 +179,9 @@
     <Compile Include="Views\MisDatosPage.xaml.cs">
       <DependentUpon>MisDatosPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TareasPage.xaml.cs">
+      <DependentUpon>TareasPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TemasPage.xaml.cs">
       <DependentUpon>TemasPage.xaml</DependentUpon>
     </Compile>
@@ -241,6 +244,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MisDatosPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TareasPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
