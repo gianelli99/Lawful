@@ -139,11 +139,12 @@ namespace Lawful.Views
             }
             catch (Exception)
             {
-                new ContentDialog {
+                var error = new ContentDialog {
                     Title = "Error",
                     Content = "Ocurrió un error inesperado, vuelva a intentarlo",
                     CloseButtonText = "Ok"
                 };
+                await error.ShowAsync();
             }
         }
 

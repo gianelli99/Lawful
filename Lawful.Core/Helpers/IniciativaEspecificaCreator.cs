@@ -33,7 +33,7 @@ namespace Lawful.Core.Helpers
                     return iniciativa;
                 case 4:
                     iniciativa = new FAQ(owner);
-                    //no seteamos respuesta correcta porque se hace en el consultar
+                    ((FAQ)iniciativa).RespuestaCorrecta.ID = Convert.ToInt32(campos[10]);
                     RellenarCamposGenerales(iniciativa,campos);
                     return iniciativa;
                 case 5:

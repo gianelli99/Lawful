@@ -19,14 +19,26 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" x:Name="Master">
+            <Border Height="40" Background="{ThemeResource AppBarBackgroundThemeBrush}" >
+                <TextBlock Text="{x:Bind Tema.Titulo}" Margin="5,0,0,0" Style="{StaticResource DetailBodyBaseMediumStyle}" VerticalAlignment="Center"/>
+            </Border>
+            
             <ListView x:Name="IniciativasListView" ItemsSource="{x:Bind Iniciativas, Mode=TwoWay}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" IsItemClickEnabled="True">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="modelo:Iniciativa">
-                        <StackPanel Orientation="Horizontal" Margin="6">
+                        <StackPanel Orientation="Horizontal" Margin="6" Width="338">
                             <SymbolIcon Symbol="{x:Bind IconName}" Margin="0,0,12,0"/>
-                            <StackPanel>
+                            <StackPanel Width="280">
                                 <TextBlock Text="{x:Bind Titulo}"  Style="{ThemeResource ListTitleStyle}"/>
-                                <TextBlock Text="{x:Bind GetIniciativaType()}" Style="{StaticResource ListSubTitleStyle}" />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="{x:Bind GetIniciativaType()}" Style="{StaticResource ListSubTitleStyle}" />
+                                    <TextBlock Grid.Row="1" Text="{x:Bind GetState()}" Style="{StaticResource ListSubTitleStyle}" FontStyle="Italic" FontSize="12"/>
+                                </Grid>
+                                
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
@@ -42,18 +54,16 @@
                 </Grid.RowDefinitions>
                 <CommandBar Grid.Row="0" x:Name="AccionesBar"></CommandBar>
                 <StackPanel Grid.Row="1" x:Name="spFormulario" Padding="{StaticResource DetailPageMargin}">
+                    <TextBlock  x:Name="tbNuevaIniciativa" Text="Nueva iniciativa" Style="{ThemeResource TitleTextBlockStyle}"/>
                     <TextBox x:Name="txtTitulo" Header= "Título" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                     <TextBox x:Name="txtDescripcion" Header= "Descripción" Margin="0,24,0,0" Width="400" HorizontalAlignment="Left"/>
                     <DatePicker Header="Fecha de cierre" x:Name="dpFechaCierre" Width="400" Margin="0,24,0,0"/>
-                    <ComboBox x:Name="cbTipoIniciativa" Header="Tipo de iniciativa" Margin="0,24,0,0" Width="400"/>
+                    <ComboBox x:Name="cbTipoIniciativa" Header="Tipo de iniciativa" Margin="0,24,0,0" Width="400" SelectionChanged="cbTipoIniciativa_SelectionChanged"/>
 
                     <StackPanel x:Name="spFormularioAsistire" HorizontalAlignment="Left">
-                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha del evento" />
-                        <DatePicker IsEnabled="False" x:Name="dpFechaEvento" Width="400"/>
-                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Fecha límite de confirmación" />
-                        <DatePicker IsEnabled="False" x:Name="dpFechaLimiteConfirmacion" Width="400"/>
-                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Lugar" />
-                        <TextBox IsEnabled="False" x:Name="txtLugar"/>
+                        <DatePicker  x:Name="dpFechaEvento" Header="Fecha del evento" Margin="0,24,0,0" Width="400"/>
+                        <DatePicker  x:Name="dpFechaLimiteConfirmacion" Header="Fecha límite de confirmación" Margin="0,24,0,0" Width="400"/>
+                        <TextBox  x:Name="txtLugar" Header="Lugar" Margin="0,24,0,0" Width="400"/>
                     </StackPanel>
                     <StackPanel x:Name="spFormularioRegla" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Relevancia" />
@@ -62,6 +72,24 @@
                     <StackPanel x:Name="spFormularioVotacionMultiple" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
                         <Slider x:Name="slFormularioMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
+                    </StackPanel>
+                    <StackPanel x:Name="spFormularioOpciones" HorizontalAlignment="Left">
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Opciones" />
+                        <TextBox  x:Name="txtOpcion" Header="Añade una opción" Margin="0,0,0,0" Width="400" KeyDown="txtOpcion_KeyDown"/>
+                        <ListView x:Name="lvFormularioOpciones" MaxHeight="500" Width="400" SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="modelo:Opcion">
+                                    <Grid HorizontalAlignment="Stretch" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="300"></ColumnDefinition>
+                                            <ColumnDefinition Width="100"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock VerticalAlignment="Center" Grid.Column="0" Text="{x:Bind Descripcion}" FontWeight="SemiBold"/>
+                                        <HyperlinkButton Name="{x:Bind Descripcion}" Grid.Column="1" Content="Borrar" Foreground="Red" Click="HyperlinkButton_Click"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </StackPanel>
                     <StackPanel x:Name="Buttons" Orientation="Horizontal">
                         <Button x:Name="btnGuardar" Content="Guardar" Margin="24" Click="btnGuardar_Click"/>
@@ -96,17 +124,12 @@
                     </StackPanel>
                     <StackPanel x:Name="spDetailVotacionMultiple" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Máximo de opciones seleccionables" />
-                        <Slider  IsEnabled="False" x:Name="slDetailMaxOpcionesSeleccionables" Maximum="10" Minimum="1" Width="400"/>
+                        <TextBlock x:Name="tbDetailMaxOpcionesSeleccionables" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                     </StackPanel>
 
                     <StackPanel x:Name="spDetailOpciones" HorizontalAlignment="Left">
-                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Opciones" />
-                        <ListView x:Name="lvOpciones" MaxHeight="500" Width="400" >
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="modelo:Opcion">
-                                    <TextBlock Text="{x:Bind Descripcion}" FontWeight="SemiBold"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
+                        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Opciones"/>
+                        <ListView x:Name="lvDetailOpciones" MaxHeight="500" Width="400">
                         </ListView>
                     </StackPanel>
 
@@ -125,7 +148,7 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                        <TextBox Margin="0,10,0,0" x:Name="txtComentario" Width="400"/>
+                        <TextBox Margin="0,10,0,0" x:Name="txtComentario" Width="400" KeyDown="txtComentario_KeyDown"/>
                     </StackPanel>
                     
                     

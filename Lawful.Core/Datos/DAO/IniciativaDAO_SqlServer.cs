@@ -49,7 +49,7 @@ namespace Lawful.Core.Datos.DAO
 
                     command.CommandText += $"SELECT opciones.id, opciones.descripcion FROM opciones WHERE iniciativa_id = {id};";
 
-                    command.CommandText += $"SELECT opciones.id,usuarios.nombre, usuarios.apellido FROM opciones INNER JOIN votos ON opciones.id =votos.opcion_id INNER JOIN usuarios ON usuarios.id = votos.usuario_id WHERE iniciativa_id = {id};";
+                    command.CommandText += $"SELECT opciones.id,usuarios.nombre, usuarios.apellido, usuarios.id FROM opciones INNER JOIN votos ON opciones.id =votos.opcion_id INNER JOIN usuarios ON usuarios.id = votos.usuario_id WHERE iniciativa_id = {id};";
                     
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
@@ -92,6 +92,7 @@ namespace Lawful.Core.Datos.DAO
                                 Usuario votante = new Usuario();
                                 votante.Nombre = response.GetString(1);
                                 votante.Apellido = response.GetString(2);
+                                votante.ID = response.GetInt32(3);
                                 int opcionId = response.GetInt32(0);
                                 foreach (var opcion in opciones)
                                 {
@@ -195,8 +196,22 @@ namespace Lawful.Core.Datos.DAO
                 {
                     
                     Strategy.SetInsertCommand(command, iniciativa);
-                    
-                    command.ExecuteNonQuery();
+
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        if (response.Read())
+                        {
+                            iniciativa.ID = response.GetInt32(0);
+                        }
+                    }
+                    command.CommandText = "";
+                    Strategy.SetInsertOpciones(command, iniciativa);
+
+                    if (command.CommandText != "")
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
                     transaction.Commit();
                     return;
                 }
@@ -215,6 +230,91 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }//done
+
+        public void InsertarComentario(int iniciativaID, Comentario comentario)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Insertar comentario");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"INSERT INTO comentarios VALUES (@descripcion, @usuario_id, @iniciativa_id);";
+                    command.Parameters.AddWithValue("@descripcion", comentario.Descripcion);
+                    command.Parameters.AddWithValue("@usuario_id", comentario.Owner.ID);
+                    command.Parameters.AddWithValue("@iniciativa_id", iniciativaID);
+                    command.ExecuteNonQuery();
+
+                    transaction.Commit();
+                    return;
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+
+                        throw ex2;
+                    }
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
+        public void InsertarVoto(int userID, List<Opcion> opciones)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Insertar voto");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    
+                    string accionesQuery = "INSERT INTO votos VALUES ";
+                    foreach (var opcion in opciones)
+                    {
+                        accionesQuery += $"({userID}, {opcion.ID}),";
+                    }
+                    accionesQuery = accionesQuery.Remove(accionesQuery.Length - 1);
+                    accionesQuery += ";";
+                    command.CommandText = accionesQuery;
+                    command.ExecuteNonQuery();
+
+                    transaction.Commit();
+                    return;
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+
+                        throw ex2;
+                    }
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
 
         public List<Iniciativa> ListarPorTema(int temaId)//done
         {
@@ -292,6 +392,43 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
+        public List<string[]> ListarTipos()
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("listar tipos");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"SELECT descripcion, class_name FROM iniciativas_tipos;";
+                    transaction.Commit();
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        List<string[]> iniciativas = new List<string[]>();
+                        while (response.Read())
+                        {
+                            string[] iniciativa = new string[] { response.GetString(0), response.GetString(1)};
+                            iniciativas.Add(iniciativa);
+                        }
+                        return iniciativas;
+                    }
+                    throw new Exception("No se ha podido encontrar el tema");
+                }
+                catch (Exception ex2)
+                {
+                    throw ex2;
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
         public void Modificar(Iniciativa iniciativa)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
@@ -311,6 +448,44 @@ namespace Lawful.Core.Datos.DAO
                     Strategy.SetUpdateCommand(command, iniciativa);
 
                     command.ExecuteNonQuery();
+                    transaction.Commit();
+                    return;
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+
+                        throw ex2;
+                    }
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
+        public void SeleccionarRespuestaCorrecta(int iniciativaID, int comentarioID)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Insertar com corr");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"UPDATE iniciativas SET respuesta_correcta_id=@respuesta_correcta_id WHERE id = {iniciativaID}";
+                    command.Parameters.AddWithValue("@respuesta_correcta_id", comentarioID);
+                    command.ExecuteNonQuery();
+
                     transaction.Commit();
                     return;
                 }

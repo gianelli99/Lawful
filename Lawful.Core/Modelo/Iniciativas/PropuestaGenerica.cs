@@ -10,5 +10,9 @@ namespace Lawful.Core.Modelo.Iniciativas
         : base(owner)
         {
         }
+        public override string GetIniciativaType()
+        {
+            return "Propuesta genérica";
+        }
     }
 }

@@ -10,6 +10,12 @@ namespace Lawful.Core.Datos.QueryMiddleware
     class AsistireStrategy : IQueryStrategy
     {
         public int Tipo { get; set; }
+        public string IconName { get; set; }
+        public AsistireStrategy()
+        {
+            IconName = "Calendar";
+            Tipo = 1;
+        }
 
         public SqlCommand SetInsertCommand(SqlCommand command, Iniciativa iniciativa)
         {
@@ -25,7 +31,7 @@ namespace Lawful.Core.Datos.QueryMiddleware
                 " lugar," +
                 " fecha_limite_confirmacion," +
                 " tema_id, " +
-                " fecha_cierre);" +
+                " fecha_cierre)" +
                 " VALUES " +
                 "(@titulo," +
                 " @descripcion," +
@@ -42,7 +48,7 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@titulo", asistire.Titulo);
             command.Parameters.AddWithValue("@descripcion", asistire.Descripcion);
             command.Parameters.AddWithValue("@fecha_creacion", asistire.FechaCreacion);
-            command.Parameters.AddWithValue("@icon_name", asistire.IconName);
+            command.Parameters.AddWithValue("@icon_name", IconName);
             command.Parameters.AddWithValue("@usuario_id", asistire.Owner.ID);
             command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
 
@@ -52,6 +58,7 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@tema_id", asistire.Tema.ID);
             command.Parameters.AddWithValue("@fecha_cierre", asistire.FechaCierre);
 
+            command.CommandText += "SELECT CAST(scope_identity() AS int);";
 
             return command;
         }
@@ -88,6 +95,19 @@ namespace Lawful.Core.Datos.QueryMiddleware
             command.Parameters.AddWithValue("@fecha_cierre", asistire.FechaCierre);
 
 
+            return command;
+        }
+
+        public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
+        {
+            Asistire asistire = (Asistire)iniciativa;
+
+            command.CommandText = "INSERT INTO opciones VALUES ";
+            foreach (Opcion item in asistire.Opciones)
+            {
+                command.CommandText += $"('{item.Descripcion}',{asistire.ID}),";
+            }
+            command.CommandText = command.CommandText.Remove(command.CommandText.Length - 1);
             return command;
         }
     }

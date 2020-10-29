@@ -11,5 +11,7 @@ namespace Lawful.Core.Datos.QueryMiddleware
         int Tipo { get; set; }
         SqlCommand SetInsertCommand(SqlCommand command, Iniciativa iniciativa);
         SqlCommand SetUpdateCommand(SqlCommand command, Iniciativa iniciativa);
+        SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa);
+        
     }
 }

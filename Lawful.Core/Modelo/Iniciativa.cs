@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Lawful.Core.Modelo
@@ -20,9 +21,39 @@ namespace Lawful.Core.Modelo
             Owner = owner;
             Comentarios = new List<Comentario>();
         }
-        public string GetIniciativaType()
+        public virtual string GetIniciativaType()
         {
             return this.GetType().Name;
+        }
+        public virtual bool UserHasVoted(int userId)
+        {
+            return false;
+        }
+        public virtual List<Opcion> OptionsVoted(int userId)
+        {
+            return null;
+        }
+        public string GetState()
+        {
+            if (FechaCierre.Date < DateTime.Now.Date)
+            {
+                return "Cerrada";
+            }
+            else
+            {
+                return "Abierta";
+            }
+        }
+        public bool isOpen()
+        {
+            if (FechaCierre.Date < DateTime.Now.Date)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }
