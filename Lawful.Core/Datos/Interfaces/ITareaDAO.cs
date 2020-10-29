@@ -11,5 +11,6 @@ namespace Lawful.Core.Datos.Interfaces
         void Modificar(Tarea tarea);
         void Eliminar(int tareaId);
         List<Tarea> ListarPorTema(int temaId);
+        void CambiarEstado(Tarea tarea);
     }
 }

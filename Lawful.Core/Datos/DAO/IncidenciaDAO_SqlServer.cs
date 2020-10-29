@@ -17,7 +17,7 @@ namespace Lawful.Core.Datos.DAO
 
                 SqlCommand command = connection.CreateCommand();
                 SqlTransaction transaction;
-                transaction = connection.BeginTransaction("Eliminar incidencia");
+                transaction = connection.BeginTransaction("agregar incidencia");
 
                 command.Connection = connection;
                 command.Transaction = transaction;

@@ -16,10 +16,17 @@ namespace Lawful.Core.Modelo
         public List<Incidencia> IncidenciasSecundarias { get; set; }
         public List<Comentario> Comentarios { get; set; }
         public Usuario Responsable { get; set; }
+        public Interfaces.EstadoTarea Estado { get; set; }
         public Tarea()
         {
             IncidenciasSecundarias = new List<Incidencia>();
             Comentarios = new List<Comentario>();
+            ChangeState(new TareaEstados.PorHacer());
+        }
+        public void ChangeState(Interfaces.EstadoTarea estado)
+        {
+            Estado = estado;
+            Estado.SetTarea(this);
         }
 
     }
