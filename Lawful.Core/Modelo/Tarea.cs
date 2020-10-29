@@ -14,10 +14,12 @@ namespace Lawful.Core.Modelo
         public DateTime FechaFinalizada { get; set; }
         public int Importancia { get; set; }
         public List<Incidencia> IncidenciasSecundarias { get; set; }
+        public List<Comentario> Comentarios { get; set; }
         public Usuario Responsable { get; set; }
         public Tarea()
         {
             IncidenciasSecundarias = new List<Incidencia>();
+            Comentarios = new List<Comentario>();
         }
 
     }

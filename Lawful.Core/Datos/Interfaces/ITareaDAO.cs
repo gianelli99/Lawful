@@ -7,7 +7,7 @@ namespace Lawful.Core.Datos.Interfaces
 {
     public interface ITareaDAO
     {
-        void Insertar(Tarea tarea);
+        void Insertar(Tarea tarea, int temaId);
         void Modificar(Tarea tarea);
         void Eliminar(int tareaId);
         List<Tarea> ListarPorTema(int temaId);
