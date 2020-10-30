@@ -523,7 +523,7 @@ namespace Lawful.Core.Datos.DAO
                             response.IsDBNull(7) ? "" :response.GetDateTime(7).ToString(),
                             response.IsDBNull(8) ? "" :response.GetString(8).ToString(),
                             response.IsDBNull(9)? "" :response.GetDateTime(9).ToString(),
-                            response.IsDBNull(10)? "" :response.GetInt32(10).ToString(),
+                            response.IsDBNull(10)? "0" :response.GetInt32(10).ToString(),
                             response.IsDBNull(11)? "" :response.GetInt32(11).ToString(),
                             response.IsDBNull(12)? "" :response.GetInt32(12).ToString(),
                             response.IsDBNull(13)? "" :response.GetInt32(13).ToString(),

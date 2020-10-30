@@ -380,12 +380,12 @@ namespace Lawful.Views
                         spDetailVotacionMultiple.MaxHeight = 0;
                         canVote = _selected.isOpen() && _selected.Owner.ID == SesionActiva.ObtenerInstancia().Usuario.ID && ((FAQ)_selected).RespuestaCorrecta.ID == 0;
                         btnVotar.IsEnabled = canVote;
+                        lvComentarios.SelectionMode = ListViewSelectionMode.Single;
                         if (!canVote)
                         {
                             ShowVotedComment();
                         }
                         btnVotar.Content = "Seleccionar respuesta correcta";
-                        lvComentarios.SelectionMode = ListViewSelectionMode.Single;
 
                         break;
                     case "PropuestaGenerica":

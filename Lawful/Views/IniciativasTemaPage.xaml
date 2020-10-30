@@ -135,7 +135,7 @@
 
                     <StackPanel x:Name="spDetailComentarios" HorizontalAlignment="Left">
                         <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Comentarios" />
-                        <ListView x:Name="lvComentarios" ItemsSource="{x:Bind Selected.Comentarios}" SelectionMode="None" MaxHeight="800">
+                        <ListView x:Name="lvComentarios" ItemsSource="{x:Bind Selected.Comentarios, Mode=TwoWay}" SelectionMode="None" MaxHeight="800">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="modelo:Comentario">
                                     <StackPanel Margin="0,5,0,5" Width="390">
