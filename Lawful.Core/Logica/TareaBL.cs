@@ -123,6 +123,18 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
+        public void InsertarComentario(int tareaId, Comentario comentario)
+        {
+            try
+            {
+                tareaDAO.InsertarComentario(tareaId, comentario);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
 
     }
 }

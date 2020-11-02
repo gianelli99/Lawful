@@ -209,6 +209,7 @@ namespace Lawful.Core.Datos.DAO
                                     Nombre = response.GetString(5),
                                     Apellido = response.GetString(6)
                                 };
+                                comentario.Owner = user;
                                 int tareaId = response.GetInt32(4);
                                 foreach (var tarea in tareas)
                                 {
@@ -291,6 +292,45 @@ namespace Lawful.Core.Datos.DAO
                     command.Parameters.AddWithValue("@importancia", tarea.Importancia);
                     command.Parameters.AddWithValue("@usuarios_id", tarea.Responsable.ID);
                     command.ExecuteNonQuery();
+                    transaction.Commit();
+                    return;
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+
+                        throw ex2;
+                    }
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+        public void InsertarComentario(int tareaID, Comentario comentario)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Insertar comentario");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"INSERT INTO tareas_comentarios VALUES (@descripcion, @usuario_id, @tarea_id);";
+                    command.Parameters.AddWithValue("@descripcion", comentario.Descripcion);
+                    command.Parameters.AddWithValue("@usuario_id", comentario.Owner.ID);
+                    command.Parameters.AddWithValue("@tarea_id", tareaID);
+                    command.ExecuteNonQuery();
+
                     transaction.Commit();
                     return;
                 }

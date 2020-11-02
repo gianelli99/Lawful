@@ -12,5 +12,6 @@ namespace Lawful.Core.Datos.Interfaces
         void Eliminar(int tareaId);
         List<Tarea> ListarPorTema(int temaId);
         void CambiarEstado(Tarea tarea);
+        void InsertarComentario(int tareaID, Comentario comentario);
     }
 }
