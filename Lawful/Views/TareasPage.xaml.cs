@@ -20,6 +20,8 @@ namespace Lawful.Views
         public ObservableCollection<Tarea> TareasPorHacer { get; set; }
         public ObservableCollection<Tarea> TareasEnCurso { get; set; }
         public ObservableCollection<Tarea> TareasFinalizadas { get; set; }
+        public ObservableCollection<Tarea> TareasFrom { get; set; }
+        public ObservableCollection<Tarea> TareasTo { get; set; }
         private Tema _selectedTema;
         private Tarea _selectedTarea;
         public Tema SelectedTema
@@ -145,12 +147,54 @@ namespace Lawful.Views
 
         }
 
-        private void lvPorHacer_Drop(object sender, DragEventArgs e)
-        {
-        }
         private void lvPorHacer_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            Trace.WriteLine(((StackPanel)sender).Name);
+            SelectedTarea = (Tarea)e.Items[0];
+
+            if (TareasPorHacer.Contains(SelectedTarea))
+            {
+                TareasFrom = TareasPorHacer;
+            }
+            else if (TareasEnCurso.Contains(SelectedTarea))
+            {
+                TareasFrom = TareasEnCurso;
+            }
+            else
+            {
+                TareasFrom = TareasFinalizadas;
+            }
+            
+
+            tbTitulo.Text = SelectedTarea.Titulo;
+            tbDescripcion.Text = SelectedTarea.Descripcion;
+            tbImportancia.Text = SelectedTarea.Importancia.ToString();
+            tbResponsable.Text = SelectedTarea.Responsable.GetNombreCompleto();
+        }
+
+        private void lvPorHacer_Drop(object sender, DragEventArgs e)
+        {
+            TareasPorHacer.Add(SelectedTarea);
+            TareasFrom.Remove(SelectedTarea);
+        }
+        private void lvEnCurso_Drop(object sender, DragEventArgs e)
+        {
+            TareasEnCurso.Add(SelectedTarea);
+            TareasFrom.Remove(SelectedTarea);
+        }
+
+        private void lvFinalizadas_Drop(object sender, DragEventArgs e)
+        {
+            TareasFinalizadas.Add(SelectedTarea);
+            TareasFrom.Remove(SelectedTarea);
+        }
+
+        private void lvPorHacer_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            SelectedTarea = (Tarea)e.ClickedItem;
+            tbTitulo.Text = SelectedTarea.Titulo;
+            tbDescripcion.Text = SelectedTarea.Descripcion;
+            tbImportancia.Text = SelectedTarea.Importancia.ToString();
+            tbResponsable.Text = SelectedTarea.Responsable.GetNombreCompleto();
         }
     }
 }

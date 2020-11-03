@@ -14,10 +14,14 @@
     </Page.Transitions>
     <Page.Resources>
         <DataTemplate x:Key="TareaTemplate" x:DataType="modelo:Tarea">
-            <StackPanel Name="{x:Bind ID}">
-                <TextBlock Text="{x:Bind Titulo}"/>
-                <TextBlock Text="Chau"/>
-            </StackPanel>
+            <Grid Margin="0" Padding="5" Height="100" Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{x:Bind Titulo}" FontWeight="SemiBold" FontSize="18" TextWrapping="WrapWholeWords"/>
+                <TextBlock Grid.Row="1" Text="{x:Bind Descripcion}" FontSize="14" TextWrapping="WrapWholeWords"/>
+            </Grid>
         </DataTemplate>
     </Page.Resources>
     <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}" MinWidth="500" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -54,21 +58,45 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <ListView x:Name="lvPorHacer" Grid.Column="0" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasPorHacer}" CanDragItems="True" AllowDrop="True" CanReorderItems="True" DragOver="lvPorHacer_DragOver" Drop="lvPorHacer_Drop" DragItemsStarting="lvPorHacer_DragItemsStarting"/>
-                        <ListView x:Name="lvEnCurso" Grid.Column="1" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasEnCurso}" CanDragItems="True" AllowDrop="True" CanReorderItems="True"></ListView>
-                        <ListView x:Name="lvFinalizadas" Grid.Column="2" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasFinalizadas}" CanDragItems="True" AllowDrop="True" CanReorderItems="True"></ListView>
+                        <ListView IsItemClickEnabled="True" SelectionMode="Single" Background="{StaticResource AppBarBackgroundThemeBrush}" Margin="8" Padding="8" Header="POR HACER" x:Name="lvPorHacer" Grid.Column="0" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasPorHacer}" CanDragItems="True" AllowDrop="True" CanReorderItems="True" DragOver="lvPorHacer_DragOver" Drop="lvPorHacer_Drop" DragItemsStarting="lvPorHacer_DragItemsStarting" ItemClick="lvPorHacer_ItemClick">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="8"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                        <ListView Background="{StaticResource AppBarBackgroundThemeBrush}" Margin="8" Padding="8" Header="EN CURSO" x:Name="lvEnCurso" Grid.Column="1" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasEnCurso}" CanDragItems="True" AllowDrop="True" CanReorderItems="True" DragOver="lvPorHacer_DragOver" DragItemsStarting="lvPorHacer_DragItemsStarting" Drop="lvEnCurso_Drop">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="8"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                        <ListView Background="{StaticResource AppBarBackgroundThemeBrush}" Margin="8" Padding="8" Header="FINALIZADAS" x:Name="lvFinalizadas" Grid.Column="2" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasFinalizadas}" CanDragItems="True" AllowDrop="True" CanReorderItems="True" DragOver="lvPorHacer_DragOver" DragItemsStarting="lvPorHacer_DragItemsStarting" Drop="lvFinalizadas_Drop">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="8"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
                     </Grid>
                     
                     <StackPanel Grid.Row="1" x:Name="spTareasInformacion">
                         <StackPanel x:Name="spTareasDetails">
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Título" />
-                            <TextBlock x:Name="tbTitulo" Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind SelectedTarea.Titulo}"/>
+                            <TextBlock x:Name="tbTitulo" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Descripción" />
-                            <TextBlock x:Name="tbDescripcion" Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind SelectedTarea.Descripcion}"/>
+                            <TextBlock x:Name="tbDescripcion" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Importancia" />
-                            <TextBlock x:Name="tbImportancia" Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind SelectedTarea.Importancia.ToString()}"/>
+                            <TextBlock x:Name="tbImportancia" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Responsable" />
-                            <TextBlock x:Name="tbResponsable" Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind SelectedTarea.Responsable.GetNombreCompleto()}"/>
+                            <TextBlock x:Name="tbResponsable" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
                             <StackPanel x:Name="spDetailIncidenciasSecundarias" HorizontalAlignment="Left">
                                 <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Incidencias secundarias"/>
                                 <ListView x:Name="lvDetailIncidenciasSecundarias" MaxHeight="500" Width="400">
