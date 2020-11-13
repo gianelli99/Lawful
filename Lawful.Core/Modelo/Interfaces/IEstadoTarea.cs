@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lawful.Core.Modelo.Interfaces
 {
-    public interface EstadoTarea
+    public interface IEstadoTarea
     {
         int DBValue { get; }
         Tarea Tarea { get; set; }

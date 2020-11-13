@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lawful.Core.Modelo.TareaEstados
 {
-    public class Finalizada : Interfaces.EstadoTarea
+    public class Finalizada : Interfaces.IEstadoTarea
     {
         public int DBValue { get => 3; }
         public Tarea Tarea { get; set; }
