@@ -18,7 +18,8 @@
             <ColumnDefinition Width="350"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" x:Name="Master">
+        <ScrollViewer Grid.Column="0">
+            <StackPanel x:Name="Master">
             <ListView x:Name="TemasListView" ItemsSource="{x:Bind Temas, Mode=TwoWay}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" IsItemClickEnabled="True" ItemClick="TemasListView_ItemClick">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="modelo:Tema">
@@ -33,6 +34,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackPanel>
+        </ScrollViewer>
         <ScrollViewer Grid.Column="1">
         <Grid  x:Name="Detail" HorizontalAlignment="Stretch" MinWidth="250" >
             <CommandBar Grid.Row="0" x:Name="AccionesBar"></CommandBar>

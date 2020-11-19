@@ -233,4 +233,8 @@
     <value>Reportes</value>
     <comment>Navigation view item name for Reportes</comment>
   </data>
+  <data name="Shell_Chats.Content" xml:space="preserve">
+    <value>Chats</value>
+    <comment>Navigation view item name for Chats</comment>
+  </data>
 </root>

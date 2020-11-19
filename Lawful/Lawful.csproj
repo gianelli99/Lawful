@@ -175,12 +175,16 @@
     <Compile Include="Views\CambiarContrasenaPage.xaml.cs">
       <DependentUpon>CambiarContrasenaPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChatsPage.xaml.cs">
+      <DependentUpon>ChatsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GruposPage.xaml.cs">
       <DependentUpon>GruposPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\IniciativasTemaPage.xaml.cs">
       <DependentUpon>IniciativasTemaPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MessageContainerStyleSelector.cs" />
     <Compile Include="Views\MisDatosPage.xaml.cs">
       <DependentUpon>MisDatosPage.xaml</DependentUpon>
     </Compile>
@@ -240,6 +244,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CambiarContrasenaPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
