@@ -7,7 +7,9 @@ namespace Lawful.Core.Datos.Interfaces
 {
     public interface IMensajeDAO
     {
-        List<Mensaje> ObtenerMensajes(int userID1, int userID2);
-        void EnviarMensaje(Mensaje mensaje);
+        List<Mensaje> ObtenerMensajesUsuarios(int userID1, int userID2);
+        List<Mensaje> ObtenerMensajesTema(int temaID);
+        void EnviarMensajeUsuario(MensajeAUsuario mensaje);
+        void EnviarMensajeTema(MensajeATema mensaje);
     }
 }

@@ -60,7 +60,7 @@
                     <TextBlock
                     HorizontalAlignment="Right"
                     Style="{StaticResource CaptionTextBlockStyle}"
-                    Text="{x:Bind Fecha, Mode=OneWay}" />
+                    Text="{x:Bind EmisorFecha(), Mode=OneWay}" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -79,30 +79,52 @@
             <ColumnDefinition Width="350"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ScrollViewer Grid.Column="0">
-        <StackPanel x:Name="Master">
-            
-            <ListView x:Name="UsuariosListView" ItemsSource="{x:Bind Usuarios, Mode=TwoWay}" SelectedItem="{x:Bind Selected, Mode=TwoWay}" IsItemClickEnabled="True" ItemClick="UsuariosListView_ItemClick">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="modelo:Usuario">
-                        <StackPanel Orientation="Horizontal" Margin="6">
-                            <SymbolIcon Symbol="OtherUser" Margin="0,0,12,0"/>
-                            <StackPanel>
-                                <TextBlock Text="{x:Bind GetNombreCompleto()}" Style="{ThemeResource ListTitleStyle}"/>
+        
+        <Grid x:Name="Master">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="5"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Row="0">
+                <ListView x:Name="UsuariosListView" Header="Usuarios" ItemsSource="{x:Bind Usuarios, Mode=TwoWay}" SelectedItem="{x:Bind UserSelected, Mode=TwoWay}" IsItemClickEnabled="True" ItemClick="UsuariosListView_ItemClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="modelo:Usuario">
+                            <StackPanel Orientation="Horizontal" Margin="6">
+                                <SymbolIcon Symbol="OtherUser" Margin="0,0,12,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="{x:Bind GetNombreCompleto()}" Style="{ThemeResource ListTitleStyle}"/>
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            
-        </StackPanel>
-        </ScrollViewer>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+            <Border Grid.Row="1" Height="1" BorderThickness="1" BorderBrush="Black"/>
+            <ScrollViewer Grid.Row="2">
+                <ListView x:Name="TemasListView" Header="Temas" ItemsSource="{x:Bind Temas, Mode=TwoWay}" SelectedItem="{x:Bind TemaSelected, Mode=TwoWay}" IsItemClickEnabled="True" ItemClick="TemasListView_ItemClick">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="modelo:Tema">
+                            <StackPanel Orientation="Horizontal" Margin="6">
+                                <SymbolIcon Symbol="OtherUser" Margin="0,0,12,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="{x:Bind Titulo}" Style="{ThemeResource ListTitleStyle}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+        </Grid>
+
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-            <ScrollViewer Grid.Row="0">
+            <TextBlock x:Name="tbTitulo" Margin="20,0,0,0" Grid.Row="0" Style="{StaticResource TitleTextBlockStyle}"/>
+            <ScrollViewer Grid.Row="1">
                 <ListView 
     x:Name="lvChat"
     CanDrag="False"
@@ -114,7 +136,7 @@
     ItemsPanel="{StaticResource MessageItemPanelTemplate}"
     ItemsSource="{x:Bind Chat, Mode=TwoWay}" />
             </ScrollViewer>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2">
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>

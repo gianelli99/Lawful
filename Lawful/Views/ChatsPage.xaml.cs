@@ -15,18 +15,33 @@ namespace Lawful.Views
         private UsuarioBL usuarioBL;
         private ChatBL chatBL;
         public ObservableCollection<Usuario> Usuarios { get; set; }
+        public ObservableCollection<Tema> Temas { get; set; }
         public List<Mensaje> Chat { get; set; }
-        private Usuario _selected;
-        public Usuario Selected
+        private Usuario _userSelected;
+        private Tema _temaSelected;
+        private bool inTema;
+        public Tema TemaSelected
         {
-            get { return _selected; }
-            set { Set(ref _selected, value); }
+            get { return _temaSelected; }
+            set { Set(ref _temaSelected, value); }
+        }
+        public Usuario UserSelected
+        {
+            get { return _userSelected; }
+            set { Set(ref _userSelected, value); }
         }
         public ChatsPage()
         {
             Usuarios = new ObservableCollection<Usuario>();
+            Temas = new ObservableCollection<Tema>();
             InitializeComponent();
             usuarioBL = new UsuarioBL();
+            var temas = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
+            foreach (var item in temas)
+            {
+                Temas.Add(item);
+            }
+
             chatBL = new ChatBL();
             var data = usuarioBL.Listar();
             int myId = SesionActiva.ObtenerInstancia().Usuario.ID;
@@ -37,10 +52,14 @@ namespace Lawful.Views
                     Usuarios.Add(item);
                 }
             }
+            if (Temas.Count>0)
+            {
+                TemaSelected = Temas[0];
+            }
             if (Usuarios.Count > 0)
             {
-                Selected = Usuarios[0];
-                Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, Selected.ID);
+                UserSelected = Usuarios[0];
+                Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, UserSelected.ID);
                 OnPropertyChanged("Chat");
             }
         }
@@ -53,46 +72,95 @@ namespace Lawful.Views
             {
                 return;
             }
-
             storage = value;
-            if (Usuarios.Count > 0)
+            if (value.GetType().Name == "Tema")
             {
-                Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, Selected.ID);
-                OnPropertyChanged("Chat");
+                inTema = true;
             }
+            else
+            {
+                inTema = false;
+            }
+            CargarChat();
+            
             OnPropertyChanged(propertyName);
+        }
+        private void CargarChat()
+        {
+            if (inTema)
+            {
+                if (Temas.Count > 0)
+                {
+                    tbTitulo.Text = TemaSelected.Titulo;
+                    Chat = chatBL.ObtenerChat(TemaSelected.ID);
+                    OnPropertyChanged("Chat");
+                }
+            }
+            else
+            {
+                if (Usuarios.Count > 0)
+                {
+                    tbTitulo.Text = UserSelected.GetNombreCompleto();
+                    Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, UserSelected.ID);
+                    OnPropertyChanged("Chat");
+                }
+            }
+           
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private void UsuariosListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-
+            var user = UserSelected;
+            _userSelected = new Usuario();
+            UserSelected = user;
         }
 
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, Selected.ID);
-            OnPropertyChanged("Chat");
+            CargarChat();
         }
 
         private void txtMensaje_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter && !String.IsNullOrWhiteSpace(txtMensaje.Text))
             {
-                var mensaje = new Mensaje()
+                Mensaje mensaje;
+                if (inTema)
                 {
-                    Emisor = new Usuario() { ID = SesionActiva.ObtenerInstancia().Usuario.ID },
-                    Receptor = Selected,
-                    Fecha = DateTime.Now,
-                    Texto = txtMensaje.Text
-                };
+                    mensaje = new MensajeATema();
+                    ((MensajeATema)mensaje).Receptor = TemaSelected;
+                }
+                else
+                {
+                    mensaje = new MensajeAUsuario();
+                    ((MensajeAUsuario)mensaje).Receptor = UserSelected;
+                }
+                mensaje.Emisor = new Usuario() { ID = SesionActiva.ObtenerInstancia().Usuario.ID };
+                mensaje.Fecha = DateTime.Now;
+                mensaje.Texto = txtMensaje.Text;
                 txtMensaje.Text = "";
-                chatBL.EnviarMensaje(mensaje);
 
-                Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, Selected.ID);
+                if (inTema)
+                {
+                    chatBL.EnviarMensaje((MensajeATema)mensaje);
+                    Chat = chatBL.ObtenerChat(TemaSelected.ID);
+                }
+                else
+                {
+                    chatBL.EnviarMensaje((MensajeAUsuario)mensaje);
+                    Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, UserSelected.ID);
+                }  
                 OnPropertyChanged("Chat");
             }
+        }
+
+        private void TemasListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var tema = TemaSelected;
+            _temaSelected = new Tema();
+            TemaSelected = tema;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Lawful.Core.Logica
         {
             try
             {
-                var retorno = mensajeDAO.ObtenerMensajes(userID1, userID2);
+                var retorno = mensajeDAO.ObtenerMensajesUsuarios(userID1, userID2);
                 if (retorno == null)
                 {
                     return new List<Mensaje>();
@@ -33,11 +33,44 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        public void EnviarMensaje(Mensaje mensaje)
+        public List<Mensaje> ObtenerChat(int temaID)
         {
             try
             {
-                mensajeDAO.EnviarMensaje(mensaje);
+                var retorno = mensajeDAO.ObtenerMensajesTema(temaID);
+                if (retorno == null)
+                {
+                    return new List<Mensaje>();
+                }
+                else
+                {
+                    return retorno;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public void EnviarMensaje(MensajeAUsuario mensaje)
+        {
+            try
+            {
+                mensajeDAO.EnviarMensajeUsuario(mensaje);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+        public void EnviarMensaje(MensajeATema mensaje)
+        {
+            try
+            {
+                mensajeDAO.EnviarMensajeTema(mensaje);
             }
             catch (Exception ex)
             {
