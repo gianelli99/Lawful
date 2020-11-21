@@ -8,11 +8,5 @@ namespace Lawful.Core.Modelo
     {
         public int ID { get; set; }
         public Usuario Usuario { get; set; }
-        public DateTime LogIn { get; set; }
-        public DateTime LogOut { get; set; }
-        public TimeSpan CalcularTiempoSesion()
-        {
-            return LogOut - LogIn;
-        }
     }
 }

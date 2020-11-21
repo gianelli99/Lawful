@@ -23,12 +23,13 @@
                 <Grid>
                     <StackPanel Margin="20,20,0,0">
                         <TextBlock Text="Tiempo de sesión de: JuanZitelli7 por día" Style="{StaticResource PageTitleStyle}" />
-                        <Charting:Chart x:Name="lineChart" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500" >
-                                <Charting:LineSeries Margin="0" IndependentValuePath="Name" DependentValuePath="Amount" IsSelectionEnabled="False"/>
+                        <Charting:Chart x:Name="lcSesionesUsuario" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500" >
+                                <Charting:LineSeries Margin="0" IndependentValuePath="DiaMes" DependentValuePath="HorasActivas" IsHitTestVisible="False"/>
                             </Charting:Chart>
                         <TextBlock Text="Tiempo se sesión promedio de cada grupo" Style="{StaticResource PageTitleStyle}" />
                         <Charting:Chart x:Name="ColumnChart" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500">
                                 <Charting:ColumnSeries Margin="0" IndependentValuePath="Name" DependentValuePath="Amount" CharacterSpacing="5" IsSelectionEnabled="True"/>
+
                             </Charting:Chart>
                         </StackPanel>
                 </Grid>

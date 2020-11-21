@@ -30,7 +30,7 @@ namespace Lawful.Core.Datos.DAO
                     {
                         if (response.Read())
                         {
-                            var tema = new Tema(new Usuario() { ID = response.GetInt32(7)});
+                            var tema = new Tema(new Usuario() { ID = response.GetInt32(7) });
                             var usuarios = new List<Usuario>();
                             tema.Usuarios = usuarios;
                             tema.ID = response.GetInt32(0);
