@@ -96,18 +96,6 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        public List<Modelo.Usuario> Listar(List<Modelo.Usuario> usuarios, string filtro)
-        {
-            try
-            {
-                return usuarios.FindAll(x => x.Nombre.ToUpper().Contains(filtro.ToUpper()) || x.Apellido.ToUpper().Contains(filtro.ToUpper()) || x.Username.ToUpper().Contains(filtro.ToUpper()));
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
         public void Eliminar(int id, int idEditor)
         {
             try
@@ -124,21 +112,6 @@ namespace Lawful.Core.Logica
             try
             {
                 return grupoDAO.Listar();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-        }
-        public List<Modelo.Grupo> ListarGrupos(int userId)
-        {
-            try
-            {
-                // Falta implementar, hay que llamar a GrupoDAO_SqlServer (ListarPorUsuario)
-                // ¯\_(ツ)_/¯
-                return null;
-                //return usuarioDAO.ListarGrupos(userId);
             }
             catch (Exception ex)
             {

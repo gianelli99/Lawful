@@ -53,32 +53,6 @@ namespace Lawful.Core.Datos.Strategies
             return command;
         }
 
-        public SqlCommand SetUpdateCommand(SqlCommand command, Iniciativa iniciativa)
-        {
-            Votacion votacion = (Votacion)iniciativa;
-            command.CommandText = "UPDATE iniciativas " +
-                "titulo=@titulo, " +
-                "descripcion=@descripcion, " +
-                "fecha_creacion=@fecha_creacion, " +
-                "icon_name=@icon_name, " +
-                "usuario_id=@usuario_id, " +
-                "iniciativa_tipo_id=@iniciativa_tipo_id, " +
-                "tema_id=@tema_id," +
-                "fecha_cierre=@fecha_cierre " +
-                $"WHERE id = {iniciativa.ID};";
-
-            command.Parameters.AddWithValue("@titulo", votacion.Titulo);
-            command.Parameters.AddWithValue("@descripcion", votacion.Descripcion);
-            command.Parameters.AddWithValue("@fecha_creacion", votacion.FechaCreacion);
-            command.Parameters.AddWithValue("@icon_name", votacion.IconName);
-            command.Parameters.AddWithValue("@usuario_id", votacion.Owner.ID);
-            command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
-            command.Parameters.AddWithValue("@tema_id", votacion.Tema.ID);
-            command.Parameters.AddWithValue("@fecha_cierre", votacion.FechaCierre);
-
-            return command;
-        }
-
         public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
         {
             Votacion votacion = (Votacion)iniciativa;

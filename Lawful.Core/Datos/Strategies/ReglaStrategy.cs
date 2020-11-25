@@ -55,36 +55,6 @@ namespace Lawful.Core.Datos.Strategies
             return command;
         }
 
-        public SqlCommand SetUpdateCommand(SqlCommand command, Iniciativa iniciativa)
-        {
-            Regla regla = (Regla)iniciativa;
-            command.CommandText = "UPDATE iniciativas " +
-                "titulo=@titulo, " +
-                "descripcion=@descripcion, " +
-                "fecha_creacion=@fecha_creacion, " +
-                "icon_name=@icon_name, " +
-                "usuario_id=@usuario_id, " +
-                "iniciativa_tipo_id=@iniciativa_tipo_id, " +
-                "relevancia=@relevancia, " +
-                "tema_id=@tema_id, " +
-                "fecha_cierre=@fecha_cierre " +
-
-                $"WHERE id = {iniciativa.ID};";
-
-            command.Parameters.AddWithValue("@titulo", regla.Titulo);
-            command.Parameters.AddWithValue("@descripcion", regla.Descripcion);
-            command.Parameters.AddWithValue("@fecha_creacion", regla.FechaCreacion);
-            command.Parameters.AddWithValue("@icon_name", regla.IconName);
-            command.Parameters.AddWithValue("@usuario_id", regla.Owner.ID);
-            command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
-            command.Parameters.AddWithValue("@relevancia", regla.Relevancia);
-            command.Parameters.AddWithValue("@tema_id", regla.Tema.ID);
-            command.Parameters.AddWithValue("@fecha_cierre", regla.FechaCierre);
-
-
-            return command;
-        }
-
         public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
         {
             Regla regla = (Regla)iniciativa;

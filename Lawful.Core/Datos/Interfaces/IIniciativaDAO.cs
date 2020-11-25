@@ -15,7 +15,6 @@ namespace Lawful.Core.Datos.Interfaces
         List<Modelo.Iniciativa> ListarPorUsuario(int userId);
         void Insertar(Iniciativa iniciativa);
         void Eliminar(int id);
-        void Modificar(Iniciativa iniciativa);
         Modelo.Iniciativa Consultar(int id);
         List<string[]> ListarTipos();
         void InsertarComentario(int iniciativaID, Comentario comentario);

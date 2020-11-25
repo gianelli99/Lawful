@@ -98,18 +98,6 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
-        public void Modificar(Modelo.Iniciativa iniciativa)
-        {
-            try
-            {
-                iniciativaDAO.Modificar(iniciativa);
-            }
-            catch (Exception)
-            {
-
-                throw new Exception("Ha ocurrido un error");
-            }
-        }
         public void Eliminar(int id)
         {
             try

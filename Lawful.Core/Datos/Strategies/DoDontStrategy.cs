@@ -52,32 +52,6 @@ namespace Lawful.Core.Datos.Strategies
             return command;
         }
 
-        public SqlCommand SetUpdateCommand(SqlCommand command, Iniciativa iniciativa)
-        {
-            DoDont dodont = (DoDont)iniciativa;
-            command.CommandText = "UPDATE iniciativas " +
-                "titulo=@titulo, " +
-                "descripcion=@descripcion, " +
-                "fecha_creacion=@fecha_creacion, " +
-                "icon_name=@icon_name, " +
-                "usuario_id=@usuario_id, " +
-                "iniciativa_tipo_id=@iniciativa_tipo_id, " +
-                "tema_id=@tema_id, " +
-                "fecha_cierre=@fecha_cierre " +
-                $"WHERE id = {iniciativa.ID};";
-
-            command.Parameters.AddWithValue("@titulo", dodont.Titulo);
-            command.Parameters.AddWithValue("@descripcion", dodont.Descripcion);
-            command.Parameters.AddWithValue("@fecha_creacion", dodont.FechaCreacion);
-            command.Parameters.AddWithValue("@icon_name", dodont.IconName);
-            command.Parameters.AddWithValue("@usuario_id", dodont.Owner.ID);
-            command.Parameters.AddWithValue("@iniciativa_tipo_id", Tipo);
-            command.Parameters.AddWithValue("@tema_id", dodont.Tema.ID);
-            command.Parameters.AddWithValue("@fecha_cierre", dodont.FechaCierre);
-
-            return command;
-        }
-
         public SqlCommand SetInsertOpciones(SqlCommand command, Iniciativa iniciativa)
         {
             DoDont dodont = (DoDont)iniciativa;

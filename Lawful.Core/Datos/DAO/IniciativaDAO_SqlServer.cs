@@ -429,44 +429,6 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
-        public void Modificar(Iniciativa iniciativa)
-        {
-            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
-            {
-                connection.Open();
-
-                SqlCommand command = connection.CreateCommand();
-                SqlTransaction transaction;
-                transaction = connection.BeginTransaction("Modificar Iniciativa");
-
-                command.Connection = connection;
-                command.Transaction = transaction;
-
-                try
-                {
-
-                    Strategy.SetUpdateCommand(command, iniciativa);
-
-                    command.ExecuteNonQuery();
-                    transaction.Commit();
-                    return;
-                }
-                catch (Exception)
-                {
-                    try
-                    {
-                        transaction.Rollback();
-                    }
-                    catch (Exception ex2)
-                    {
-
-                        throw ex2;
-                    }
-                }
-            }
-            throw new Exception("Ha ocurrido un error");
-        }
-
         public void SeleccionarRespuestaCorrecta(int iniciativaID, int comentarioID)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
