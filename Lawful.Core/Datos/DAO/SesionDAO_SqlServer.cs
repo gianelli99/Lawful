@@ -297,7 +297,7 @@ namespace Lawful.Core.Datos.DAO
                             var sesion = new SesionInforme();
                             sesion.Usuario = new Usuario() { ID = response.GetInt32(0) };
                             sesion.Fecha = response.GetDateTime(1);
-                            sesion.MinutosActivos = response.GetInt32(2);
+                            sesion.MinutosActivos = response.IsDBNull(2) ? 0 : response.GetInt32(2);
                             sesiones.Add(sesion);
                         }
                         return sesiones;

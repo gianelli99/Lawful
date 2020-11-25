@@ -142,14 +142,14 @@ namespace Lawful.Views
                 mensaje.Texto = txtMensaje.Text;
                 txtMensaje.Text = "";
 
+                chatBL.EnviarMensaje(mensaje);
+
                 if (inTema)
                 {
-                    chatBL.EnviarMensaje((MensajeATema)mensaje);
                     Chat = chatBL.ObtenerChat(TemaSelected.ID);
                 }
                 else
                 {
-                    chatBL.EnviarMensaje((MensajeAUsuario)mensaje);
                     Chat = chatBL.ObtenerChat(SesionActiva.ObtenerInstancia().Usuario.ID, UserSelected.ID);
                 }  
                 OnPropertyChanged("Chat");

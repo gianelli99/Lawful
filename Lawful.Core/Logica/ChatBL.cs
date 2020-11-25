@@ -53,24 +53,18 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-        public void EnviarMensaje(MensajeAUsuario mensaje)
+        public void EnviarMensaje(Mensaje mensaje)
         {
             try
             {
-                mensajeDAO.EnviarMensajeUsuario(mensaje);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-
-        }
-        public void EnviarMensaje(MensajeATema mensaje)
-        {
-            try
-            {
-                mensajeDAO.EnviarMensajeTema(mensaje);
+                if (mensaje.GetType().Name == "MensajeATema")
+                {
+                    mensajeDAO.EnviarMensajeTema((MensajeATema)mensaje);
+                }
+                else
+                {
+                    mensajeDAO.EnviarMensajeUsuario((MensajeAUsuario)mensaje);
+                }
             }
             catch (Exception ex)
             {
