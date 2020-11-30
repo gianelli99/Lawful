@@ -421,5 +421,71 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
+
+        public List<AuditoriaUsuario> ObtenerAuditoria(int userId)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Consulta Usuario");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"select us1.nombre,us1.apellido,us1.username,us1.contrasena,us1.email,us1.edicion_fecha,us1.edicion_accion, us2.nombre,us2.apellido from usuarios us1 inner join usuarios us2 on us1.editor_id = us2.id where us1.id = {userId};"
+                        +$"select usuarios_auditorias.nombre, usuarios_auditorias.apellido, usuarios_auditorias.username, usuarios_auditorias.contrasena, usuarios_auditorias.email, usuarios_auditorias.edicion_fecha, usuarios_auditorias.edicion_accion, usuarios.nombre, usuarios.apellido from usuarios_auditorias inner join usuarios on usuarios.id = usuarios_auditorias.editor_id where usuario_id = {userId} order by usuarios_auditorias.edicion_fecha desc;";
+                    transaction.Commit();
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        var auditoria = new List<AuditoriaUsuario>();
+                        if (response.Read())
+                        {
+                            var aud = new AuditoriaUsuario();
+                            aud.RegistroViejo = new Usuario();
+                            aud.RegistroViejo.Nombre = response.GetString(0);
+                            aud.RegistroViejo.Apellido = response.GetString(1);
+                            aud.RegistroViejo.Username = response.GetString(2);
+                            aud.RegistroViejo.Password = response.GetString(3);
+                            aud.RegistroViejo.Email = response.GetString(4);
+                            aud.FechaHora = response.GetDateTime(5);
+                            aud.Accion = response.IsDBNull(6) ? "" : response.GetString(6);
+                            aud.Actor = new Usuario();
+                            aud.Actor.Nombre = response.IsDBNull(7) ? "" : response.GetString(7);
+                            aud.Actor.Apellido = response.IsDBNull(8) ? "" : response.GetString(8);
+                            auditoria.Add(aud);
+                        }
+                        response.NextResult();
+                        while (response.Read())
+                        {
+                            var aud = new AuditoriaUsuario();
+                            aud.RegistroViejo = new Usuario();
+                            aud.RegistroViejo.Nombre = response.GetString(0);
+                            aud.RegistroViejo.Apellido = response.GetString(1);
+                            aud.RegistroViejo.Username = response.GetString(2);
+                            aud.RegistroViejo.Password = response.GetString(3);
+                            aud.RegistroViejo.Email = response.GetString(4);
+                            aud.FechaHora = response.GetDateTime(5);
+                            aud.Accion = response.IsDBNull(6) ? "" : response.GetString(6);
+                            aud.Actor = new Usuario();
+                            aud.Actor.Nombre = response.IsDBNull(7) ? "" : response.GetString(7);
+                            aud.Actor.Apellido = response.IsDBNull(8) ? "" : response.GetString(8);
+                            auditoria.Add(aud);
+                        }
+                        return auditoria;
+                    }
+                    throw new Exception("No se ha podido encontrar el grupo");
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lawful.Core.Modelo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,6 @@ namespace Lawful.Core.Datos.Interfaces
         void CambiarContrasena(string pass, int userId, int editorId, bool needNewPass);
         bool UsernameEmailDisponibles(string username, string email, string id);
         bool NeedNewPassword(int userId);
+        List<AuditoriaUsuario> ObtenerAuditoria(int userId);
     }
 }

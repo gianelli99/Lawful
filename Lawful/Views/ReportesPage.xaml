@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
 
@@ -22,15 +23,18 @@
                 <ScrollViewer>
                 <Grid>
                     <StackPanel Margin="20,20,0,0">
-                        <TextBlock Text="Tiempo de sesión de: JuanZitelli7 por día" Style="{StaticResource PageTitleStyle}" />
-                        <Charting:Chart x:Name="lcSesionesUsuario" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500" >
-                                <Charting:LineSeries Margin="0" IndependentValuePath="DiaMes" DependentValuePath="HorasActivas" IsHitTestVisible="False"/>
+                        <TextBlock Text="Tiempo de sesión por día en horas" Style="{StaticResource PageTitleStyle}" />
+                            <ComboBox x:Name="cbUsuarios" Header="Usuario" Margin="0,10,0,0" Width="300" SelectionChanged="cbUsuarios_SelectionChanged" ItemsSource="{x:Bind Usuarios}"/>
+                            <Charting:Chart x:Name="lcSesionesUsuario" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500" >
+                                <Charting:LineSeries Margin="0" IndependentValuePath="DiaMes" DependentValuePath="HorasActivas"/>
                             </Charting:Chart>
-                        <TextBlock Text="Tiempo se sesión promedio de cada grupo" Style="{StaticResource PageTitleStyle}" />
-                        <Charting:Chart x:Name="ColumnChart" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500">
-                                <Charting:ColumnSeries Margin="0" IndependentValuePath="Name" DependentValuePath="Amount" CharacterSpacing="5" IsSelectionEnabled="True"/>
+                            <TextBlock x:Name="tbSesionesUsuario" Visibility="Collapsed" Margin="0,10,0,10" Text="El usuario seleccionado no posee registro de sesiones en los últimos 10 días" Style="{StaticResource DetailBodyStyle}" />
+                            <TextBlock Text="Tiempo se sesión promedio por día de cada grupo en los últimos 10 días" Style="{StaticResource PageTitleStyle}" />
+                        <Charting:Chart x:Name="ccSesionesGrupos" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500">
+                                <Charting:ColumnSeries Margin="0" IndependentValuePath="DescripcionGrupo" DependentValuePath="PromedioPorDiaEnHoras" CharacterSpacing="5"/>
 
                             </Charting:Chart>
+                            <TextBlock x:Name="tbSesionesGrupo" Visibility="Collapsed" Margin="0,10,0,10" Text="No se encontraron datos disponibles" Style="{StaticResource DetailBodyStyle}" />
                         </StackPanel>
                 </Grid>
                 </ScrollViewer>
@@ -39,8 +43,25 @@
             <PivotItem x:Name="Reportes_Usuarios" Header="Usuarios">
                 <ScrollViewer>
                 <Grid>
-                    <TextBlock>Tabla de cambios al usuario</TextBlock>
-                </Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Auditoría" Style="{StaticResource PageTitleStyle}" />
+                        <ComboBox Grid.Row="1" x:Name="cbUsuariosAudit" Header="Usuario" Margin="0,10,0,0" Width="300" ItemsSource="{x:Bind Usuarios}" SelectionChanged="cbUsuariosAudit_SelectionChanged"/>
+                        <controls:DataGrid Grid.Row="3" Name="dgUsuarioAuditoria" ItemsSource="{x:Bind Auditoria}" AutoGenerateColumns="False" GridLinesVisibility="Horizontal" IsReadOnly="True">
+                            <controls:DataGrid.Columns>
+                                <controls:DataGridTextColumn Header="Nombre" Binding="{Binding RegistroViejo.Nombre}" />
+                                <controls:DataGridTextColumn Header="Apellido" Binding="{Binding RegistroViejo.Apellido}" />
+                                <controls:DataGridTextColumn Header="Username" Binding="{Binding RegistroViejo.Username}" />
+                                <controls:DataGridTextColumn Header="Contraseña" Binding="{Binding RegistroViejo.Password}" />
+                                <controls:DataGridTextColumn Header="Fecha" Binding="{Binding FechaHora}" />
+                                <controls:DataGridTextColumn Header="Acción" Binding="{Binding Accion}" />
+                                <controls:DataGridTextColumn Header="Editor" Binding="{Binding Actor}" />
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
             <PivotItem x:Name="Reportes_Temas" Header="Temas">

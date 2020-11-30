@@ -27,5 +27,9 @@ namespace Lawful.Core.Modelo
         {
             return Nombre + " " + Apellido;
         }
+        public override string ToString()
+        {
+            return GetNombreCompleto();
+        }
     }
 }
