@@ -429,6 +429,54 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
+        public List<IniciativaInforme> ObtenerCantidadesPorTema(int temaId)
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Listar cantidades");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"SELECT iniciativas_tipos.descripcion, count(1) as cantidad from iniciativas"
+                                           + " inner join iniciativas_tipos on iniciativas.iniciativa_tipo_id = iniciativas_tipos.id"
+                                           + $" where tema_id = {temaId}"
+                                           + " group by iniciativas_tipos.descripcion;";
+                    transaction.Commit();
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        if (response.HasRows)
+                        {
+                            var informe = new List<IniciativaInforme>();
+                            while (response.Read())
+                            {
+                                var iniciativa = new IniciativaInforme();
+                                iniciativa.DescripcionInciativa = response.GetString(0);
+                                iniciativa.Cantidad = response.GetInt32(1);
+                                informe.Add(iniciativa);
+                            }
+                            return informe;
+                        }
+                        else
+                        {
+                            return new List<IniciativaInforme>();
+                        }
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    throw ex2;
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
         public void SeleccionarRespuestaCorrecta(int iniciativaID, int comentarioID)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))

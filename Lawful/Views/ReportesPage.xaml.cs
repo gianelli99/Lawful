@@ -2,7 +2,6 @@
 using Lawful.Core.Modelo;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml.Controls;
@@ -14,18 +13,24 @@ namespace Lawful.Views
     {
         private ReporteBL reporteBL;
         private UsuarioBL usuarioBL;
+        private TemaBL temaBL;
         public List<Usuario> Usuarios { get; set; }
+        public List<Tema> Temas { get; set; }
         public List<AuditoriaUsuario> Auditoria { get; set; }
+        public List<IniciativaInforme> Iniciativas { get; set; }
         public ReportesPage()
         {
             reporteBL = new ReporteBL();
             usuarioBL = new UsuarioBL();
+            temaBL = new TemaBL();
             Usuarios = usuarioBL.Listar();
-           
+            Temas = temaBL.Listar();
+            
             InitializeComponent();
             LoadAuditoria();
             LoadSesionesPorUsuario();
             LoadSesionesPorGrupo();
+            LoadIniciativas();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -111,6 +116,18 @@ namespace Lawful.Views
             dgUsuarioAuditoria.ItemsSource = Auditoria;
 
         }
+        private void LoadIniciativas()
+        {
+            Iniciativas = new List<IniciativaInforme>();
+
+
+            if (cbTema.SelectedItem != null)
+            {
+                Iniciativas = reporteBL.ObtenerCantIniciativas(((Tema)cbTema.SelectedItem).ID);
+                (pcIniciativas.Series[0] as PieSeries).ItemsSource = Iniciativas;
+            }
+
+        }
         private void LoadChartContents()
         {
 
@@ -137,7 +154,7 @@ namespace Lawful.Views
                 Name = "Sri",
                 Amount = rand.Next(0, 200)
             });
-            (PieChart.Series[0] as PieSeries).ItemsSource = records;
+            
             
             (ColumnChart2.Series[0] as ColumnSeries).ItemsSource = records;
         }
@@ -150,6 +167,11 @@ namespace Lawful.Views
         private void cbUsuariosAudit_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadAuditoria();
+        }
+
+        private void cbTema_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LoadIniciativas();
         }
     }
     public class Records

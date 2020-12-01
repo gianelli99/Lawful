@@ -33,5 +33,9 @@ namespace Lawful.Core.Modelo
         {
             return "Hasta: " + FechaCierre.ToShortDateString();
         }
+        public override string ToString()
+        {
+            return Titulo;
+        }
     }
 }

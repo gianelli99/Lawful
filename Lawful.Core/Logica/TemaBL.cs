@@ -74,6 +74,18 @@ namespace Lawful.Core.Logica
                 throw new Exception("Ha ocurrido un error");
             }
         }
+        public List<Modelo.Tema> Listar()
+        {
+            try
+            {
+                return temaDAO.Listar();
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Ha ocurrido un error");
+            }
+        }
 
     }
 }

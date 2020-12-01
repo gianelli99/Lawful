@@ -165,6 +165,56 @@ namespace Lawful.Core.Datos.DAO
             throw new Exception("Ha ocurrido un error");
         }
 
+        public List<Tema> Listar()
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Listar temas");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"SELECT temas.id, descripcion, estado, fecha_creacion, fecha_cierre, everyone_can_edit, titulo FROM temas WHERE estado = 1";
+                    transaction.Commit();
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        if (response.HasRows)
+                        {
+                            var temas = new List<Tema>();
+                            while (response.Read())
+                            {
+                                var tema = new Tema()
+                                {
+                                    ID = response.GetInt32(0),
+                                    Descripcion = response.GetString(1),
+                                    Estado = response.GetBoolean(2),
+                                    FechaCreacion = response.GetDateTime(3),
+                                    FechaCierre = response.GetDateTime(4),
+                                    EveryoneCanEdit = response.GetBoolean(5),
+                                    Titulo = response.GetString(6)
+                                };
+
+                                temas.Add(tema);
+                            }
+                            return temas;
+                        }
+                        return null;
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    throw ex2;
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
         public List<Tema> ListarPorUsuario(int userId)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
