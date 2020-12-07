@@ -18,6 +18,7 @@ namespace Lawful.Views
         public List<Tema> Temas { get; set; }
         public List<AuditoriaUsuario> Auditoria { get; set; }
         public List<IniciativaInforme> Iniciativas { get; set; }
+        public List<ParticipacionInforme> Participacion { get; set; }
         public ReportesPage()
         {
             reporteBL = new ReporteBL();
@@ -31,6 +32,7 @@ namespace Lawful.Views
             LoadSesionesPorUsuario();
             LoadSesionesPorGrupo();
             LoadIniciativas();
+            LoadParticipacion();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -127,36 +129,36 @@ namespace Lawful.Views
                 (pcIniciativas.Series[0] as PieSeries).ItemsSource = Iniciativas;
             }
 
-        }
-        private void LoadChartContents()
-        {
+            if (cbTema.SelectedItem == null || Iniciativas == null || Iniciativas.Count <= 0 )
+            {
+                tbIniciativasTema.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                pcIniciativas.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            else
+            {
+                tbIniciativasTema.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                pcIniciativas.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
 
-            var sesiones = reporteBL.ObtenerUltimasSesiones(1);
-            Random rand = new Random();
-            List<Records> records = new List<Records>();
-            records.Add(new Records()
+
+        }
+        private void LoadParticipacion()
+        {
+            Participacion = new List<ParticipacionInforme>();
+
+            Participacion = reporteBL.ObtenerParticipacionTemas();
+            if (Participacion != null && Participacion.Count>0)
             {
-                Name = "Suresh",
-                Amount = rand.Next(0, 200)
-            });
-            records.Add(new Records()
+                (ccParticipacion.Series[0] as ColumnSeries).ItemsSource = Participacion;
+                ccParticipacion.Series[0].LegendItems.Clear();
+                tbIniciativasParticipacion.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                ccParticipacion.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
             {
-                Name = "Juancho",
-                Amount = rand.Next(0, 200)
-            });
-            records.Add(new Records()
-            {
-                Name = "Sam",
-                Amount = rand.Next(0, 200)
-            });
-            records.Add(new Records()
-            {
-                Name = "Sri",
-                Amount = rand.Next(0, 200)
-            });
-            
-            
-            (ColumnChart2.Series[0] as ColumnSeries).ItemsSource = records;
+                tbIniciativasParticipacion.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                ccParticipacion.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
         }
 
         private void cbUsuarios_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -174,17 +176,5 @@ namespace Lawful.Views
             LoadIniciativas();
         }
     }
-    public class Records
-    {
-        public string Name
-        {
-            get;
-            set;
-        }
-        public int Amount
-        {
-            get;
-            set;
-        }
-    }
+    
 }

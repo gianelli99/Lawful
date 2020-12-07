@@ -12,5 +12,6 @@ namespace Lawful.Core.Datos.Interfaces
         void Eliminar(int id);
         void Modificar(Modelo.Tema tema);
         Modelo.Tema Consultar(int id);
+        public List<Modelo.ParticipacionInforme> ObtenerParticipacionTemas();
     }
 }

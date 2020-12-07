@@ -316,5 +316,51 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
+        public List<ParticipacionInforme> ObtenerParticipacionTemas()
+        {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("obtener participacion");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = "select count(distinct iniciativas.id) as iniciativas,temas.titulo, count(distinct usuarios_temas.usuario_id) as usuarios, count(distinct votos.id) as votos from iniciativas"
+                                           + " inner join usuarios_temas on usuarios_temas.tema_id = iniciativas.tema_id"
+                                            + " inner join temas on temas.id = iniciativas.tema_id"
+                                            + " inner join opciones on opciones.iniciativa_id = iniciativas.id"
+                                            + " left join votos on votos.opcion_id = opciones.id"
+                                            + " where iniciativa_tipo_id not between 4 and 5 and temas.estado != 0"
+                                            + " group by iniciativas.tema_id, temas.titulo";
+                    transaction.Commit();
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        List<ParticipacionInforme> participacion = new List<ParticipacionInforme>();
+                        while (response.Read())
+                        {
+                            var part = new ParticipacionInforme();
+                            part.Iniciativas = response.GetInt32(0);
+                            part.Tema = response.GetString(1);
+                            part.Usuarios = response.GetInt32(2);
+                            part.Votos = response.GetInt32(3);
+                            participacion.Add(part);
+                        }
+                        return participacion;
+                    }
+                    throw new Exception("No se ha podido encontrar resultados");
+                }
+                catch (Exception ex2)
+                {
+                    throw ex2;
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
     }
 }

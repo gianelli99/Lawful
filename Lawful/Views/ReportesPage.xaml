@@ -70,14 +70,17 @@
                     <StackPanel Margin="20,20,0,0">
                         <TextBlock Text="Distribución de iniciativas por tema" Style="{StaticResource PageTitleStyle}" />
                             <ComboBox Grid.Row="1" x:Name="cbTema" Header="Tema" Margin="0,10,0,0" Width="300" ItemsSource="{x:Bind Temas}" SelectionChanged="cbTema_SelectionChanged"/>
-                            <Charting:Chart Width="800" Height="500" x:Name="pcIniciativas" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+                            <Charting:Chart Visibility="Collapsed" Width="800" Height="500" x:Name="pcIniciativas" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
                                 <Charting:PieSeries Margin="0" IndependentValuePath="DescripcionInciativa" DependentValuePath="Cantidad"/>
                         </Charting:Chart>
-                        <TextBlock Text="Participacion de usuarios en iniciativas" Style="{StaticResource PageTitleStyle}" />
-                        <Charting:Chart x:Name="ColumnChart2" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500" >
-                            <Charting:ColumnSeries Margin="0" IndependentValuePath="Name" DependentValuePath="Amount" CharacterSpacing="5" IsSelectionEnabled="True"/>
+                            <TextBlock x:Name="tbIniciativasTema" Visibility="Visible" Margin="0,10,0,10" Text="El tema seleccionado no posee iniciativas" Style="{StaticResource DetailBodyStyle}" />
+
+                            <TextBlock Text="Participacion de usuarios en iniciativas" Style="{StaticResource PageTitleStyle}" />
+                        <Charting:Chart x:Name="ccParticipacion" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500" >
+                            <Charting:ColumnSeries Margin="0" IndependentValuePath="Tema" DependentValuePath="Participacion" CharacterSpacing="5" IsSelectionEnabled="True"/>
                         </Charting:Chart>
-                    </StackPanel>
+                            <TextBlock x:Name="tbIniciativasParticipacion" Visibility="Visible" Margin="0,10,0,10" Text="No se han encontrado datos disponibles" Style="{StaticResource DetailBodyStyle}" />
+                        </StackPanel>
                 </Grid>
                 </ScrollViewer>
             </PivotItem>

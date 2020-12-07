@@ -16,12 +16,14 @@ namespace Lawful.Core.Logica
         private Datos.Interfaces.IUsuarioDAO usuarioDAO;
         private Datos.Interfaces.IGrupoDAO grupoDAO;
         private Datos.Interfaces.IIniciativaDAO iniciativaDAO;
+        private Datos.Interfaces.ITemaDAO temaDAO;
         public ReporteBL()
         {
             sesionDAO = new Datos.DAO.SesionDAO_SqlServer();
             usuarioDAO = new Datos.DAO.UsuarioDAO_SqlServer();
             grupoDAO = new Datos.DAO.GrupoDAO_SqlServer();
             iniciativaDAO = new Datos.DAO.IniciativaDAO_SqlServer();
+            temaDAO = new Datos.DAO.TemaDAO_SqlServer();
         }
         public List<Modelo.SesionInforme> ObtenerUltimasSesiones(int userId)
         {
@@ -40,6 +42,18 @@ namespace Lawful.Core.Logica
             try
             {
                 return sesionDAO.ObtenerMinutosSesionGrupos();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public List<Modelo.ParticipacionInforme> ObtenerParticipacionTemas()
+        {
+            try
+            {
+                return temaDAO.ObtenerParticipacionTemas();
             }
             catch (Exception ex)
             {
