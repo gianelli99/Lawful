@@ -6,26 +6,55 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
-    <StackPanel x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}" VerticalAlignment="Center">
+    <StackPanel
+        x:Name="ContentArea"
+        Margin="{StaticResource MediumLeftRightMargin}"
+        VerticalAlignment="Center">
 
-        <StackPanel   Spacing="40" Margin="240,50,240,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical" Width="454">
+        <StackPanel
+            Width="454"
+            Margin="240,50,240,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Orientation="Vertical"
+            Spacing="40">
             <StackPanel Spacing="10">
-                <TextBlock Text="Cambiá tu contraseña" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="36" FontWeight="Bold"/>
-                <TextBlock Text="Ingresá tu nueva contraseña y confirmala para iniciar sesión (Asegurate que no sea igual a la actual)" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="36"
+                    FontWeight="Bold"
+                    Text="Cambiá tu contraseña"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Text="Ingresá tu nueva contraseña y confirmala para iniciar sesión (Asegurate que no sea igual a la actual)"
+                    TextWrapping="Wrap" />
             </StackPanel>
 
             <StackPanel Spacing="30">
-                <PasswordBox Name="txtCurrentPassword" PlaceholderText="Contraseña actual"/>
-                <PasswordBox Name="txtNewPassword" PlaceholderText="Contraseña nueva"/>
-                <PasswordBox Name="txtConfirmNewPassword" PlaceholderText="Repetir contraseña nueva"/>
-                <TextBlock Text="" Foreground="Red" Name="lblError"/>
+                <PasswordBox Name="txtCurrentPassword" PlaceholderText="Contraseña actual" />
+                <PasswordBox Name="txtNewPassword" PlaceholderText="Contraseña nueva" />
+                <PasswordBox Name="txtConfirmNewPassword" PlaceholderText="Repetir contraseña nueva" />
+                <TextBlock
+                    Name="lblError"
+                    Foreground="Red"
+                    Text="" />
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Center">
-                <Button Name="btnEnviarCorreo" Content="Cambiar Contraseña" HorizontalAlignment="Center" Click="btnEnviarCorreo_Click"/>
+                <Button
+                    Name="btnEnviarCorreo"
+                    HorizontalAlignment="Center"
+                    Click="btnEnviarCorreo_Click"
+                    Content="Cambiar Contraseña" />
             </StackPanel>
 
-            <TextBlock Text="Lawful ©" TextWrapping="Wrap" HorizontalAlignment="Center" FontSize="12" FontWeight="Normal"/>
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="12"
+                FontWeight="Normal"
+                Text="Lawful ©"
+                TextWrapping="Wrap" />
         </StackPanel>
     </StackPanel>
 </Page>

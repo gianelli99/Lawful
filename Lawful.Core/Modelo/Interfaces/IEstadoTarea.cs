@@ -9,6 +9,7 @@ namespace Lawful.Core.Modelo.Interfaces
         int DBValue { get; }
         Tarea Tarea { get; set; }
         void Mover();
+        void MoverAtras();
         void SetTarea(Tarea tarea);
     }
 }

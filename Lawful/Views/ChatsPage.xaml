@@ -32,6 +32,7 @@
         BasedOn="{StaticResource MessageItemStyle}"
         TargetType="SelectorItem">
             <Setter Property="Background" Value="{StaticResource SystemAccentColor}" />
+            <Setter Property="Foreground" Value="White"/>
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
 

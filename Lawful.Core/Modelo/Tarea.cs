@@ -21,7 +21,6 @@ namespace Lawful.Core.Modelo
         {
             IncidenciasSecundarias = new List<Incidencia>();
             Comentarios = new List<Comentario>();
-            ChangeState(new TareaEstados.PorHacer());
         }
         public void ChangeState(Interfaces.IEstadoTarea estado)
         {
