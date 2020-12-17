@@ -14,30 +14,69 @@
     </Page.Transitions>
     <Page.Resources>
         <DataTemplate x:Key="TareaTemplate" x:DataType="modelo:Tarea">
-            <Grid Margin="0" Padding="5" Height="100" Background="White">
+            <Grid
+                MaxHeight="200"
+                Margin="0"
+                Padding="10"
+                Background="White"
+                CornerRadius="5">
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="{x:Bind Titulo}" FontWeight="SemiBold" FontSize="18" TextWrapping="WrapWholeWords"/>
-                <TextBlock Grid.Row="1" Text="{x:Bind Descripcion}" FontSize="14" TextWrapping="WrapWholeWords"/>
+                <TextBlock
+                    Grid.Row="0"
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Text="{x:Bind Titulo}"
+                    TextWrapping="WrapWholeWords" />
+                <TextBlock
+                    Grid.Row="1"
+                    FontSize="14"
+                    Text="{x:Bind Descripcion}"
+                    TextWrapping="WrapWholeWords" />
             </Grid>
         </DataTemplate>
+
+        <DataTemplate x:Key="IncidenciaSecundariaTemplate" x:DataType="modelo:Incidencia">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon
+                    Margin="5,0,5,0"
+                    DataContext="{x:Bind ID}"
+                    Symbol="Delete"
+                    Tapped="SymbolIcon_Tapped" />
+                <CheckBox
+                    Checked="CheckBox_Checked"
+                    Content="{x:Bind Descripcion}"
+                    DataContext="{x:Bind ID}"
+                    IsChecked="{x:Bind IsDone}"
+                    Unchecked="CheckBox_Unchecked" />
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
-    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}" MinWidth="500" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid
+        x:Name="ContentArea"
+        MinWidth="500"
+        Margin="{StaticResource MediumLeftRightMargin}"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="350" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" x:Name="Master">
-            <ListView x:Name="TemasListView" ItemsSource="{x:Bind Temas, Mode=TwoWay}" SelectedItem="{x:Bind SelectedTema, Mode=TwoWay}" IsItemClickEnabled="True">
+        <StackPanel x:Name="Master" Grid.Column="0">
+            <ListView
+                x:Name="TemasListView"
+                IsItemClickEnabled="True"
+                ItemsSource="{x:Bind Temas, Mode=TwoWay}"
+                SelectedItem="{x:Bind SelectedTema, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="modelo:Tema">
-                        <StackPanel Orientation="Horizontal" Margin="6">
-                            <SymbolIcon Symbol="Tag" Margin="0,0,12,0"/>
+                        <StackPanel Margin="6" Orientation="Horizontal">
+                            <SymbolIcon Margin="0,0,12,0" Symbol="Tag" />
                             <StackPanel>
-                                <TextBlock Text="{x:Bind Titulo}"  Style="{ThemeResource ListTitleStyle}"/>
-                                <TextBlock Text="{x:Bind DisponibleHasta()}" Style="{StaticResource ListSubTitleStyle}" />
+                                <TextBlock Style="{ThemeResource ListTitleStyle}" Text="{x:Bind Titulo}" />
+                                <TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{x:Bind DisponibleHasta()}" />
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
@@ -45,85 +84,231 @@
             </ListView>
         </StackPanel>
         <ScrollViewer Grid.Column="1">
-            <Grid  x:Name="Detail" HorizontalAlignment="Stretch" MinWidth="250">
-                <CommandBar Grid.Row="0" x:Name="AccionesBar"></CommandBar>
-                <Grid Grid.Row="1" x:Name="gTareas" Margin="0,44,0,0">
+            <Grid
+                x:Name="Detail"
+                MinWidth="250"
+                HorizontalAlignment="Stretch">
+                <CommandBar x:Name="AccionesBar" Grid.Row="0" />
+                <Grid
+                    x:Name="gTareas"
+                    Grid.Row="1"
+                    Margin="0,44,0,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" x:Name="gTareasKanban">
+                    <Grid
+                        x:Name="gTareasKanban"
+                        Grid.Row="0"
+                        MinHeight="300">
+                        <Grid.RowDefinitions>
+                            <RowDefinition MinHeight="300" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
-                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <ListView IsItemClickEnabled="True" SelectionMode="Single" Background="{StaticResource AppBarBackgroundThemeBrush}" Margin="8" Padding="8" Header="POR HACER" x:Name="lvPorHacer" Grid.Column="0" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasPorHacer}" CanDragItems="True" AllowDrop="True" CanReorderItems="True" DragOver="lvPorHacer_DragOver" Drop="lvPorHacer_Drop" DragItemsStarting="lvPorHacer_DragItemsStarting" ItemClick="lvPorHacer_ItemClick">
+                        <ListView
+                            x:Name="lvPorHacer"
+                            Grid.Column="0"
+                            Margin="8"
+                            Padding="8"
+                            AllowDrop="True"
+                            Background="{StaticResource AppBarBackgroundThemeBrush}"
+                            CanDragItems="True"
+                            CanReorderItems="True"
+                            DragItemsStarting="LvKanban_DragItemsStarting"
+                            DragOver="LvKanban_DragOver"
+                            Drop="LvPorHacer_Drop"
+                            Header="POR HACER"
+                            IsItemClickEnabled="True"
+                            ItemClick="LvKanban_ItemClick"
+                            ItemTemplate="{StaticResource TareaTemplate}"
+                            ItemsSource="{x:Bind TareasPorHacer, Mode=TwoWay}"
+                            SelectionMode="Single">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="Margin" Value="8"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="8" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
-                        <ListView Background="{StaticResource AppBarBackgroundThemeBrush}" Margin="8" Padding="8" Header="EN CURSO" x:Name="lvEnCurso" Grid.Column="1" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasEnCurso}" CanDragItems="True" AllowDrop="True" CanReorderItems="True" DragOver="lvPorHacer_DragOver" DragItemsStarting="lvPorHacer_DragItemsStarting" Drop="lvEnCurso_Drop">
+                        <ListView
+                            x:Name="lvEnCurso"
+                            Grid.Column="1"
+                            Margin="8"
+                            Padding="8"
+                            AllowDrop="True"
+                            Background="{StaticResource AppBarBackgroundThemeBrush}"
+                            CanDragItems="True"
+                            CanReorderItems="True"
+                            DragItemsStarting="LvKanban_DragItemsStarting"
+                            DragOver="LvKanban_DragOver"
+                            Drop="LvEnCurso_Drop"
+                            Header="EN CURSO"
+                            IsItemClickEnabled="True"
+                            ItemClick="LvKanban_ItemClick"
+                            ItemTemplate="{StaticResource TareaTemplate}"
+                            ItemsSource="{x:Bind TareasEnCurso, Mode=TwoWay}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="Margin" Value="8"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="8" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
-                        <ListView Background="{StaticResource AppBarBackgroundThemeBrush}" Margin="8" Padding="8" Header="FINALIZADAS" x:Name="lvFinalizadas" Grid.Column="2" ItemTemplate="{StaticResource TareaTemplate}" ItemsSource="{x:Bind TareasFinalizadas}" CanDragItems="True" AllowDrop="True" CanReorderItems="True" DragOver="lvPorHacer_DragOver" DragItemsStarting="lvPorHacer_DragItemsStarting" Drop="lvFinalizadas_Drop">
+                        <ListView
+                            x:Name="lvFinalizadas"
+                            Grid.Column="2"
+                            Margin="8"
+                            Padding="8"
+                            AllowDrop="True"
+                            Background="{StaticResource AppBarBackgroundThemeBrush}"
+                            CanDragItems="True"
+                            CanReorderItems="True"
+                            DragItemsStarting="LvKanban_DragItemsStarting"
+                            DragOver="LvKanban_DragOver"
+                            Drop="LvFinalizadas_Drop"
+                            Header="FINALIZADAS"
+                            IsItemClickEnabled="True"
+                            ItemClick="LvKanban_ItemClick"
+                            ItemTemplate="{StaticResource TareaTemplate}"
+                            ItemsSource="{x:Bind TareasFinalizadas, Mode=TwoWay}">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="Margin" Value="8"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="8" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
                     </Grid>
-                    
-                    <StackPanel Grid.Row="1" x:Name="spTareasInformacion">
+
+                    <StackPanel x:Name="spTareasInformacion" Grid.Row="1">
                         <StackPanel x:Name="spTareasDetails">
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Título" />
-                            <TextBlock x:Name="tbTitulo" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
+                            <TextBlock x:Name="tbTitulo" Style="{StaticResource DetailBodyBaseMediumStyle}" />
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Descripción" />
-                            <TextBlock x:Name="tbDescripcion" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
+                            <TextBlock x:Name="tbDescripcion" Style="{StaticResource DetailBodyBaseMediumStyle}" />
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Importancia" />
-                            <TextBlock x:Name="tbImportancia" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
+                            <TextBlock x:Name="tbImportancia" Style="{StaticResource DetailBodyBaseMediumStyle}" />
                             <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Responsable" />
-                            <TextBlock x:Name="tbResponsable" Style="{StaticResource DetailBodyBaseMediumStyle}"/>
+                            <TextBlock x:Name="tbResponsable" Style="{StaticResource DetailBodyBaseMediumStyle}" />
                             <StackPanel x:Name="spDetailIncidenciasSecundarias" HorizontalAlignment="Left">
-                                <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Incidencias secundarias"/>
-                                <ListView x:Name="lvDetailIncidenciasSecundarias" MaxHeight="500" Width="400">
-                                </ListView>
+                                <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Incidencias secundarias" />
+                                <ListView
+                                    x:Name="lvDetailIncidenciasSecundarias"
+                                    Width="400"
+                                    MaxHeight="500"
+                                    ItemTemplate="{StaticResource IncidenciaSecundariaTemplate}"
+                                    ItemsSource="{x:Bind SelectedTarea.IncidenciasSecundarias}"
+                                    SelectionMode="None" />
                             </StackPanel>
 
                             <StackPanel x:Name="spDetailComentarios" HorizontalAlignment="Left">
-                                <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource DetailSubTitleStyle}" Text="Comentarios" />
-                                <ListView x:Name="lvComentarios" ItemsSource="{x:Bind SelectedTarea.Comentarios, Mode=TwoWay}" SelectionMode="None" MaxHeight="800">
+                                <TextBlock
+                                    Margin="{StaticResource SmallTopMargin}"
+                                    Style="{StaticResource DetailSubTitleStyle}"
+                                    Text="Comentarios" />
+                                <ListView
+                                    x:Name="lvComentarios"
+                                    MaxHeight="800"
+                                    ItemsSource="{x:Bind comentariosOC}"
+                                    SelectionMode="None">
                                     <ListView.ItemTemplate>
                                         <DataTemplate x:DataType="modelo:Comentario">
-                                            <StackPanel Margin="0,5,0,5" Width="390">
-                                                <TextBlock Margin="0,0,0,4" Text="{x:Bind Owner.GetNombreCompleto()}" FontWeight="SemiBold"/>
-                                                <StackPanel Padding="5" Background="{ThemeResource AppBarBackgroundThemeBrush}" Width="390" CornerRadius="5">
-                                                    <TextBlock Text="{x:Bind Descripcion}" TextWrapping="WrapWholeWords"/>
-                                                    <TextBlock TextAlignment="Right" Text="{x:Bind Fecha}" FontStyle="Italic" FontWeight="Light"/>
+                                            <StackPanel Width="390" Margin="0,5,0,5">
+                                                <TextBlock
+                                                    Margin="0,0,0,4"
+                                                    FontWeight="SemiBold"
+                                                    Text="{x:Bind Owner.GetNombreCompleto()}" />
+                                                <StackPanel
+                                                    Width="390"
+                                                    Padding="5"
+                                                    Background="{ThemeResource AppBarBackgroundThemeBrush}"
+                                                    CornerRadius="5">
+                                                    <TextBlock Text="{x:Bind Descripcion}" TextWrapping="WrapWholeWords" />
+                                                    <TextBlock
+                                                        FontStyle="Italic"
+                                                        FontWeight="Light"
+                                                        Text="{x:Bind Fecha}"
+                                                        TextAlignment="Right" />
                                                 </StackPanel>
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
-                                <TextBox Margin="0,10,0,0" x:Name="txtComentario" Width="400" KeyDown="txtComentario_KeyDown"/>
+                                <TextBox
+                                    x:Name="txtComentario"
+                                    Width="400"
+                                    Margin="0,10,0,0"
+                                    KeyDown="TxtComentario_KeyDown" />
                             </StackPanel>
 
                         </StackPanel>
-                        <StackPanel x:Name="spTareasFormulario">
-                            
+                        <StackPanel
+                            x:Name="spTareasFormulario"
+                            Width="300"
+                            Margin="10,10,0,10"
+                            HorizontalAlignment="Left">
+                            <!--  Titulo: Textbox  -->
+                            <TextBox
+                                x:Name="txtTitulo"
+                                Margin="10,10,0,10"
+                                Header="Titulo" />
+                            <!--  Descripcion: Textbox  -->
+                            <TextBox
+                                x:Name="txtDescripcion"
+                                Margin="10,10,0,10"
+                                Header="Descripcion" />
+                            <!--  Importancia: Slider  -->
+                            <Slider
+                                x:Name="slImportancia"
+                                Margin="10,10,0,10"
+                                Header="Importancia"
+                                Maximum="10"
+                                Minimum="1" />
+                            <!--  Responsable: ListView  -->
+                            <ListView
+                                x:Name="lvResponsableFormulario"
+                                MaxHeight="200"
+                                Margin="10,10,0,10"
+                                Header="Responsable"
+                                SelectionMode="Single" />
+                            <!--  Incidencias: ListView  -->
+                            <ListView
+                                x:Name="lvIncidenciasFormulario"
+                                Width="400"
+                                MaxHeight="500"
+                                Margin="10,10,0,10"
+                                Header="Incidencias secundarias"
+                                ItemTemplate="{StaticResource IncidenciaSecundariaTemplate}"
+                                ItemsSource="{x:Bind incidenciasFormulario}" />
+                            <!--  ItemsSource="{x:Bind SelectedTarea.IncidenciasSecundarias}"  -->
+                            <TextBox
+                                x:Name="txtIncidencia"
+                                Margin="10,10,0,10"
+                                Header="Agregar una nueva incidencia"
+                                KeyDown="TxtIncidencia_KeyDown" />
+                            <!--  Aceptar y cancelar: Button  -->
+                            <StackPanel
+                                x:Name="spBotones"
+                                Margin="10,10,0,10"
+                                Orientation="Horizontal">
+                                <Button
+                                    x:Name="btnAceptar"
+                                    Margin="10"
+                                    Click="BtnAceptar_Click"
+                                    Content="Aceptar" />
+                                <Button
+                                    x:Name="btnCancelar"
+                                    Margin="10"
+                                    Click="BtnCancelar_Click"
+                                    Content="Cancelar" />
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </Grid>

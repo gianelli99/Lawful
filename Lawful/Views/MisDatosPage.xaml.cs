@@ -59,13 +59,11 @@ namespace Lawful.Views
             {
                 commandBar.PrimaryCommands.Add(button);
             }
-            //Trace.WriteLine(commandBar.PrimaryCommands.Count);
             return commandBar;
         }
 
         private async void Accion_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            // Cuando cliqueo en cada acción ¿Qué hago?
             switch (((AccionAppBarButton)sender).Accion.Descripcion)
             {
 

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Lawful.Core.Datos;
-using Lawful.Core.Modelo;
+﻿using Lawful.Core.Modelo;
 using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lawful.Core.Datos.DAO
 {
@@ -100,10 +99,12 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO tareas (titulo,descripcion,fecha_por_hacer,importancia,usuario_id,tema_id,estado) VALUES (@titulo, @descripcion, @fecha_por_hacer, @importancia, @usuario_id, @tema_id, @estado);SELECT CAST(scope_identity() AS int);";
+                    command.CommandText = $"INSERT INTO tareas (titulo,descripcion,fecha_por_hacer,fecha_en_curso,fecha_finalizada,importancia,usuario_id,tema_id,estado) VALUES (@titulo, @descripcion, @fecha_por_hacer,@fecha_en_curso,@fecha_finalizada, @importancia, @usuario_id, @tema_id, @estado);SELECT CAST(scope_identity() AS int);";
                     command.Parameters.AddWithValue("@titulo", tarea.Titulo);
                     command.Parameters.AddWithValue("@descripcion", tarea.Descripcion);
                     command.Parameters.AddWithValue("@fecha_por_hacer", tarea.FechaPorHacer);
+                    command.Parameters.AddWithValue("@fecha_en_curso", tarea.FechaEnCurso);
+                    command.Parameters.AddWithValue("@fecha_finalizada", tarea.FechaFinalizada);
                     command.Parameters.AddWithValue("@importancia", tarea.Importancia);
                     command.Parameters.AddWithValue("@usuario_id", tarea.Responsable.ID);
                     command.Parameters.AddWithValue("@tema_id", temaId);
@@ -115,16 +116,18 @@ namespace Lawful.Core.Datos.DAO
                             tarea.ID = response.GetInt32(0);
                         }
                     }
-                    command.CommandText = "INSERT INTO incidencias VALUES";
+                    command.CommandText = "INSERT INTO incidencias (descripcion, is_done, tarea_id) VALUES";
                     if (tarea.IncidenciasSecundarias.Count > 0)
                     {
                         foreach (var incidencia in tarea.IncidenciasSecundarias)
                         {
-                            command.CommandText += $"(@descripcion,{incidencia.IsDone},{tarea.ID}),";
-                            command.Parameters.AddWithValue("@descripcion", incidencia.Descripcion);
+                            var isdone = incidencia.IsDone ? 1 : 0;
+
+                            command.CommandText += $"('{incidencia.Descripcion}',{isdone},{tarea.ID}),"; // command.Parameters.AddWithValue("@desc", incidencia.Descripcion); // Se removió el addWithValue porque rompía y decia "No se puede repetir el @descripcion" 
                         }
                         command.CommandText = command.CommandText.Remove(command.CommandText.Length - 1);
                         command.CommandText += ";";
+
                         command.ExecuteNonQuery();
                     }
 
@@ -182,6 +185,8 @@ namespace Lawful.Core.Datos.DAO
                                     FechaPorHacer = response.GetDateTime(2),
                                     FechaEnCurso = response.IsDBNull(3) ? DateTime.MinValue : response.GetDateTime(3),
                                     FechaFinalizada = response.IsDBNull(4) ? DateTime.MinValue : response.GetDateTime(4),
+                                    //FechaEnCurso = response.GetDateTime(3),
+                                    //FechaFinalizada = response.GetDateTime(4),
                                     Importancia = response.GetInt32(5),
                                 };
                                 var user = new Usuario()
@@ -191,7 +196,7 @@ namespace Lawful.Core.Datos.DAO
                                     Apellido = response.GetString(8)
                                 };
                                 tarea.Responsable = user;
-                                SetState(tarea, response.GetInt32(9));
+                                SetState(tarea, response.GetInt32(10)); //Era 9
                                 tareas.Add(tarea);
                             }
                             response.NextResult();
@@ -325,8 +330,9 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO tareas_comentarios VALUES (@descripcion, @usuario_id, @tarea_id);";
+                    command.CommandText = $"INSERT INTO tareas_comentarios VALUES (@descripcion, @fecha, @usuario_id, @tarea_id);";
                     command.Parameters.AddWithValue("@descripcion", comentario.Descripcion);
+                    command.Parameters.AddWithValue("@fecha", comentario.Fecha);
                     command.Parameters.AddWithValue("@usuario_id", comentario.Owner.ID);
                     command.Parameters.AddWithValue("@tarea_id", tareaID);
                     command.ExecuteNonQuery();

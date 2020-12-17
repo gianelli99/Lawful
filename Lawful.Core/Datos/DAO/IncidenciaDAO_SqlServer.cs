@@ -63,7 +63,8 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"UPDATE incidencias SET is_done={isDone} WHERE id = {id};";
+                    var isdone = isDone ? 1 : 0;
+                    command.CommandText = $"UPDATE incidencias SET is_done={isdone} WHERE id = {id};";
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;

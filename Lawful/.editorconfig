@@ -9,3 +9,6 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 insert_final_newline = true
+
+# IDE1006: Estilos de nombres
+dotnet_diagnostic.IDE1006.severity = none

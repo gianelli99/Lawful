@@ -60,7 +60,7 @@ namespace Lawful.Core.Logica
             catch (Exception ex)
             {
 
-                throw ex;
+                 throw ex;
             }
         }
         public void Eliminar(int tareaId)
@@ -135,6 +135,6 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
-
+        
     }
 }
