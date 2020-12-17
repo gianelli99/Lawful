@@ -76,17 +76,7 @@ namespace Lawful.Views
 
             var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 10);
             CommandBarHelpers.CreateCommandBar(this.AccionesBar, acciones, Accion_Click);
-            usuarios = usuarioBL.Listar();
-            foreach (var item in usuarios)
-            {
-                UsuarioListViewItem usuarioListViewItem = new UsuarioListViewItem()
-                {
-                    Usuario = item,
-                    Name = item.ID.ToString(),
-                    Content = item.GetNombreCompleto()
-                };
-                lvResponsableFormulario.Items.Add(usuarioListViewItem);
-            }
+            
             RefreshTemasListView();
             SelectedTarea = new Tarea();
             SelectedTema.Tareas = tareaBL.ListarPorTema(_selectedTema.ID);
@@ -101,6 +91,18 @@ namespace Lawful.Views
             var tareas = tareaBL.ListarPorTema(_selectedTema.ID);
             OrganizeTareasByState(tareas);
             SelectedTema.Tareas = tareas;
+
+            usuarios = usuarioBL.Listar();
+            foreach (var item in usuarios)
+            {
+                UsuarioListViewItem usuarioListViewItem = new UsuarioListViewItem()
+                {
+                    Usuario = item,
+                    Name = item.ID.ToString(),
+                    Content = item.GetNombreCompleto()
+                };
+                lvResponsableFormulario.Items.Add(usuarioListViewItem);
+            }
 
         }
 
@@ -458,6 +460,7 @@ namespace Lawful.Views
             TareasEnCurso.Add(SelectedTarea);
             TareasFrom.Remove(SelectedTarea);
             SelectedTarea.FechaEnCurso = DateTime.Now;
+            SelectedTarea.FechaFinalizada = DateTime.Now;
             tareaBL.ModificarEstado(SelectedTarea);
             RefreshSelectedTema();
         }
