@@ -87,8 +87,16 @@
             <PivotItem x:Name="Reportes_Tareas" Header="Tareas">
                 <ScrollViewer>
                 <Grid>
-                    <TextBlock>Line Chart con tareas</TextBlock>
-                </Grid>
+                        <StackPanel>
+                        <ComboBox x:Name="cbTemaTarea" Header="Tema" Margin="0,10,0,0" Width="300" ItemsSource="{x:Bind Temas}" SelectionChanged="cbTemaTarea_SelectionChanged"/>
+                        <Charting:Chart x:Name="lcTareas" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Width="800" Height="500" >
+                            <Charting:LineSeries Title="Por hacer" Margin="0" IndependentValuePath="DiaMes" DependentValuePath="Cantidad"/>
+                            <Charting:LineSeries Title="En progreso" Margin="0" IndependentValuePath="DiaMes" DependentValuePath="Cantidad"/>
+                            <Charting:LineSeries Title="Finalizadas" Margin="0" IndependentValuePath="DiaMes" DependentValuePath="Cantidad"/>
+                            </Charting:Chart>
+                        <TextBlock x:Name="tbTareas" Visibility="Visible" Margin="0,10,0,10" Text="El usuario seleccionado no posee registro de sesiones en los últimos 10 días" Style="{StaticResource DetailBodyStyle}" />
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
             </PivotItem>
         </Pivot>

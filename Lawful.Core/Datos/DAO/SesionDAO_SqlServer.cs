@@ -182,7 +182,7 @@ namespace Lawful.Core.Datos.DAO
                         {
                             var grupo = new GrupoInforme();
                             grupo.Grupo = new Grupo() { Descripcion = response.GetString(0) };
-                            grupo.MinutosTotales = response.GetInt32(1);
+                            grupo.MinutosTotales = response.IsDBNull(1) ? 0 : response.GetInt32(1);
                             grupo.CantUsers = response.GetInt32(2);
                             grupo.Dias = 10;
                             grupos.Add(grupo);

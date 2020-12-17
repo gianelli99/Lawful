@@ -33,6 +33,7 @@ namespace Lawful.Views
             LoadSesionesPorGrupo();
             LoadIniciativas();
             LoadParticipacion();
+            LoadTareas();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -105,6 +106,32 @@ namespace Lawful.Views
                     ccSesionesGrupos.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 }
         }
+        private void LoadTareas()
+        {
+            if (cbTemaTarea.SelectedItem != null)
+            {
+                var tareas = reporteBL.ObtenerEstadoTareasPorDia(((Tema)cbTemaTarea.SelectedItem).ID);
+                if (tareas != null && tareas[0].Count > 0)
+                {
+                    (lcTareas.Series[0] as LineSeries).ItemsSource = tareas[0];
+                    (lcTareas.Series[1] as LineSeries).ItemsSource = tareas[1];
+                    (lcTareas.Series[2] as LineSeries).ItemsSource = tareas[2];
+
+                    tbTareas.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    lcTareas.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                }
+                else
+                {
+                    tbTareas.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    lcTareas.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                tbTareas.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                lcTareas.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }            
+        }
         private void LoadAuditoria()
         {
             Auditoria= new List<AuditoriaUsuario>();
@@ -174,6 +201,11 @@ namespace Lawful.Views
         private void cbTema_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadIniciativas();
+        }
+
+        private void cbTemaTarea_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LoadTareas();
         }
     }
     
