@@ -238,5 +238,17 @@ namespace Lawful.Core.Logica
                 throw ex;
             }
         }
+        public List<Modelo.Usuario> ListarPorTema(int temaId)
+        {
+            try
+            {
+                return usuarioDAO.ListarPorTema(temaId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
     }
 }

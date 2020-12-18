@@ -165,7 +165,6 @@
     <Compile Include="Helpers\EnumToBooleanConverter.cs" />
     <Compile Include="Helpers\FrameGlobal.cs" />
     <Compile Include="Helpers\GrupoListViewItem.cs" />
-    <Compile Include="Helpers\IncidenciaListViewItem.cs" />
     <Compile Include="Helpers\ModalHelpers.cs" />
     <Compile Include="Helpers\NavHelper.cs" />
     <Compile Include="Helpers\OpcionListViewItem.cs" />

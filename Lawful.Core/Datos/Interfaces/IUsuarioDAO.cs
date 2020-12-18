@@ -19,5 +19,6 @@ namespace Lawful.Core.Datos.Interfaces
         bool UsernameEmailDisponibles(string username, string email, string id);
         bool NeedNewPassword(int userId);
         List<AuditoriaUsuario> ObtenerAuditoria(int userId);
+        List<Usuario> ListarPorTema(int temaId);
     }
 }

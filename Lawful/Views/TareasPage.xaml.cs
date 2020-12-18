@@ -33,7 +33,6 @@ namespace Lawful.Views
 
         public ObservableCollection<Tarea> TareasFrom { get; set; }
 
-        public ObservableCollection<Incidencia> incidenciasFormulario;
         public List<Comentario> comentariosOC;
 
         public ObservableCollection<Tarea> TareasTo { get; set; }
@@ -57,42 +56,40 @@ namespace Lawful.Views
 
         public TareasPage()
         {
-            /*
-             * 1. Inicializo todo
-             * 2. Traigo todos los temas de la base de datos
-             * 3. Armo la commandBar
-             * 4. Relleno el combobox de usuarios para cuando se haga una alta/modificacion
-             */
 
             usuarioBL = new UsuarioBL();
             tareaBL = new TareaBL();
             TareasPorHacer = new ObservableCollection<Tarea>();
             TareasEnCurso = new ObservableCollection<Tarea>();
             TareasFinalizadas = new ObservableCollection<Tarea>();
-            incidenciasFormulario = new ObservableCollection<Incidencia>();
             comentariosOC = new List<Comentario>();
+
             InitializeComponent();
 
 
             var acciones = usuarioBL.ListarAccionesDisponiblesEnVista(SesionActiva.ObtenerInstancia().Usuario.ID, 10);
             CommandBarHelpers.CreateCommandBar(this.AccionesBar, acciones, Accion_Click);
-            
+
             RefreshTemasListView();
-            SelectedTarea = new Tarea();
-            SelectedTema.Tareas = tareaBL.ListarPorTema(_selectedTema.ID);
-            if (SelectedTema.Tareas.Count > 0)
-            {
-                SelectedTarea = SelectedTema.Tareas[0];
-            }
-            else
-            {
-                SelectedTarea = null;
-            }
+            
+
             var tareas = tareaBL.ListarPorTema(_selectedTema.ID);
             OrganizeTareasByState(tareas);
+
             SelectedTema.Tareas = tareas;
 
-            usuarios = usuarioBL.Listar();
+            if (SelectedTema.Tareas.Count > 0) {
+                SelectedTarea = SelectedTema.Tareas[0];
+                DetailsMode(SelectedTarea);
+            }
+            usuarios = usuarioBL.ListarPorTema(SelectedTema.ID);
+            loadUsersInListView(usuarios);
+
+
+        }
+
+        private void loadUsersInListView(List<Usuario> usuarios)
+        {
             foreach (var item in usuarios)
             {
                 UsuarioListViewItem usuarioListViewItem = new UsuarioListViewItem()
@@ -103,7 +100,6 @@ namespace Lawful.Views
                 };
                 lvResponsableFormulario.Items.Add(usuarioListViewItem);
             }
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -120,17 +116,16 @@ namespace Lawful.Views
             {
                 var tareas = tareaBL.ListarPorTema(_selectedTema.ID);
                 OrganizeTareasByState(tareas);
+                //SelectedTarea = null;
+                SelectedTema.Tareas = tareas;
                 if (SelectedTema.Tareas != null && SelectedTema.Tareas.Count > 0)
                 {
                     SelectedTarea = SelectedTema.Tareas[0];
-
                 }
                 DetailsMode(SelectedTarea);
             }
             if (value != null && value.GetType().Name == "Tarea")
             {
-                RefreshIncidenciasDetails();
-                //lvComentarios.ItemsSource = SelectedTarea.Comentarios;
                 comentariosOC = SelectedTarea.Comentarios;
                 lvComentarios.ItemsSource = comentariosOC;
             }
@@ -138,7 +133,7 @@ namespace Lawful.Views
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private void RefreshTemasListView()
+        private void RefreshTemasListView() // Esta bien
         {
             Temas = new ObservableCollection<Tema>();
             var data = usuarioBL.ListarTemasDisponibles(SesionActiva.ObtenerInstancia().Usuario.ID);
@@ -203,9 +198,7 @@ namespace Lawful.Views
                     };
                     txtComentario.Text = "";
                     tareaBL.InsertarComentario(SelectedTarea.ID, comentario);
-                    //SelectedTarea.Comentarios.Add(comentario);
                     comentariosOC.Add(comentario);
-
                     lvComentarios.ItemsSource = null;
                     lvComentarios.ItemsSource = comentariosOC;
                 }
@@ -215,9 +208,9 @@ namespace Lawful.Views
                 ModalHelpers.DisplayError(ex.Message);
             }
 
-        }
+        } // Esta bien
 
-        private void BtnAceptar_Click(object sender, RoutedEventArgs e)
+        private void BtnAceptar_Click(object sender, RoutedEventArgs e) // Esta bien
         {
             try
             {
@@ -243,8 +236,7 @@ namespace Lawful.Views
                         Estado = new PorHacer(),
                         FechaEnCurso = DateTime.Now.Date,
                         FechaPorHacer = DateTime.Now.Date,
-                        FechaFinalizada = DateTime.Now.Date,
-                        IncidenciasSecundarias = incidenciasFormulario.Select(incidencia => incidencia).ToList()
+                        FechaFinalizada = DateTime.Now.Date
                     };
                     SelectedTarea = tarea;
                     TareasPorHacer.Add(tarea);
@@ -260,18 +252,9 @@ namespace Lawful.Views
                     SelectedTarea.FechaPorHacer = SelectedTarea.FechaPorHacer;
                     SelectedTarea.FechaFinalizada = SelectedTarea.FechaFinalizada;
 
-                    foreach (Incidencia incidencia in incidenciasFormulario)
-                    {
-                        if (!SelectedTarea.IncidenciasSecundarias.Contains(incidencia))
-                        {
-                            tareaBL.InsertarIncidencia(incidencia, SelectedTarea.ID);
-                        }
-                    }
-
                     tareaBL.ModificarDatos(SelectedTarea);
                 }
                 RefreshSelectedTema();
-                RefreshIncidenciasDetails();
 
             }
             catch (Exception ex)
@@ -295,48 +278,6 @@ namespace Lawful.Views
             DetailsMode(SelectedTarea);
         }
 
-        private void TxtIncidencia_KeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter && !String.IsNullOrWhiteSpace(txtIncidencia.Text))
-            {
-                var incidencia = new IncidenciaListViewItem()
-                {
-                    Incidencia = new Incidencia()
-                    {
-                        IsDone = false,
-                        Descripcion = txtIncidencia.Text
-                    },
-                    Content = txtIncidencia.Text,
-                    IsSelected = false,
-                };
-                txtIncidencia.Text = "";
-                try
-                {
-                    if (isAlta)
-                    {
-                        incidenciasFormulario.Add(incidencia.Incidencia);
-                        lvIncidenciasFormulario.ItemsSource = incidenciasFormulario;
-                    }
-                    else
-                    {
-                        tareaBL.InsertarIncidencia(incidencia.Incidencia, SelectedTarea.ID);
-                        SelectedTarea.IncidenciasSecundarias.Add(incidencia.Incidencia);
-                        lvIncidenciasFormulario.ItemsSource = SelectedTarea.IncidenciasSecundarias;
-
-
-                    }
-                    RefreshIncidenciasDetails();
-                }
-                catch (Exception ex)
-                {
-                    ModalHelpers.DisplayError(ex.Message);
-                }
-
-                //SelectedTarea.IncidenciasSecundarias.Add(incidencia.Incidencia);
-                //OnPropertyChanged("SelectedTarea");
-                RefreshIncidenciasDetails();
-            }
-        }
 
         private void DetailsMode(Tarea tarea)
         {
@@ -363,15 +304,10 @@ namespace Lawful.Views
             lvResponsableFormulario.SelectedItem = null;
             spTareasFormulario.MaxHeight = double.PositiveInfinity;
             spTareasDetails.MaxHeight = 0;
-            lvIncidenciasFormulario.ItemsSource = null;
-            incidenciasFormulario.Clear();
+            
+           
             if (isEdit)
-            {
-                foreach (var item in tarea.IncidenciasSecundarias) //incidenciasFormulario = tarea.IncidenciasSecundarias;
-                {
-                    incidenciasFormulario.Add(item);
-                }
-                lvIncidenciasFormulario.ItemsSource = incidenciasFormulario;
+            {               
                 txtTitulo.Text = tarea.Titulo;
                 txtDescripcion.Text = tarea.Descripcion;
                 slImportancia.Value = tarea.Importancia;
@@ -495,28 +431,13 @@ namespace Lawful.Views
             DetailsMode(SelectedTarea);
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            var incidenciaID = ((CheckBox)sender).DataContext;
-            tareaBL.CambiarEstadoIncidencia(Convert.ToInt32(incidenciaID), true);
-            RefreshSelectedTema();
-        }
-
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            var incidenciaID = ((CheckBox)sender).DataContext;
-            tareaBL.CambiarEstadoIncidencia(Convert.ToInt32(incidenciaID), false);
-            RefreshSelectedTema();
-        }
-
         private void ClearFormInputs()
         {
             txtComentario.Text = "";
             txtDescripcion.Text = "";
             txtTitulo.Text = "";
-            txtIncidencia.Text = "";
             slImportancia.Value = 1;
-        }
+        } // Esta bien
 
         private void OrganizeTareasByState(List<Tarea> tareas)
         {
@@ -538,85 +459,6 @@ namespace Lawful.Views
                     TareasFinalizadas.Add(item);
                 }
             }
-        }
-
-        private void RefreshIncidenciasDetails()
-        {
-            if (SelectedTarea != null)
-            {
-                var incidencias = SelectedTarea.IncidenciasSecundarias;
-                lvDetailIncidenciasSecundarias.ItemsSource = incidencias;
-            }
-        }
-
-        private async void SymbolIcon_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
-        {
-            var incidenciaID = ((SymbolIcon)sender).DataContext;
-            ContentDialogResult contentDialogResult = await ModalHelpers.DisplayDeleteConfirmation();
-            if (contentDialogResult == ContentDialogResult.Primary)
-            {
-
-                if (isDetails)
-                {
-                    var incidencias = lvDetailIncidenciasSecundarias.Items;
-                    List<Incidencia> incidenciasParaCambiar = new List<Incidencia>();
-
-                    foreach (Incidencia item in incidencias)
-                    {
-                        if (((Incidencia)item).ID != (int)incidenciaID)
-                        {
-                            incidenciasParaCambiar.Add(item);
-                        }
-                    }
-                    lvDetailIncidenciasSecundarias.ItemsSource = null;
-                    lvDetailIncidenciasSecundarias.ItemsSource = incidenciasParaCambiar;
-                }
-                else
-                {
-                    if (isAlta)
-                    {
-                        var inciPreClear = incidenciasFormulario;
-                        incidenciasFormulario.Clear();
-                        foreach (var item in inciPreClear)
-                        {
-                            if (item.ID != (int)incidenciaID)
-                            {
-                                incidenciasFormulario.Add(item);
-                            }
-
-                        }
-                        lvIncidenciasFormulario.ItemsSource = incidenciasFormulario;
-                    }
-                    else
-                    {
-                        var inci = SelectedTarea.IncidenciasSecundarias;
-                        SelectedTarea.IncidenciasSecundarias.Clear();
-                        foreach (var item in inci)
-                        {
-                            if (item.ID != (int)incidenciaID)
-                            {
-                                SelectedTarea.IncidenciasSecundarias.Add(item);
-                            }
-                        }
-                        lvIncidenciasFormulario.ItemsSource = SelectedTarea.IncidenciasSecundarias;
-                    }
-                }
-                try
-                {
-                    tareaBL.EliminarIncidencia(Convert.ToInt32(incidenciaID));
-                }
-                catch (Exception ex)
-                {
-                    ModalHelpers.DisplayError(ex.Message);
-                }
-                RefreshSelectedTema();
-                return;
-            }
-            else
-            {
-                return;
-            }
-
         }
     }
 }

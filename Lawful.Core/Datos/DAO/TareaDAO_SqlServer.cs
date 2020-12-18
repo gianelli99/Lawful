@@ -63,7 +63,8 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"DELETE FROM incidencias WHERE tarea_id = {tareaId};DELETE FROM tareas_comentarios WHERE tarea_id = {tareaId};DELETE FROM tareas WHERE id = {tareaId};";
+                    Trace.WriteLine("El id de la tarea que va a ser eliminada es " + tareaId);
+                    command.CommandText = $"DELETE FROM tareas_comentarios WHERE tarea_id = {tareaId};DELETE FROM tareas WHERE id = {tareaId};";
                     command.ExecuteNonQuery();
                     transaction.Commit();
                     return;
@@ -99,7 +100,7 @@ namespace Lawful.Core.Datos.DAO
 
                 try
                 {
-                    command.CommandText = $"INSERT INTO tareas (titulo,descripcion,fecha_por_hacer,fecha_en_curso,fecha_finalizada,importancia,usuario_id,tema_id,estado) VALUES (@titulo, @descripcion, @fecha_por_hacer,@fecha_en_curso,@fecha_finalizada, @importancia, @usuario_id, @tema_id, @estado);SELECT CAST(scope_identity() AS int);";
+                    command.CommandText = $"INSERT INTO tareas (titulo,descripcion,fecha_por_hacer,fecha_en_curso,fecha_finalizada,importancia,usuario_id,tema_id,estado) VALUES (@titulo, @descripcion, @fecha_por_hacer,@fecha_en_curso,@fecha_finalizada, @importancia, @usuario_id, @tema_id, @estado);";
                     command.Parameters.AddWithValue("@titulo", tarea.Titulo);
                     command.Parameters.AddWithValue("@descripcion", tarea.Descripcion);
                     command.Parameters.AddWithValue("@fecha_por_hacer", tarea.FechaPorHacer);
@@ -109,29 +110,7 @@ namespace Lawful.Core.Datos.DAO
                     command.Parameters.AddWithValue("@usuario_id", tarea.Responsable.ID);
                     command.Parameters.AddWithValue("@tema_id", temaId);
                     command.Parameters.AddWithValue("@estado", tarea.Estado.DBValue);
-                    using (SqlDataReader response = command.ExecuteReader())
-                    {
-                        if (response.Read())
-                        {
-                            tarea.ID = response.GetInt32(0);
-                        }
-                    }
-                    command.CommandText = "INSERT INTO incidencias (descripcion, is_done, tarea_id) VALUES";
-                    if (tarea.IncidenciasSecundarias.Count > 0)
-                    {
-                        foreach (var incidencia in tarea.IncidenciasSecundarias)
-                        {
-                            var isdone = incidencia.IsDone ? 1 : 0;
-
-                            command.CommandText += $"('{incidencia.Descripcion}',{isdone},{tarea.ID}),"; // command.Parameters.AddWithValue("@desc", incidencia.Descripcion); // Se removió el addWithValue porque rompía y decia "No se puede repetir el @descripcion" 
-                        }
-                        command.CommandText = command.CommandText.Remove(command.CommandText.Length - 1);
-                        command.CommandText += ";";
-
-                        command.ExecuteNonQuery();
-                    }
-
-
+                    command.ExecuteNonQuery();
                     transaction.Commit();
                     return;
                 }
@@ -168,7 +147,6 @@ namespace Lawful.Core.Datos.DAO
                 {
                     command.CommandText = $"SELECT titulo, descripcion, fecha_por_hacer, fecha_en_curso, fecha_finalizada, importancia, usuario_id, nombre, apellido, tareas.id, tareas.estado FROM tareas INNER JOIN usuarios ON usuarios.id = tareas.usuario_id WHERE tema_id = {temaId};";
                     command.CommandText += $"SELECT tareas_comentarios.id, tareas_comentarios.descripcion, tareas_comentarios.fecha, tareas_comentarios.usuario_id, tarea_id, nombre, apellido FROM tareas_comentarios INNER JOIN tareas ON tareas.id = tarea_id INNER JOIN usuarios ON usuarios.id = tareas_comentarios.usuario_id WHERE tareas.tema_id = {temaId};";
-                    command.CommandText += $"SELECT incidencias.id, incidencias.descripcion, is_done, incidencias.tarea_id FROM incidencias INNER JOIN tareas ON tareas.id = incidencias.tarea_id WHERE tema_id = {temaId};";
                     transaction.Commit();
                     using (SqlDataReader response = command.ExecuteReader())
                     {
@@ -225,26 +203,6 @@ namespace Lawful.Core.Datos.DAO
                                     }
                                 }
                             }
-                            response.NextResult();
-                            while (response.Read())
-                            {
-                                var incidencia = new Incidencia()
-                                {
-                                    ID = response.GetInt32(0),
-                                    Descripcion = response.GetString(1),
-                                    IsDone = response.GetBoolean(2)
-                                };
-                                int tareaId = response.GetInt32(3);
-                                foreach (var tarea in tareas)
-                                {
-                                    if (tarea.ID == tareaId)
-                                    {
-                                        tarea.IncidenciasSecundarias.Add(incidencia);
-                                        break;
-                                    }
-                                }
-                            }
-
                             return tareas;
                         }
                         return new List<Tarea>();

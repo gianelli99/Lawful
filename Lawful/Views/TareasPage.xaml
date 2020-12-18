@@ -39,21 +39,6 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="IncidenciaSecundariaTemplate" x:DataType="modelo:Incidencia">
-            <StackPanel Orientation="Horizontal">
-                <SymbolIcon
-                    Margin="5,0,5,0"
-                    DataContext="{x:Bind ID}"
-                    Symbol="Delete"
-                    Tapped="SymbolIcon_Tapped" />
-                <CheckBox
-                    Checked="CheckBox_Checked"
-                    Content="{x:Bind Descripcion}"
-                    DataContext="{x:Bind ID}"
-                    IsChecked="{x:Bind IsDone}"
-                    Unchecked="CheckBox_Unchecked" />
-            </StackPanel>
-        </DataTemplate>
     </Page.Resources>
     <Grid
         x:Name="ContentArea"
@@ -202,16 +187,6 @@
                                 <TextBlock x:Name="tbImportancia" Style="{StaticResource DetailBodyBaseMediumStyle}" />
                                 <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Responsable" />
                                 <TextBlock x:Name="tbResponsable" Style="{StaticResource DetailBodyBaseMediumStyle}" />
-                                <StackPanel x:Name="spDetailIncidenciasSecundarias" HorizontalAlignment="Left">
-                                    <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Incidencias secundarias" />
-                                    <ListView
-                                    x:Name="lvDetailIncidenciasSecundarias"
-                                    Width="400"
-                                    MaxHeight="500"
-                                    ItemTemplate="{StaticResource IncidenciaSecundariaTemplate}"
-                                    ItemsSource="{x:Bind SelectedTarea.IncidenciasSecundarias}"
-                                    SelectionMode="None" />
-                                </StackPanel>
 
                                 <StackPanel x:Name="spDetailComentarios" HorizontalAlignment="Left">
                                     <TextBlock
@@ -283,21 +258,7 @@
                                 Margin="10,10,0,10"
                                 Header="Responsable"
                                 SelectionMode="Single" />
-                                <!--  Incidencias: ListView  -->
-                                <ListView
-                                x:Name="lvIncidenciasFormulario"
-                                Width="400"
-                                MaxHeight="500"
-                                Margin="10,10,0,10"
-                                Header="Incidencias secundarias"
-                                ItemTemplate="{StaticResource IncidenciaSecundariaTemplate}"
-                                ItemsSource="{x:Bind incidenciasFormulario}" />
-                                <!--  ItemsSource="{x:Bind SelectedTarea.IncidenciasSecundarias}"  -->
-                                <TextBox
-                                x:Name="txtIncidencia"
-                                Margin="10,10,0,10"
-                                Header="Agregar una nueva incidencia"
-                                KeyDown="TxtIncidencia_KeyDown" />
+                               
                                 <!--  Aceptar y cancelar: Button  -->
                                 <StackPanel
                                 x:Name="spBotones"
