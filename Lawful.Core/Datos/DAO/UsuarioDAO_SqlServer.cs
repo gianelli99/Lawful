@@ -50,7 +50,7 @@ namespace Lawful.Core.Datos.DAO
             }
             throw new Exception("Ha ocurrido un error");
         }
-        public Usuario Consultar(int id) // Traigo usuario y sus grupos
+        public Usuario Consultar(int id)
         {
             using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
             {
@@ -412,6 +412,51 @@ namespace Lawful.Core.Datos.DAO
                             return need;
                         }
                         return false;
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    throw ex2;
+                }
+            }
+            throw new Exception("Ha ocurrido un error");
+        }
+
+        public List<Usuario> ListarPorTema(int temaId) {
+            using (SqlConnection connection = new SqlConnection(Conexion.ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+                transaction = connection.BeginTransaction("Listar usuarios");
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.CommandText = $"SELECT	usuarios.id,username,email,nombre,apellido,estado FROM usuarios INNER JOIN usuarios_temas on usuarios_temas.usuario_id = usuarios.id WHERE usuarios_temas.tema_id = {temaId} AND usuarios.estado = 1;";
+                    transaction.Commit();
+                    using (SqlDataReader response = command.ExecuteReader())
+                    {
+                        if (response.HasRows)
+                        {
+                            var usuarios = new List<Modelo.Usuario>();
+                            while (response.Read())
+                            {
+                                var usuario = new Modelo.Usuario();
+
+                                usuario.ID = response.GetInt32(0);
+                                usuario.Username = response.GetString(1);
+                                usuario.Email = response.GetString(2);
+                                usuario.Nombre = response.GetString(3);
+                                usuario.Apellido = response.GetString(4);
+                                usuario.Estado = response.GetBoolean(5);
+                                usuarios.Add(usuario);
+                            }
+                            return usuarios;
+                        }
                     }
                 }
                 catch (Exception ex2)
