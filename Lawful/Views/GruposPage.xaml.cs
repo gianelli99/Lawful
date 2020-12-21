@@ -199,7 +199,7 @@ namespace Lawful.Views
 
         private CommandBar CreateCommandBar(CommandBar commandBar, List<Accion> acciones)
         {
-            commandBar.PrimaryCommands.Add(CreateFindAppBarButton());
+            //commandBar.PrimaryCommands.Add(CreateFindAppBarButton());
             foreach (var button in CreateAppBarButtons(acciones))
             {
                 commandBar.PrimaryCommands.Add(button);
