@@ -316,6 +316,7 @@ namespace Lawful.Views
 
         private void DetailsMode()
         {
+            tbOpcionMasVotada.Text = "";
             btnVotar.Content = "Votar";
             bool canVote = true;
             spFormulario.MaxHeight = 0;
@@ -451,6 +452,18 @@ namespace Lawful.Views
 
                             }
                         }
+                        if (!_selected.isOpen())
+                        {
+                            int count = 0;
+                            foreach (OpcionListViewItem item in lvDetailOpciones.Items)
+                            {
+                                if (item.Opcion.Votantes.Count > count)
+                                {
+                                    count = item.Opcion.Votantes.Count;
+                                    tbOpcionMasVotada.Text = "Opción mas votada: " + item.Opcion.Descripcion;
+                                }
+                            }
+                        }
 
                         spDetailAsistire.MaxHeight = 0;
                         spDetailDoDont.MaxHeight = 0;
@@ -478,14 +491,30 @@ namespace Lawful.Views
         }
         private void ShowVotedOption()
         {
-            foreach (OpcionListViewItem item in lvDetailOpciones.Items)
+            if (_selected.isOpen())
             {
-                if (item.Opcion.Votantes.FindIndex(x => x.ID == SesionActiva.ObtenerInstancia().Usuario.ID) != -1)
+                foreach (OpcionListViewItem item in lvDetailOpciones.Items)
                 {
-                    lvDetailOpciones.SelectedItem = item;
-                    break;
+                    if (item.Opcion.Votantes.FindIndex(x => x.ID == SesionActiva.ObtenerInstancia().Usuario.ID) != -1)
+                    {
+                        lvDetailOpciones.SelectedItem = item;
+                        break;
+                    }
                 }
             }
+            else
+            {
+                int count =0;
+                foreach (OpcionListViewItem item in lvDetailOpciones.Items)
+                {
+                    if (item.Opcion.Votantes.Count >= count)
+                    {
+                        count = item.Opcion.Votantes.Count;
+                        tbOpcionMasVotada.Text =  "Opción mas votada: " + item.Opcion.Descripcion;
+                    }
+                }
+            }
+            
         }
 
         private ObservableCollection<OpcionListViewItem> CreateListViewOpciones(List<Opcion> IniciativaOpciones)

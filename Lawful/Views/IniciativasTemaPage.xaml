@@ -323,6 +323,7 @@
                             Margin="0,10,0,0"
                             KeyDown="txtComentario_KeyDown" />
                     </StackPanel>
+                    <TextBlock x:Name="tbOpcionMasVotada"></TextBlock>
 
 
                     <Button
